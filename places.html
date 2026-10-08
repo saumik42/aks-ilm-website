@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_blank">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!--
+    MapLibre 3.6.1 is intentionally pinned.
+    Do not upgrade without testing Google Sites + mobile + Instagram.
+  -->
+  <link
+    href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css"
+    rel="stylesheet">
+
+  <script
+    src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js">
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #174ea6;
+      --blue2: #1a73e8;
+      --softBlue: #eef5ff;
+      --text: #202124;
+      --muted: #687386;
+      --line: #dbe5f3;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #ffffff;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 18px;
+    }
+
+    .explorer {
+      width: 100%;
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin: 2px auto 20px;
+    }
+
+    .header h2 {
+      margin: 0 0 7px;
+      color: var(--blue);
+      font-size: 25px;
+    }
+
+    .header p {
+      max-width: 670px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .map-shell {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 5px 18px rgba(23,78,166,.08);
+    }
+
+    .map-topbar {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 15px;
+      border-bottom: 1px solid #e6edf6;
+      background: #ffffff;
+    }
+
+    .map-title {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .count {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--softBlue);
+      color: #5f6b7a;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .back {
+      border: 1px solid #c9d9ef;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: #ffffff;
+      color: var(--blue);
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .back:hover {
+      background: #f4f8ff;
+    }
+
+
+    .card-nav {
+      margin: 14px 0;
+    }
+
+    .card-nav.top {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    .card-nav.bottom {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #e3ebf4;
+    }
+
+    .card-nav .back {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--softBlue);
+      font-size: 13px;
+    }
+
+    .card-nav .back:hover {
+      background: #e7f1ff;
+    }
+
+    .map-holder {
+      position: relative;
+      width: 100%;
+      height: 475px;
+      min-height: 475px;
+      background: linear-gradient(135deg,#eaf5fc 0%,#d8ecf8 100%);
+    }
+
+    #map {
+      position: absolute;
+          right: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 475px;
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    #map.ready {
+      opacity: 1;
+    }
+
+    .map-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg,#eef7fc 0%,#dceff8 100%);
+      color: #6d7c8c;
+      font-size: 13px;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+
+    .map-loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-inner {
+      text-align: center;
+    }
+
+    .loading-dot {
+      width: 9px;
+      height: 9px;
+      margin: 0 auto 9px;
+      border-radius: 50%;
+      background: var(--blue2);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: .35;
+        transform: scale(.85);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+    }
+
+    .maplibregl-ctrl-attrib {
+      font-family: Arial, sans-serif !important;
+      font-size: 9px !important;
+      background: rgba(255,255,255,.88) !important;
+    }
+
+    .maplibregl-ctrl-logo {
+      opacity: .72;
+    }
+
+    .map-place-label {
+      padding: 5px 8px;
+      border: 1px solid #cbdcf0;
+      border-radius: 8px;
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 2px 7px rgba(40,70,110,.14);
+      color: #26374c;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        transform .15s ease,
+        color .15s ease,
+        border-color .15s ease,
+        background .15s ease,
+        box-shadow .15s ease;
+    }
+
+    .map-place-label:hover,
+    .map-place-label:focus {
+      transform: scale(1.05);
+      color: var(--blue);
+      border-color: #9ebfe8;
+      background: #f7faff;
+      box-shadow: 0 3px 10px rgba(23,78,166,.22);
+      outline: none;
+    }
+
+    .map-place-label.gateway {
+      color: #ffffff;
+      border-color: var(--blue);
+      background: var(--blue);
+    }
+
+    .map-place-label.gateway:hover,
+    .map-place-label.gateway:focus {
+      color: #ffffff;
+      border-color: #0d47a1;
+      background: #0d47a1;
+    }
+
+    .info {
+      min-height: 165px;
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 3px 12px rgba(23,78,166,.06);
+    }
+
+    .placeholder {
+      padding: 32px 10px;
+      text-align: center;
+      color: #737d8c;
+      font-size: 14px;
+    }
+
+    .info h3 {
+      margin: 0 0 4px;
+      color: var(--blue);
+      font-size: 21px;
+    }
+
+    .location {
+      margin-bottom: 15px;
+      color: #737d8c;
+      font-size: 13px;
+    }
+
+    .photo-wrap {
+      width: 100%;
+      margin: 0 0 16px;
+    }
+
+    .location-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #e3e9f1;
+      background: #f2f5f8;
+    }
+
+    .photo-caption {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 4px 10px;
+      margin-top: 6px;
+      color: #7b8491;
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
+
+    .photo-caption a {
+      color: #687a96;
+      text-decoration: none;
+    }
+
+    .photo-caption a:hover {
+      color: var(--blue);
+      text-decoration: underline;
+    }
+
+    .description {
+      margin-bottom: 14px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .reference {
+      padding-top: 12px;
+      border-top: 1px solid #edf1f6;
+      font-size: 13px;
+    }
+
+    .reference strong,
+    .reference a {
+      color: var(--blue);
+    }
+
+    .reference a {
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .reference a:hover {
+      text-decoration: underline;
+    }
+
+    .note {
+      max-width: 770px;
+      margin: 13px auto 0;
+      color: #737d8c;
+      font-size: 11.5px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 10px;
+      }
+
+      .header h2 {
+        font-size: 21px;
+      }
+
+      .header p {
+        font-size: 13px;
+      }
+
+      .map-holder,
+      #map {
+        height: 440px;
+        min-height: 440px;
+      }
+
+      .map-topbar {
+        padding: 10px 11px;
+      }
+
+      .map-title {
+        font-size: 12px;
+      }
+
+      .count {
+        padding: 4px 7px;
+        font-size: 9.5px;
+      }
+
+      .back {
+        padding: 6px 8px;
+        font-size: 10px;
+      }
+
+      .map-place-label {
+        padding: 4px 6px;
+        font-size: 9px;
+      }
+
+      .info {
+        padding: 14px;
+      }
+
+      .info h3 {
+        font-size: 19px;
+      }
+
+      .location-photo {
+        border-radius: 10px;
+      }
+
+      .description {
+        font-size: 13.5px;
+      }
+    }
+  
+    .welcome-card {
+      text-align: center;
+      padding: 12px 8px 4px;
+    }
+
+    .welcome-card .welcome-title {
+      margin: 0 0 8px;
+      color: #245da8;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .welcome-card .welcome-text {
+      margin: 0 auto 14px;
+      max-width: 520px;
+      color: #748196;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .welcome-illustration {
+      width: 150px;
+      max-width: 45%;
+      height: auto;
+      margin: 2px auto 12px;
+      display: block;
+    }
+
+    .welcome-meta {
+      color: #748196;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: .1px;
+    }
+
+  </style>
+<link rel="stylesheet" href="./shared.css"><style>body{padding:0;background:#fff}.map-card{border-radius:12px}.map-title{color:#164b88}.info{font-size:16px}.info p{font-size:16px}.note{font-size:14px}.page-heading{max-width:1000px;padding:0 24px}</style><style>.place-picker{padding:14px 20px;display:flex;align-items:center;gap:18px;border-top:1px solid #dce7f2}.place-picker label{font-size:14px;color:#164b88}.place-picker select{font:16px Arial,sans-serif;padding:10px;border:1px solid #c9d9e9;border-radius:5px;background:white;max-width:100%;flex:1}@media(max-width:600px){.place-picker{flex-direction:column;align-items:stretch;gap:8px}}</style></head>
+
+<body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html">AKS Ilm<small>ISLAMIC TRIVIA & LEARNING</small></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav><div class="page-heading"><h1>Explore Islamic Places</h1><p>Discover significant locations connected to the Qur’an, Sunnah, and Islamic history.</p></div>
+
+<div class="explorer">
+
+  <div class="map-shell">
+
+    <div class="map-topbar" id="mapTopbar">
+
+      <button
+        class="back"
+        id="backButton"
+        onclick="showRegionalMap()"
+        style="display:none;">
+        ← Regional Map
+      </button>
+
+      <div class="map-title" id="mapTitle">
+        Regional Map
+      </div>
+
+      <div class="count" id="mapCount">
+        16 locations to explore
+      </div>
+
+    </div>
+
+    <div class="place-picker"><label for="place-select">Choose a location</label><select id="place-select"><option value="">Select a location</option></select></div><div class="map-holder">
+
+      <div id="map"></div>
+
+      <div class="map-loading" id="mapLoading">
+        <div class="loading-inner">
+          <div class="loading-dot"></div>
+          Loading map…
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="info" id="info">
+    <div class="placeholder">
+      Select a location on the map to learn more about its significance.
+    </div>
+  </div>
+
+  <div class="note">
+    A primary reference is provided for each location for simplicity.
+    Some locations and events are mentioned or described in additional
+    Qur’anic verses and authentic narrations.
+  </div>
+
+</div>
+
+<script>
+
+function commonsImage(filename) {
+  return (
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/" +
+    encodeURIComponent(filename) +
+    "?width=1800"
+  );
+}
+
+const places = {
+
+  quds: {
+    name: "Al-Quds (Jerusalem)",
+    location: "Al-Quds (Jerusalem), Palestine",
+    lat: 31.778,
+    lng: 35.235,
+    description:
+      "Al-Quds is home to Al-Masjid Al-Aqsa, to which Allah took the Prophet Muhammad ﷺ during Al-Isra’, the Night Journey from Al-Masjid Al-Haram. The Qur’an also describes the surroundings of Al-Masjid Al-Aqsa as blessed.",
+    reference: "Qur’an 17:1",
+    url: "https://quran.com/17/1",
+    photoFile: "Al-Aqsa Mosque (Jerusalem).jpg",
+    photoAlt: "Al-Masjid Al-Aqsa in Al-Quds",
+    photoCaption: "Al-Masjid Al-Aqsa, Al-Quds",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Al-Aqsa_Mosque_(Jerusalem).jpg"
+  },
+
+  madinah: {
+    name: "Madinah",
+    location: "Madinah, Saudi Arabia",
+    lat: 24.4672,
+    lng: 39.6111,
+    description:
+      "Madinah became the home of the Prophet Muhammad ﷺ and the Muslim community following the Hijrah from Makkah. The Prophet ﷺ also declared the area between its two mountains a sanctuary.",
+    reference: "Sahih al-Bukhari 4084",
+    url: "https://sunnah.com/bukhari:4084",
+    photoFile: "Al-Masjid al-Nabawi, Medina - panoramio.jpg",
+    photoAlt: "Exterior view of Al-Masjid an-Nabawi in Madinah",
+    photoCaption: "Al-Masjid an-Nabawi, Madinah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Al-Masjid_al-Nabawi,_Medina_-_panoramio.jpg"
+  },
+
+  uhud: {
+    name: "Mount Uhud",
+    location: "Near Madinah, Saudi Arabia",
+    lat: 24.52097,
+    lng: 39.62685,
+    description:
+      "Mount Uhud is associated with the Battle of Uhud, which took place near Madinah. The Prophet Muhammad ﷺ also described Uhud as a mountain that loves us and is loved by us.",
+    reference: "Sahih al-Bukhari 4083",
+    url: "https://sunnah.com/bukhari:4083",
+    photoFile: "Monte Uhud, Medina, Arabia Saudita, 2025-05-22, DD 06.jpg",
+    photoAlt: "Mount Uhud near Madinah",
+    photoCaption: "Mount Uhud, Madinah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Monte_Uhud,_Medina,_Arabia_Saudita,_2025-05-22,_DD_06.jpg"
+  },
+
+  badr: {
+    name: "Badr",
+    location: "Madinah Region, Saudi Arabia",
+    lat: 23.77227,
+    lng: 38.78964,
+    description:
+      "Badr is associated with the Battle of Badr, where Allah granted victory to the Muslims despite their weakness in number. Badr is explicitly mentioned by name in the Qur’an.",
+    reference: "Qur’an 3:123",
+    url: "https://quran.com/3/123",
+    photoFile: "Battlefield of Badr.jpg",
+    photoAlt: "The battlefield area at Badr",
+    photoCaption: "Badr, Saudi Arabia",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Battlefield_of_Badr.jpg"
+  },
+
+  makkah: {
+    name: "Makkah",
+    location: "Makkah, Saudi Arabia",
+    lat: 21.42252,
+    lng: 39.82618,
+    description:
+      "Makkah is home to Al-Masjid Al-Haram and the Kaʿbah, the sacred House toward which Muslims face in prayer. It is also the city from which the Prophet Muhammad ﷺ began the Night Journey.",
+    reference: "Qur’an 17:1",
+    url: "https://quran.com/17/1",
+    photoFile: "Kaaba, Makkah.jpg",
+    photoAlt: "The Kaʿbah at Al-Masjid Al-Haram in Makkah",
+    photoCaption: "The Kaʿbah, Makkah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Kaaba,_Makkah.jpg"
+  },
+
+  hira: {
+    name: "Cave of Hira",
+    location: "Jabal al-Nur, near Makkah",
+    lat: 21.45737,
+    lng: 39.85920,
+    description:
+      "The Prophet Muhammad ﷺ would spend time in seclusion and worship in the Cave of Hira. It was there that the beginning of revelation came to him.",
+    reference: "Sahih al-Bukhari 3",
+    url: "https://sunnah.com/bukhari:3",
+    photoFile: "Jabal al-Nour And cave Hira.jpg",
+    photoAlt: "Jabal al-Nur with the Cave of Hira near Makkah",
+    photoCaption: "Jabal al-Nur and Cave of Hira",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Jabal_al-Nour_And_cave_Hira.jpg"
+  },
+
+  thawr: {
+    name: "Cave of Thawr",
+    location: "Jabal Thawr, near Makkah",
+    lat: 21.37712,
+    lng: 39.84982,
+    description:
+      "During the Hijrah from Makkah, the Prophet Muhammad ﷺ and Abu Bakr (RA) took refuge in a cave. Qur’an 9:40 recalls this moment and the Prophet’s reassurance to his companion that Allah was with them.",
+    reference: "Qur’an 9:40",
+    url: "https://quran.com/9/40",
+    photoFile: "Jabl e Thawr.jpg",
+    photoAlt: "Jabal Thawr near Makkah",
+    photoCaption: "Jabal Thawr, near Makkah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Jabl_e_Thawr.jpg"
+  },
+
+  mina: {
+    name: "Mina",
+    location: "Makkah, Saudi Arabia",
+    lat: 21.41333,
+    lng: 39.89333,
+    description:
+      "Mina is one of the principal sites of Hajj. Pilgrims spend important days of the pilgrimage there, and the rites performed in the area include the stoning of the Jamarat.",
+    reference: "Sahih Muslim 1218c",
+    url: "https://sunnah.com/muslim:1218c",
+    photoFile: "Haji pilgrimage mina tent city.jpg",
+    photoAlt: "The tent city of Mina during the Hajj season",
+    photoCaption: "The tent city of Mina",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Haji_pilgrimage_mina_tent_city.jpg"
+  },
+
+  muzdalifah: {
+    name: "Muzdalifah",
+    location: "Between Mina and ʿArafah",
+    lat: 21.39250,
+    lng: 39.93778,
+    description:
+      "Muzdalifah is an important station of Hajj between ʿArafah and Mina. After departing ʿArafah, pilgrims remember Allah at Al-Mashʿar Al-Haram before continuing the rites of Hajj.",
+    reference: "Qur’an 2:198",
+    url: "https://quran.com/2/198",
+    photoFile: "Fajr in Muzdalifah.jpg",
+    photoAlt: "Pilgrims at Muzdalifah around Fajr during Hajj",
+    photoCaption: "Muzdalifah during Hajj",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Fajr_in_Muzdalifah.jpg"
+  },
+
+  quba: {
+    name: "Masjid Quba",
+    location: "Madinah, Saudi Arabia",
+    lat: 24.439172,
+    lng: 39.618153,
+    description:
+      "Masjid Quba was the first mosque built in Islam, established following the Hijrah of the Prophet Muhammad ﷺ to Madinah. The Prophet ﷺ would also visit Masjid Quba every Saturday, sometimes walking and sometimes riding.",
+    reference: "Sahih al-Bukhari 1193",
+    url: "https://sunnah.com/bukhari:1193",
+    photoFile: "Quba Masjid.jpg",
+    photoAlt: "Masjid Quba in Madinah",
+    photoCaption: "Masjid Quba, Madinah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Quba_Masjid.jpg"
+  },
+
+  qiblatayn: {
+    name: "Masjid al-Qiblatayn",
+    location: "Madinah, Saudi Arabia",
+    lat: 24.484157,
+    lng: 39.578811,
+    description:
+      "Masjid al-Qiblatayn is historically associated with the change of the Qiblah from Bayt al-Maqdis toward the Kaʿbah in Makkah. Allah commanded the Prophet Muhammad ﷺ and the believers to turn toward Al-Masjid Al-Haram in prayer.",
+    reference: "Qur’an 2:144",
+    url: "https://quran.com/2/144",
+    photoFile: "Masjid al-Qiblatain.jpg",
+    photoAlt: "Masjid al-Qiblatayn in Madinah",
+    photoCaption: "Masjid al-Qiblatayn, Madinah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Masjid_al-Qiblatain.jpg"
+  },
+
+  sinai: {
+    name: "Mount Sinai (Ṭūr Sīnāʾ)",
+    location: "Sinai Peninsula, Egypt",
+    lat: 28.5394,
+    lng: 33.9753,
+    description:
+      "Mount Sinai is mentioned in the Qur’an and is connected with Prophet Mūsā (AS). The Qur’an refers explicitly to Ṭūr Sīnāʾ (Mount Sinai). The precise identification of the modern mountain traditionally called Jabal Musa with the Qur’anic location is not established by the verse itself.",
+    reference: "Qur’an 23:20",
+    url: "https://quran.com/23/20",
+    photoFile: "Mount Sinai Egypt 1.jpg",
+    photoAlt: "Mount Sinai in the Sinai Peninsula of Egypt",
+    photoCaption: "Mount Sinai, Sinai Peninsula",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Mount_Sinai_Egypt_1.jpg"
+  },
+
+  arafah: {
+    name: "ʿArafah",
+    location: "Near Makkah, Saudi Arabia",
+    lat: 21.35489,
+    lng: 39.98412,
+    description:
+      "ʿArafah is one of the central locations of Hajj, where pilgrims gather on the ninth day of Dhul-Hijjah. The Prophet Muhammad ﷺ emphasized its essential place in the pilgrimage.",
+    reference: "Jamiʿ at-Tirmidhi 889",
+    url: "https://sunnah.com/tirmidhi:889",
+    photoFile: "Mount Arafat.JPG",
+    photoAlt: "Mount Arafat at ʿArafah",
+    photoCaption: "Mount Arafat, ʿArafah",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Mount_Arafat.JPG"
+  }
+
+,
+
+  hijr: {
+    name: "Al-Ḥijr (Hegra)",
+    location: "AlUla area, Madinah Region, Saudi Arabia",
+    lat: 26.78361,
+    lng: 37.95500,
+    description:
+      "Al-Ḥijr is the place associated with the people of Thamūd, to whom Prophet Ṣāliḥ (AS) was sent. The Qur’an names the people of Al-Ḥijr and describes them as carving dwellings into the mountains.",
+    reference: "Qur’an 15:80–82",
+    url: "https://quran.com/15/80-82",
+    photoFile: "Hegra - 55354677386.jpg",
+    photoAlt: "Rock-cut structures at Al-Ḥijr (Hegra) in Saudi Arabia",
+    photoCaption: "Al-Ḥijr (Hegra), Saudi Arabia",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Hegra_-_55354677386.jpg"
+  },
+
+  khaybar: {
+    name: "Khaybar",
+    location: "Madinah Region, Saudi Arabia",
+    lat: 25.69861,
+    lng: 39.29250,
+    description:
+      "Khaybar is an oasis north of Madinah associated with the Expedition of Khaybar during the Prophet Muhammad’s ﷺ Madinan period. Authentic narrations describe the Prophet ﷺ and the Muslim army reaching Khaybar.",
+    reference: "Sahih al-Bukhari 4197",
+    url: "https://sunnah.com/bukhari:4197",
+    photoFile: "Khaybar - fortress Qamus (1).jpg",
+    photoAlt: "Qamus Fortress overlooking the oasis at Khaybar, Saudi Arabia",
+    photoCaption: "Qamus Fortress at Khaybar",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:Khaybar_-_fortress_Qamus_(1).jpg"
+  },
+
+  taif: {
+    name: "Ṭāʾif",
+    location: "Ṭāʾif, Saudi Arabia",
+    lat: 21.26667,
+    lng: 40.41667,
+    description:
+      "Ṭāʾif holds an important place in the Seerah of the Prophet Muhammad ﷺ. It is associated with the difficult journey in which he sought support from its people and was rejected, an episode he later described when asked about the most difficult day he had faced.",
+    reference: "Sahih al-Bukhari 3231",
+    url: "https://sunnah.com/bukhari:3231",
+    photoFile: "الطائف، المملكة العربية السعودية 2024.jpg",
+    photoAlt: "Landscape of Ṭāʾif in Saudi Arabia",
+    photoCaption: "Ṭāʾif, Saudi Arabia",
+    photoSource:
+      "https://commons.wikimedia.org/wiki/File:الطائف،_المملكة_العربية_السعودية_2024.jpg"
+  }
+
+};
+
+let map = null;
+let labelMarkers = [];
+let locationLayersReady = false;
+let mapLoadedSuccessfully = false;
+let initialising = false;
+let currentView = "regional";
+
+
+/* ---------------------------------------------------------
+   INSTAGRAM / IN-APP BROWSER COMPATIBILITY HELPERS
+--------------------------------------------------------- */
+
+function mapContainerIsReady() {
+
+  const container =
+    document.getElementById("map");
+
+  if (!container) return false;
+
+  const rect =
+    container.getBoundingClientRect();
+
+  return (
+    rect.width >= 20 &&
+    rect.height >= 100
+  );
+}
+
+
+function forceMapResize() {
+
+  if (!map) return;
+
+  try {
+    map.resize();
+  } catch (error) {}
+
+}
+
+
+function scheduleResizePasses() {
+
+  [
+    0,
+    100,
+    250,
+    500,
+    900,
+    1500,
+    2500,
+    4000
+  ].forEach(function(delay) {
+
+    setTimeout(function() {
+      forceMapResize();
+    }, delay);
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   MAP INITIALIZATION
+--------------------------------------------------------- */
+
+function initialiseMap() {
+
+  if (map || initialising) return;
+
+  if (
+    document.visibilityState === "hidden" ||
+    !mapContainerIsReady()
+  ) {
+
+    setTimeout(
+      initialiseMap,
+      200
+    );
+
+    return;
+  }
+
+  initialising = true;
+
+  /*
+    Give Instagram / embedded WebViews an extra frame to
+    finish laying out the nested iframe before WebGL starts.
+  */
+  requestAnimationFrame(function() {
+
+    requestAnimationFrame(function() {
+
+      try {
+
+        map = new maplibregl.Map({
+          container: "map",
+          style: "https://tiles.waymorphic.com/styles/bright",
+          center: [39.2, 26.5],
+          zoom: 4.5,
+          attributionControl: true,
+          scrollZoom: false,
+          doubleClickZoom: false,
+          boxZoom: false,
+          dragRotate: false,
+          pitchWithRotate: false,
+          pitch: 0,
+          bearing: 0
+        });
+
+      } catch (error) {
+
+        initialising = false;
+        map = null;
+
+        /*
+          Do not replace the feature with a fallback.
+          Retry after the in-app browser has had more time
+          to establish its rendering environment.
+        */
+        setTimeout(
+          initialiseMap,
+          800
+        );
+
+        return;
+      }
+
+
+      map.on("error", function(event) {
+
+        /*
+          Keep this listener so temporary worker/tile/WebGL
+          errors inside an in-app browser do not stop our
+          resize/recovery passes.
+        */
+
+        if (
+          event &&
+          event.error
+        ) {
+          console.warn(
+            "Explore Islamic Places map error:",
+            event.error
+          );
+        }
+
+      });
+
+
+      map.on("load", function() {
+
+        mapLoadedSuccessfully = true;
+
+        applyEnglishLabels();
+        hideNativeLabels();
+        addPalestineLabel();
+        setupLocationLayers();
+        showRegionalMap();
+
+        scheduleResizePasses();
+
+        map.once("idle", function() {
+
+          forceMapResize();
+
+          document
+            .getElementById("map")
+            .classList
+            .add("ready");
+
+          document
+            .getElementById("mapLoading")
+            .classList
+            .add("hidden");
+
+        });
+
+      });
+
+
+      /*
+        If the WebGL context is restored by the browser,
+        immediately tell MapLibre to recalculate the canvas.
+      */
+      setTimeout(function() {
+
+        if (!map) return;
+
+        const canvas =
+          map.getCanvas();
+
+        if (!canvas) return;
+
+        canvas.addEventListener(
+          "webglcontextrestored",
+          function() {
+            scheduleResizePasses();
+          },
+          false
+        );
+
+      }, 500);
+
+
+      scheduleResizePasses();
+
+    });
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   EXISTING MAP FUNCTIONS
+--------------------------------------------------------- */
+
+function applyEnglishLabels() {
+
+  const style = map.getStyle();
+
+  if (!style || !style.layers) return;
+
+  style.layers.forEach(function(layer) {
+
+    if (
+      layer.type === "symbol" &&
+      layer.layout &&
+      layer.layout["text-field"]
+    ) {
+
+      try {
+
+        map.setLayoutProperty(
+          layer.id,
+          "text-field",
+          [
+            "coalesce",
+            ["get", "name:en"],
+            ["get", "name_en"],
+            ["get", "name:latin"],
+            ["get", "name"]
+          ]
+        );
+
+      } catch (error) {}
+
+    }
+
+  });
+
+}
+
+
+function hideNativeLabels() {
+
+  const style = map.getStyle();
+
+  if (!style || !style.layers) return;
+
+  const namesToHide = [
+    "Israel",
+    "יִשְׂרָאֵל",
+    "إسرائيل",
+    "Mecca",
+    "Makkah",
+    "مكة",
+    "مكة المكرمة"
+  ];
+
+  style.layers.forEach(function(layer) {
+
+    if (
+      layer.type !== "symbol" ||
+      !layer.layout ||
+      !layer.layout["text-field"]
+    ) {
+      return;
+    }
+
+    try {
+
+      const existing =
+        map.getFilter(layer.id);
+
+      const nameExpression = [
+        "coalesce",
+        ["get", "name:en"],
+        ["get", "name_en"],
+        ["get", "name"],
+        ""
+      ];
+
+      const exclusion = [
+        "!",
+        [
+          "in",
+          nameExpression,
+          ["literal", namesToHide]
+        ]
+      ];
+
+      if (existing) {
+
+        map.setFilter(
+          layer.id,
+          ["all", existing, exclusion]
+        );
+
+      } else {
+
+        map.setFilter(
+          layer.id,
+          exclusion
+        );
+
+      }
+
+    } catch (error) {}
+
+  });
+
+}
+
+
+function addPalestineLabel() {
+
+  if (
+    map.getSource(
+      "palestine-custom-label"
+    )
+  ) return;
+
+  map.addSource(
+    "palestine-custom-label",
+    {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: {
+              name: "Palestine"
+            },
+            geometry: {
+              type: "Point",
+              coordinates: [
+                35.10,
+                31.70
+              ]
+            }
+          }
+        ]
+      }
+    }
+  );
+
+  map.addLayer({
+    id: "palestine-custom-label",
+    type: "symbol",
+    source: "palestine-custom-label",
+    minzoom: 3,
+
+    layout: {
+      "text-field": ["get", "name"],
+
+      "text-size": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        3, 11,
+        5, 13,
+        8, 15
+      ],
+
+      "text-letter-spacing": .02,
+      "text-allow-overlap": true,
+      "text-ignore-placement": true
+    },
+
+    paint: {
+      "text-color": "#394b59",
+      "text-halo-color":
+        "rgba(255,255,255,.96)",
+      "text-halo-width": 1.5
+    }
+  });
+
+}
+
+
+function setupLocationLayers() {
+
+  if (locationLayersReady) return;
+
+  map.addSource(
+    "islamic-locations",
+    {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: []
+      }
+    }
+  );
+
+  map.addLayer({
+    id: "location-hit-area",
+    type: "circle",
+    source: "islamic-locations",
+
+    paint: {
+      "circle-radius": 18,
+      "circle-color":
+        "rgba(26,115,232,0.01)"
+    }
+  });
+
+  map.addLayer({
+    id: "location-ring",
+    type: "circle",
+    source: "islamic-locations",
+
+    paint: {
+      "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        3, 7,
+        7, 8,
+        12, 9
+      ],
+
+      "circle-color": "#ffffff",
+      "circle-stroke-width": 1,
+      "circle-stroke-color":
+        "rgba(23,78,166,.25)"
+    }
+  });
+
+  map.addLayer({
+    id: "location-dot",
+    type: "circle",
+    source: "islamic-locations",
+
+    paint: {
+      "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        3, 4.8,
+        7, 5.7,
+        12, 6.5
+      ],
+
+      "circle-color": "#1a73e8",
+      "circle-stroke-width": 1,
+      "circle-stroke-color":
+        "#174ea6"
+    }
+  });
+
+  map.addLayer({
+    id: "location-center",
+    type: "circle",
+    source: "islamic-locations",
+
+    paint: {
+      "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        3, 1.5,
+        10, 2
+      ],
+
+      "circle-color": "#ffffff"
+    }
+  });
+
+  map.on(
+    "click",
+    "location-hit-area",
+    function(event) {
+
+      if (
+        !event.features ||
+        !event.features.length
+      ) return;
+
+      const key =
+        event.features[0]
+          .properties
+          .key;
+
+      activateLocation(key);
+
+    }
+  );
+
+  map.on(
+    "mouseenter",
+    "location-hit-area",
+    function() {
+
+      map.getCanvas()
+        .style.cursor =
+        "pointer";
+
+    }
+  );
+
+  map.on(
+    "mouseleave",
+    "location-hit-area",
+    function() {
+
+      map.getCanvas()
+        .style.cursor =
+        "";
+
+    }
+  );
+
+  locationLayersReady = true;
+
+}
+
+
+function activateLocation(key) {
+
+  if (key === "makkahGateway") {
+
+    showMakkahArea();
+
+  } else if (key === "madinahGateway") {
+
+    showMadinahArea();
+
+  } else {
+
+    showPlace(key);
+
+  }
+
+}
+
+
+function makeFeature(
+  key,
+  lng,
+  lat
+) {
+
+  return {
+    type: "Feature",
+
+    properties: {
+      key: key
+    },
+
+    geometry: {
+      type: "Point",
+      coordinates: [
+        lng,
+        lat
+      ]
+    }
+  };
+
+}
+
+
+function setLocationData(features) {
+
+  const source =
+    map.getSource(
+      "islamic-locations"
+    );
+
+  if (!source) return;
+
+  source.setData({
+    type:
+      "FeatureCollection",
+    features: features
+  });
+
+}
+
+
+function clearLabelMarkers() {
+
+  labelMarkers.forEach(
+    function(marker) {
+      marker.remove();
+    }
+  );
+
+  labelMarkers = [];
+
+}
+
+
+function addClickableLabel(
+  key,
+  text,
+  lng,
+  lat,
+  offsetX,
+  offsetY,
+  gateway
+) {
+
+  const element =
+    document.createElement("div");
+
+  element.className =
+    "map-place-label" +
+    (gateway ? " gateway" : "");
+
+  element.textContent =
+    text;
+
+  element.setAttribute(
+    "role",
+    "button"
+  );
+
+  element.setAttribute(
+    "tabindex",
+    "0"
+  );
+
+  element.setAttribute(
+    "aria-label",
+    gateway
+      ? "Explore " + text.replace(" →", "")
+      : "Learn about " + text
+  );
+
+  element.addEventListener(
+    "click",
+    function(event) {
+
+      event.stopPropagation();
+      activateLocation(key);
+
+    }
+  );
+
+  element.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Enter" ||
+        event.key === " "
+      ) {
+
+        event.preventDefault();
+        activateLocation(key);
+
+      }
+
+    }
+  );
+
+  const marker =
+    new maplibregl.Marker({
+      element: element,
+      anchor: "center",
+      offset: [
+        offsetX,
+        offsetY
+      ]
+    })
+      .setLngLat([
+        lng,
+        lat
+      ])
+      .addTo(map);
+
+  labelMarkers.push(marker);
+
+}
+
+
+
+function returnToRegionalMap() {
+
+  showRegionalMap();
+
+}
+
+
+function showPlace(key) {
+
+  const p =
+    places[key];
+
+  const imageURL =
+    commonsImage(
+      p.photoFile
+    );
+
+  document
+    .getElementById("info")
+    .innerHTML = `
+      <h3>📍 ${p.name}</h3>
+
+      <div class="location">
+        ${p.location}
+      </div>
+
+      <div class="photo-wrap">
+
+        <img
+          class="location-photo"
+          src="${imageURL}"
+          alt="${p.photoAlt}"
+          loading="lazy"
+          referrerpolicy="no-referrer">
+
+        <div class="photo-caption">
+
+          <span>
+            ${p.photoCaption}
+          </span>
+
+          <a
+            href="${p.photoSource}"
+            target="_blank"
+            rel="noopener noreferrer">
+            Photo source: Wikimedia Commons ↗
+          </a>
+
+        </div>
+
+      </div>
+
+      <div class="description">
+        ${p.description}
+      </div>
+
+      <div class="reference">
+
+        <strong>
+          📖 Primary Reference:
+        </strong>
+
+        <a
+          href="${p.url}"
+          target="_blank"
+          rel="noopener noreferrer">
+          ${p.reference}
+        </a>
+
+      </div>
+
+      ${currentView !== "regional" ? `
+        <div class="card-nav bottom">
+          <button class="back" onclick="returnToRegionalMap()">
+            ← Back to Regional Map
+          </button>
+        </div>
+      ` : ""}
+
+    `;
+
+}
+
+
+function resetInfo(text) {
+
+  document
+    .getElementById("info")
+    .innerHTML =
+    `<div class="placeholder">${text}</div>`;
+
+}
+
+
+function showRegionalMap() {
+
+  currentView = "regional";
+  clearLabelMarkers();
+
+  document.getElementById("backButton").style.display = "none";
+  document.getElementById("mapTitle").textContent = "Regional Map";
+  document.getElementById("mapCount").textContent = "16 locations to explore";
+
+  document
+    .getElementById("info")
+    .innerHTML = `
+      <div class="welcome-card">
+
+        <div class="welcome-title">
+          📍 Select a Location
+        </div>
+
+        <div class="welcome-text">
+          Select a location on the map to learn more about its significance.
+        </div>
+
+        <svg class="welcome-illustration"
+             viewBox="0 0 220 130"
+             role="img"
+             aria-label="Map and location pin illustration">
+
+          <g fill="none"
+             stroke="#b9d2ef"
+             stroke-width="3"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+
+            <path d="M20 92 L63 72 L105 90 L151 67 L200 84" />
+            <path d="M20 92 L20 42 L63 24 L105 43 L151 20 L200 37 L200 84" />
+            <path d="M63 24 L63 72" />
+            <path d="M105 43 L105 90" />
+            <path d="M151 20 L151 67" />
+
+          </g>
+
+          <g transform="translate(89 25)">
+            <path d="M21 0
+                     C9.4 0 0 9.4 0 21
+                     C0 37 21 58 21 58
+                     C21 58 42 37 42 21
+                     C42 9.4 32.6 0 21 0Z"
+                  fill="#eaf3ff"
+                  stroke="#2f73d8"
+                  stroke-width="3"/>
+            <circle cx="21" cy="21" r="7"
+                    fill="#2f73d8"/>
+          </g>
+
+        </svg>
+
+        <div class="welcome-meta">
+          16 significant locations • Qur’an • Sunnah • Islamic history
+        </div>
+
+      </div>
+    `;
+
+  setLocationData([
+    makeFeature("quds", places.quds.lng, places.quds.lat),
+    makeFeature("sinai", places.sinai.lng, places.sinai.lat),
+    makeFeature("badr", places.badr.lng, places.badr.lat),
+    makeFeature("hijr", places.hijr.lng, places.hijr.lat),
+    makeFeature("khaybar", places.khaybar.lng, places.khaybar.lat),
+    makeFeature("taif", places.taif.lng, places.taif.lat),
+    makeFeature("madinahGateway", places.madinah.lng, places.madinah.lat),
+    makeFeature("makkahGateway", places.makkah.lng, places.makkah.lat)
+  ]);
+
+  addClickableLabel("quds", "Al-Quds (Jerusalem)", places.quds.lng, places.quds.lat, 80, 0, false);
+  addClickableLabel("sinai", "Mount Sinai", places.sinai.lng, places.sinai.lat, -58, 4, false);
+  addClickableLabel("badr", "Badr", places.badr.lng, places.badr.lat, -45, 4, false);
+  addClickableLabel("hijr", "Al-Ḥijr", places.hijr.lng, places.hijr.lat, -52, -6, false);
+  addClickableLabel("khaybar", "Khaybar", places.khaybar.lng, places.khaybar.lat, -50, -4, false);
+  addClickableLabel("taif", "Ṭāʾif", places.taif.lng, places.taif.lat, 45, 14, false);
+  addClickableLabel("madinahGateway", "Madinah Area →", places.madinah.lng, places.madinah.lat, 78, -8, true);
+  addClickableLabel("makkahGateway", "Makkah Area →", places.makkah.lng, places.makkah.lat, 75, 0, true);
+
+  map.fitBounds(
+    [[33.25, 20.25], [44.25, 32.75]],
+    {
+      padding: {top: 38, bottom: 38, left: 42, right: 42},
+      maxZoom: 5.35,
+      duration: 650
+    }
+  );
+
+}
+
+
+function showMakkahArea() {
+
+  currentView = "makkah";
+  clearLabelMarkers();
+
+  document
+    .getElementById(
+      "backButton"
+    )
+    .style.display =
+    "inline-block";
+
+  document
+    .getElementById(
+      "mapTitle"
+    )
+    .textContent =
+    "Makkah Area";
+
+  document
+    .getElementById(
+      "mapCount"
+    )
+    .textContent =
+    "6 locations";
+
+  resetInfo(
+    "Select a location in the Makkah area to learn more."
+  );
+
+  setLocationData([
+
+    makeFeature(
+      "makkah",
+      places.makkah.lng,
+      places.makkah.lat
+    ),
+
+    makeFeature(
+      "hira",
+      places.hira.lng,
+      places.hira.lat
+    ),
+
+    makeFeature(
+      "thawr",
+      places.thawr.lng,
+      places.thawr.lat
+    ),
+
+    makeFeature(
+      "mina",
+      places.mina.lng,
+      places.mina.lat
+    ),
+
+    makeFeature(
+      "muzdalifah",
+      places.muzdalifah.lng,
+      places.muzdalifah.lat
+    ),
+
+    makeFeature(
+      "arafah",
+      places.arafah.lng,
+      places.arafah.lat
+    )
+
+  ]);
+
+  addClickableLabel(
+    "makkah",
+    "Makkah",
+    places.makkah.lng,
+    places.makkah.lat,
+    -52,
+    0,
+    false
+  );
+
+  addClickableLabel(
+    "hira",
+    "Cave of Hira",
+    places.hira.lng,
+    places.hira.lat,
+    4,
+    -30,
+    false
+  );
+
+  addClickableLabel(
+    "thawr",
+    "Cave of Thawr",
+    places.thawr.lng,
+    places.thawr.lat,
+    -65,
+    15,
+    false
+  );
+
+  addClickableLabel(
+    "mina",
+    "Mina",
+    places.mina.lng,
+    places.mina.lat,
+    32,
+    -25,
+    false
+  );
+
+  addClickableLabel(
+    "muzdalifah",
+    "Muzdalifah",
+    places.muzdalifah.lng,
+    places.muzdalifah.lat,
+    4,
+    30,
+    false
+  );
+
+  addClickableLabel(
+    "arafah",
+    "ʿArafah",
+    places.arafah.lng,
+    places.arafah.lat,
+    45,
+    4,
+    false
+  );
+
+  map.fitBounds(
+    [
+      [39.79, 21.32],
+      [40.01, 21.48]
+    ],
+    {
+      padding: {
+        top: 55,
+        bottom: 55,
+        left: 65,
+        right: 65
+      },
+
+      duration: 650
+    }
+  );
+
+}
+
+
+function showMadinahArea() {
+
+  currentView = "madinah";
+  clearLabelMarkers();
+
+  document.getElementById("backButton").style.display = "none";
+  document.getElementById("mapTitle").textContent = "Madinah Area";
+  document.getElementById("mapCount").textContent = "4 locations";
+
+  resetInfo(
+    "Select a location in the Madinah area to learn more."
+  );
+
+  setLocationData([
+    makeFeature("madinah", places.madinah.lng, places.madinah.lat),
+    makeFeature("uhud", places.uhud.lng, places.uhud.lat),
+    makeFeature("quba", places.quba.lng, places.quba.lat),
+    makeFeature("qiblatayn", places.qiblatayn.lng, places.qiblatayn.lat)
+  ]);
+
+  addClickableLabel("madinah", "Madinah", places.madinah.lng, places.madinah.lat, 58, 18, false);
+  addClickableLabel("uhud", "Mount Uhud", places.uhud.lng, places.uhud.lat, 0, -30, false);
+  addClickableLabel("quba", "Masjid Quba", places.quba.lng, places.quba.lat, 54, 26, false);
+  addClickableLabel("qiblatayn", "Masjid al-Qiblatayn", places.qiblatayn.lng, places.qiblatayn.lat, -74, -6, false);
+
+  map.fitBounds(
+    [[39.54, 24.41], [39.66, 24.55]],
+    {
+      padding: {top: 58, bottom: 58, left: 72, right: 72},
+      duration: 650
+    }
+  );
+
+}
+
+
+/* ---------------------------------------------------------
+   EMBED / WEBVIEW LIFECYCLE
+--------------------------------------------------------- */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    setTimeout(
+      initialiseMap,
+      350
+    );
+
+    setTimeout(
+      initialiseMap,
+      1000
+    );
+
+  }
+);
+
+
+document.addEventListener(
+  "visibilitychange",
+  function() {
+
+    if (
+      document.visibilityState ===
+      "visible"
+    ) {
+
+      if (!map) {
+
+        setTimeout(
+          initialiseMap,
+          250
+        );
+
+      } else {
+
+        scheduleResizePasses();
+
+      }
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "pageshow",
+  function() {
+
+    if (!map) {
+
+      setTimeout(
+        initialiseMap,
+        250
+      );
+
+    } else {
+
+      scheduleResizePasses();
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "focus",
+  function() {
+
+    if (!map) {
+
+      setTimeout(
+        initialiseMap,
+        250
+      );
+
+    } else {
+
+      scheduleResizePasses();
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  function() {
+    forceMapResize();
+  }
+);
+
+
+window.addEventListener(
+  "orientationchange",
+  function() {
+    scheduleResizePasses();
+  }
+);
+
+
+if (
+  "ResizeObserver" in window
+) {
+
+  const observer =
+    new ResizeObserver(
+      function() {
+
+        if (map) {
+          forceMapResize();
+        }
+
+      }
+    );
+
+  observer.observe(
+    document.querySelector(
+      ".map-holder"
+    )
+  );
+
+}
+
+</script>
+
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value)});</script></body>
+</html>

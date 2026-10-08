@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Far Are You From the Kaʿbah?</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #102a43;
+      --navy-deep: #071a2b;
+      --navy-mid: #173f5f;
+      --blue: #4da3ff;
+      --gold: #d6ad4c;
+      --gold-light: #f0d88a;
+      --cream: #fffdf8;
+      --text: #172b3a;
+      --muted: #667784;
+      --border: #dde5ea;
+      --soft: #f6f8f9;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: transparent;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .feature {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: clamp(24px, 5vw, 34px);
+      line-height: 1.15;
+    }
+
+    .header p {
+      max-width: 650px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .search-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(16, 42, 67, 0.07);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    #cityInput {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #cbd6dd;
+      border-radius: 11px;
+      padding: 13px 14px;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      background: white;
+    }
+
+    #cityInput:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.13);
+    }
+
+    #calculateBtn {
+      border: 0;
+      border-radius: 11px;
+      padding: 13px 20px;
+      background: var(--navy);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    #calculateBtn:hover {
+      background: #183e5e;
+    }
+
+    #calculateBtn:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .examples {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .example-label {
+      margin-right: 2px;
+    }
+
+    .example {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      color: var(--navy);
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .example:hover {
+      border-color: #b9c8d2;
+      background: #eef3f6;
+    }
+
+    .message {
+      min-height: 18px;
+      margin-top: 10px;
+      text-align: center;
+      color: #a23b3b;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* PLACEHOLDER */
+
+    .placeholder {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(214, 173, 76, 0.08), transparent 26%),
+        linear-gradient(180deg, #fbfcfd 0%, #f5f8fa 100%);
+      padding: 30px 24px 20px;
+      text-align: center;
+    }
+
+    .placeholder-main {
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .placeholder-icon {
+      width: 66px;
+      height: 66px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #e2e7ea;
+      box-shadow: 0 6px 18px rgba(16, 42, 67, 0.08);
+      font-size: 31px;
+    }
+
+    .placeholder-title {
+      margin: 0 0 7px;
+      color: var(--navy);
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .placeholder-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .placeholder-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      max-width: 650px;
+      margin: 23px auto 0;
+    }
+
+    .placeholder-preview-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+    }
+
+    .placeholder-preview-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    .placeholder-preview-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .placeholder-explore {
+      max-width: 650px;
+      margin: 12px auto 0;
+      padding: 17px 16px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .placeholder-explore strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    .placeholder-explore p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .placeholder-reflection {
+      max-width: 650px;
+      margin: 12px auto 0;
+      padding: 16px;
+      background: #fbf8ee;
+      border: 1px solid #eee3c5;
+      border-radius: 14px;
+      color: #5f5232;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .placeholder-reflection strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #514522;
+    }
+
+    .placeholder-note {
+      max-width: 650px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* RESULTS */
+
+    #results {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .map-card {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.16) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 72% 22%, rgba(255,255,255,.13) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 38% 68%, rgba(255,255,255,.12) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 87% 63%, rgba(255,255,255,.14) 0 1px, transparent 1.5px),
+        linear-gradient(180deg, #0b2841, #071a2b);
+      background-size: 120px 120px, 170px 170px, 140px 140px, 190px 190px, auto;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 10px 26px rgba(7, 26, 43, 0.18);
+    }
+
+    .map-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 720 / 310;
+      min-height: 235px;
+      overflow: hidden;
+      border-radius: 12px;
+      touch-action: none;
+      cursor: default;
+    }
+
+    .map-wrap.zoomed {
+      cursor: grab;
+    }
+
+    .map-wrap.dragging {
+      cursor: grabbing;
+    }
+
+    #worldMap {
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .map-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* MAP CONTROLS */
+
+    .map-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 9px;
+      background: rgba(7, 26, 43, 0.82);
+      box-shadow: 0 4px 12px rgba(0,0,0,.18);
+      backdrop-filter: blur(4px);
+    }
+
+    .map-control {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .map-control + .map-control {
+      border-top: 1px solid rgba(255,255,255,.16);
+    }
+
+    .map-control:hover {
+      background: rgba(255,255,255,.12);
+    }
+
+    .map-control:disabled {
+      opacity: .35;
+      cursor: default;
+    }
+
+    .zoom-level {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      z-index: 7;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(7, 26, 43, .72);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    .map-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      z-index: 7;
+      transform: translateX(-50%);
+      max-width: calc(100% - 110px);
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(7, 26, 43, .74);
+      color: rgba(255,255,255,.88);
+      font-size: 10px;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .map-hint.hidden {
+      opacity: 0;
+    }
+
+    .graticule {
+      stroke: rgba(255,255,255,.075);
+      stroke-width: .55;
+      fill: none;
+    }
+
+    .country {
+      fill: #2b5c7c;
+      stroke: #6b91a9;
+      stroke-width: .45;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .route {
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-dasharray: 7 6;
+      opacity: .95;
+      filter: drop-shadow(0 0 3px rgba(214,173,76,.35));
+      vector-effect: non-scaling-stroke;
+    }
+
+    .city-dot {
+      fill: var(--blue);
+      stroke: white;
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .makkah-dot {
+      fill: var(--gold);
+      stroke: #fff5cf;
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .map-label {
+      fill: white;
+      font-size: 11px;
+      font-weight: 700;
+      paint-order: stroke;
+      stroke: #071a2b;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .map-sub-label {
+      fill: rgba(255,255,255,.76);
+      font-size: 8.5px;
+      paint-order: stroke;
+      stroke: #071a2b;
+      stroke-width: 2.5px;
+      stroke-linejoin: round;
+    }
+
+    .kabah-symbol {
+      font-size: 15px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 17px 4px 3px;
+      color: white;
+    }
+
+    .summary-location {
+      text-align: center;
+      min-width: 0;
+    }
+
+    .summary-location strong {
+      display: block;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-location span {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255,255,255,.68);
+      font-size: 11px;
+    }
+
+    .summary-arrow {
+      color: var(--gold-light);
+      font-size: 21px;
+    }
+
+    .distance-card {
+      margin-top: 14px;
+      padding: 21px 16px;
+      text-align: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      box-shadow: 0 7px 20px rgba(16, 42, 67, 0.06);
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .distance-value {
+      margin-top: 6px;
+      color: var(--navy);
+      font-size: clamp(34px, 8vw, 49px);
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .distance-unit {
+      font-size: .48em;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-top: 11px;
+    }
+
+    .detail-card {
+      padding: 15px 12px;
+      text-align: center;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .detail-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--navy);
+      font-size: 18px;
+    }
+
+    .perspective {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .perspective-button {
+      width: 100%;
+      border: 0;
+      background: white;
+      color: var(--navy);
+      padding: 15px 17px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .perspective-button:hover {
+      background: #fafcfd;
+    }
+
+    .chevron {
+      transition: transform .2s ease;
+    }
+
+    .perspective.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .perspective-content {
+      display: none;
+      padding: 0 17px 17px;
+    }
+
+    .perspective.open .perspective-content {
+      display: block;
+    }
+
+    .perspective-item {
+      padding: 13px 0;
+      border-top: 1px solid #edf1f3;
+    }
+
+    .perspective-item:first-child {
+      border-top: 0;
+    }
+
+    .perspective-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    .perspective-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .reflection {
+      margin-top: 13px;
+      padding: 17px;
+      text-align: center;
+      border-radius: 15px;
+      background: #fbf8ee;
+      border: 1px solid #eee3c5;
+      color: #5f5232;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .try-again-wrap {
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    #tryAgainBtn {
+      border: 1px solid #c8d4dc;
+      border-radius: 10px;
+      padding: 10px 16px;
+      background: white;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #tryAgainBtn:hover {
+      background: var(--soft);
+    }
+
+    .note {
+      margin: 13px auto 0;
+      max-width: 650px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .search-card {
+        padding: 14px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      #calculateBtn {
+        width: 100%;
+      }
+
+      .placeholder {
+        padding: 25px 14px 18px;
+      }
+
+      .placeholder-preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .map-card {
+        padding: 9px;
+      }
+
+      .map-wrap {
+        min-height: 190px;
+      }
+
+      .map-control {
+        width: 34px;
+        height: 34px;
+        font-size: 20px;
+      }
+
+      .summary-row {
+        gap: 6px;
+      }
+
+      .summary-location strong {
+        font-size: 12px;
+      }
+
+      .detail-grid {
+        gap: 8px;
+      }
+
+      .detail-card strong {
+        font-size: 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+<link rel="stylesheet" href="./shared.css"><style>body{background:#fff}.feature{box-shadow:none}.intro h1,h1{color:#164b88;font-family:Georgia,serif;font-weight:normal}button{font-size:14px}input{font-size:16px}.placeholder-text,.reflection{font-size:16px}</style></head>
+
+<body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html">AKS Ilm<small>ISLAMIC TRIVIA & LEARNING</small></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
+
+  <main class="feature">
+
+    <div class="header">
+      <h1>How Far Are You From the Kaʿbah?</h1>
+      <p>
+        Discover the approximate distance and direction from your city
+        to the Kaʿbah in Makkah.
+      </p>
+    </div>
+
+    <section class="search-card">
+
+      <div class="search-row">
+        <input
+          id="cityInput"
+          type="text"
+          placeholder="Enter a city..."
+          autocomplete="off"
+          aria-label="Enter a city"
+        />
+
+        <button id="calculateBtn" type="button">
+          Calculate Distance
+        </button>
+      </div>
+
+      <div class="examples">
+        <span class="example-label">Try:</span>
+        <button class="example" data-city="Toronto">Toronto</button>
+        <button class="example" data-city="London">London</button>
+        <button class="example" data-city="Tokyo">Tokyo</button>
+        <button class="example" data-city="Cape Town">Cape Town</button>
+        <button class="example" data-city="Sydney">Sydney</button>
+      </div>
+
+      <div id="message" class="message" aria-live="polite"></div>
+
+    </section>
+
+    <section id="placeholder" class="placeholder">
+
+      <div class="placeholder-main">
+        <div class="placeholder-icon" aria-hidden="true">🕋</div>
+
+        <h2 class="placeholder-title">
+          Enter a city to begin
+        </h2>
+
+        <p class="placeholder-text">
+          Discover its approximate distance and direction to the Kaʿbah.
+        </p>
+      </div>
+
+      <div class="placeholder-preview-grid">
+
+        <div class="placeholder-preview-card">
+          <strong>📍 Distance &amp; Direction</strong>
+          <p>
+            See approximately how far your selected city is from Makkah
+            and the direction toward the Kaʿbah.
+          </p>
+        </div>
+
+        <div class="placeholder-preview-card">
+          <strong>🌍 Put the distance into perspective</strong>
+          <p>
+            See how the distance compares with the size of the Earth and
+            what it represents at a conceptual cruising speed.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="placeholder-explore">
+        <strong>🧭 Explore from anywhere</strong>
+        <p>
+          Try your own city or explore other cities around the world
+          to see how their distance and direction to the Kaʿbah compare.
+        </p>
+      </div>
+
+      <div class="placeholder-reflection">
+        <strong>A shared direction</strong>
+        Wherever Muslims are in the world, they turn toward the Kaʿbah
+        in Makkah during Ṣalāh.
+      </div>
+
+      <p class="placeholder-note">
+        Distances and directions are approximate and are calculated using
+        representative coordinates for each city and the Kaʿbah in Makkah.
+      </p>
+
+    </section>
+
+    <section id="results">
+
+      <div class="map-card">
+
+        <div id="mapWrap" class="map-wrap">
+
+          <svg
+            id="worldMap"
+            viewBox="0 0 720 310"
+            role="img"
+            aria-label="World map showing the selected city and Makkah"
+          >
+            <g id="mapViewport">
+              <g id="graticuleLayer"></g>
+              <g id="countriesLayer"></g>
+              <g id="routeLayer"></g>
+              <g id="markerLayer"></g>
+            </g>
+          </svg>
+
+          <div id="mapLoading" class="map-loading">
+            Loading map…
+          </div>
+
+          <div class="map-controls" aria-label="Map zoom controls">
+            <button
+              id="zoomInBtn"
+              class="map-control"
+              type="button"
+              aria-label="Zoom in"
+              title="Zoom in"
+            >+</button>
+
+            <button
+              id="zoomOutBtn"
+              class="map-control"
+              type="button"
+              aria-label="Zoom out"
+              title="Zoom out"
+            >−</button>
+          </div>
+
+          <div id="mapHint" class="map-hint">
+            Pinch to zoom • Drag to explore
+          </div>
+
+          <div id="zoomLevel" class="zoom-level">
+            1×
+          </div>
+
+        </div>
+
+        <div class="summary-row">
+
+          <div class="summary-location">
+            <strong id="summaryCity">—</strong>
+            <span id="summaryCountry">—</span>
+          </div>
+
+          <div class="summary-arrow">→</div>
+
+          <div class="summary-location">
+            <strong>Kaʿbah</strong>
+            <span>Makkah, Saudi Arabia</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="distance-card">
+
+        <div class="result-label">
+          Approximate Distance
+        </div>
+
+        <div class="distance-value">
+          <span id="distanceNumber">—</span>
+          <span class="distance-unit">km</span>
+        </div>
+
+        <div class="detail-grid">
+
+          <div class="detail-card">
+            <div class="result-label">Direction</div>
+            <strong id="directionText">—</strong>
+          </div>
+
+          <div class="detail-card">
+            <div class="result-label">Initial Bearing</div>
+            <strong id="bearingText">—</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div id="perspective" class="perspective">
+
+        <button
+          id="perspectiveButton"
+          class="perspective-button"
+          type="button"
+          aria-expanded="false"
+        >
+          <span>🌍 Put this distance into perspective</span>
+          <span class="chevron">⌄</span>
+        </button>
+
+        <div class="perspective-content">
+
+          <div class="perspective-item">
+            <strong>Compared with Earth’s circumference</strong>
+            <p id="earthComparison"></p>
+          </div>
+
+          <div class="perspective-item">
+            <strong>At a conceptual cruising speed of 900 km/h</strong>
+            <p id="flightComparison"></p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div id="reflection" class="reflection"></div>
+
+      <div class="try-again-wrap">
+        <button id="tryAgainBtn" type="button">
+          Try Another City
+        </button>
+      </div>
+
+      <p class="note">
+        Distances and directions are approximate and are calculated using
+        representative coordinates for each city and the Kaʿbah in Makkah.
+      </p>
+
+    </section>
+
+  </main>
+
+  <script>
+
+    const KABAH = {
+      lat: 21.4225,
+      lon: 39.8262
+    };
+
+    const MAP_WIDTH = 720;
+    const MAP_HEIGHT = 310;
+
+    const EARTH_RADIUS_KM = 6371.0088;
+    const EARTH_CIRCUMFERENCE_KM = 40075;
+    const CONCEPTUAL_SPEED_KMH = 900;
+
+    const MIN_ZOOM = 1;
+    const MAX_ZOOM = 6;
+    const BUTTON_ZOOM_FACTOR = 1.25;
+
+    const WORLD_DATA_URL =
+      "./world.geojson";
+
+    const cityInput = document.getElementById("cityInput");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const message = document.getElementById("message");
+    const placeholder = document.getElementById("placeholder");
+    const results = document.getElementById("results");
+
+    const summaryCity = document.getElementById("summaryCity");
+    const summaryCountry = document.getElementById("summaryCountry");
+    const distanceNumber = document.getElementById("distanceNumber");
+    const directionText = document.getElementById("directionText");
+    const bearingText = document.getElementById("bearingText");
+
+    const earthComparison = document.getElementById("earthComparison");
+    const flightComparison = document.getElementById("flightComparison");
+    const reflection = document.getElementById("reflection");
+
+    const perspective = document.getElementById("perspective");
+    const perspectiveButton = document.getElementById("perspectiveButton");
+    const tryAgainBtn = document.getElementById("tryAgainBtn");
+
+    const mapWrap = document.getElementById("mapWrap");
+    const mapViewport = document.getElementById("mapViewport");
+
+    const zoomInBtn = document.getElementById("zoomInBtn");
+    const zoomOutBtn = document.getElementById("zoomOutBtn");
+    const zoomLevel = document.getElementById("zoomLevel");
+    const mapHint = document.getElementById("mapHint");
+
+    const graticuleLayer = document.getElementById("graticuleLayer");
+    const countriesLayer = document.getElementById("countriesLayer");
+    const routeLayer = document.getElementById("routeLayer");
+    const markerLayer = document.getElementById("markerLayer");
+    const mapLoading = document.getElementById("mapLoading");
+
+    let worldDataLoaded = false;
+
+    /* ------------------------------
+       MAP INTERACTION STATE
+    ------------------------------ */
+
+    let mapScale = 1;
+    let panX = 0;
+    let panY = 0;
+
+    const activePointers = new Map();
+
+    let dragPointerId = null;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+
+    let pinchStartDistance = 0;
+    let pinchStartScale = 1;
+    let pinchStartPanX = 0;
+    let pinchStartPanY = 0;
+    let pinchAnchorX = MAP_WIDTH / 2;
+    let pinchAnchorY = MAP_HEIGHT / 2;
+
+    let mapHasBeenInteractedWith = false;
+
+    function hideMapHint() {
+      if (mapHasBeenInteractedWith) {
+        return;
+      }
+
+      mapHasBeenInteractedWith = true;
+      mapHint.classList.add("hidden");
+    }
+
+    function toRadians(degrees) {
+      return degrees * Math.PI / 180;
+    }
+
+    function toDegrees(radians) {
+      return radians * 180 / Math.PI;
+    }
+
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+
+      const φ1 = toRadians(lat1);
+      const φ2 = toRadians(lat2);
+
+      const Δφ = toRadians(lat2 - lat1);
+      const Δλ = toRadians(lon2 - lon1);
+
+      const a =
+        Math.sin(Δφ / 2) ** 2 +
+        Math.cos(φ1) *
+        Math.cos(φ2) *
+        Math.sin(Δλ / 2) ** 2;
+
+      const c =
+        2 *
+        Math.atan2(
+          Math.sqrt(a),
+          Math.sqrt(1 - a)
+        );
+
+      return EARTH_RADIUS_KM * c;
+    }
+
+    function initialBearing(lat1, lon1, lat2, lon2) {
+
+      const φ1 = toRadians(lat1);
+      const φ2 = toRadians(lat2);
+
+      const λ1 = toRadians(lon1);
+      const λ2 = toRadians(lon2);
+
+      const y =
+        Math.sin(λ2 - λ1) *
+        Math.cos(φ2);
+
+      const x =
+        Math.cos(φ1) *
+        Math.sin(φ2) -
+        Math.sin(φ1) *
+        Math.cos(φ2) *
+        Math.cos(λ2 - λ1);
+
+      const θ = Math.atan2(y, x);
+
+      return (toDegrees(θ) + 360) % 360;
+    }
+
+    function compassDirection(bearing) {
+
+      const directions = [
+        "North",
+        "Northeast",
+        "East",
+        "Southeast",
+        "South",
+        "Southwest",
+        "West",
+        "Northwest"
+      ];
+
+      return directions[
+        Math.round(bearing / 45) % 8
+      ];
+    }
+
+    function project(lon, lat) {
+
+      return {
+        x: ((lon + 180) / 360) * MAP_WIDTH,
+        y: ((90 - lat) / 180) * MAP_HEIGHT
+      };
+    }
+
+    function createSVGElement(name, attributes = {}) {
+
+      const element =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          name
+        );
+
+      Object.entries(attributes)
+        .forEach(([key, value]) => {
+          element.setAttribute(key, value);
+        });
+
+      return element;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function clampPan() {
+
+      if (mapScale <= 1) {
+        panX = 0;
+        panY = 0;
+        return;
+      }
+
+      const maxX =
+        (MAP_WIDTH / 2) *
+        (1 - 1 / mapScale);
+
+      const maxY =
+        (MAP_HEIGHT / 2) *
+        (1 - 1 / mapScale);
+
+      panX = clamp(panX, -maxX, maxX);
+      panY = clamp(panY, -maxY, maxY);
+    }
+
+    function updateMapTransform() {
+
+      mapScale =
+        clamp(
+          mapScale,
+          MIN_ZOOM,
+          MAX_ZOOM
+        );
+
+      if (Math.abs(mapScale - 1) < 0.001) {
+        mapScale = 1;
+        panX = 0;
+        panY = 0;
+      }
+
+      clampPan();
+
+      mapViewport.setAttribute(
+        "transform",
+        `
+          translate(${MAP_WIDTH / 2} ${MAP_HEIGHT / 2})
+          scale(${mapScale})
+          translate(${-MAP_WIDTH / 2 + panX} ${-MAP_HEIGHT / 2 + panY})
+        `
+      );
+
+      zoomLevel.textContent =
+        mapScale.toFixed(
+          mapScale === 1 ? 0 : 1
+        ) + "×";
+
+      zoomOutBtn.disabled =
+        mapScale <= MIN_ZOOM + 0.001;
+
+      zoomInBtn.disabled =
+        mapScale >= MAX_ZOOM - 0.001;
+
+      mapWrap.classList.toggle(
+        "zoomed",
+        mapScale > 1
+      );
+    }
+
+    function resetMapView() {
+
+      mapScale = 1;
+      panX = 0;
+      panY = 0;
+
+      activePointers.clear();
+
+      dragPointerId = null;
+      pinchStartDistance = 0;
+
+      mapWrap.classList.remove("dragging");
+
+      updateMapTransform();
+    }
+
+    /*
+      Convert a screen position inside the
+      map into the SVG's 720 × 310 coordinate
+      system.
+    */
+
+    function screenToMapPoint(clientX, clientY) {
+
+      const rect =
+        mapWrap.getBoundingClientRect();
+
+      return {
+        x:
+          (clientX - rect.left) *
+          (MAP_WIDTH / rect.width),
+
+        y:
+          (clientY - rect.top) *
+          (MAP_HEIGHT / rect.height)
+      };
+    }
+
+    /*
+      Change zoom while preserving the map
+      location underneath a chosen anchor
+      point.
+
+      This is what makes pinch zoom feel
+      like a normal map rather than simply
+      enlarging from the centre.
+    */
+
+    function setZoomAroundPoint(
+      newScale,
+      anchorX,
+      anchorY
+    ) {
+
+      const oldScale = mapScale;
+
+      newScale =
+        clamp(
+          newScale,
+          MIN_ZOOM,
+          MAX_ZOOM
+        );
+
+      if (
+        Math.abs(
+          newScale - oldScale
+        ) < 0.0001
+      ) {
+        return;
+      }
+
+      if (newScale <= 1.001) {
+        mapScale = 1;
+        panX = 0;
+        panY = 0;
+        updateMapTransform();
+        return;
+      }
+
+      /*
+        Current transform:
+
+        screen =
+          centre +
+          scale *
+          (mapPoint - centre + pan)
+
+        Adjust pan so the point beneath the
+        fingers remains beneath the fingers
+        after the scale changes.
+      */
+
+      const centerX = MAP_WIDTH / 2;
+      const centerY = MAP_HEIGHT / 2;
+
+      const worldX =
+        centerX -
+        panX +
+        (anchorX - centerX) / oldScale;
+
+      const worldY =
+        centerY -
+        panY +
+        (anchorY - centerY) / oldScale;
+
+      mapScale = newScale;
+
+      panX =
+        anchorX / mapScale -
+        centerX / mapScale -
+        worldX +
+        centerX;
+
+      panY =
+        anchorY / mapScale -
+        centerY / mapScale -
+        worldY +
+        centerY;
+
+      updateMapTransform();
+    }
+
+    /* ------------------------------
+       PLUS / MINUS ZOOM
+    ------------------------------ */
+
+    function zoomIn() {
+
+      hideMapHint();
+
+      const newScale =
+        Math.min(
+          MAX_ZOOM,
+          mapScale *
+          BUTTON_ZOOM_FACTOR
+        );
+
+      setZoomAroundPoint(
+        newScale,
+        MAP_WIDTH / 2,
+        MAP_HEIGHT / 2
+      );
+    }
+
+    function zoomOut() {
+
+      hideMapHint();
+
+      const newScale =
+        Math.max(
+          MIN_ZOOM,
+          mapScale /
+          BUTTON_ZOOM_FACTOR
+        );
+
+      setZoomAroundPoint(
+        newScale,
+        MAP_WIDTH / 2,
+        MAP_HEIGHT / 2
+      );
+    }
+
+    zoomInBtn.addEventListener(
+      "click",
+      event => {
+        event.stopPropagation();
+        zoomIn();
+      }
+    );
+
+    zoomOutBtn.addEventListener(
+      "click",
+      event => {
+        event.stopPropagation();
+        zoomOut();
+      }
+    );
+
+    /* ------------------------------
+       PINCH + DRAG
+    ------------------------------ */
+
+    function pointerDistance(a, b) {
+
+      return Math.hypot(
+        b.x - a.x,
+        b.y - a.y
+      );
+    }
+
+    function pointerMidpoint(a, b) {
+
+      return {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2
+      };
+    }
+
+    function beginDrag(pointerId, point) {
+
+      if (mapScale <= 1) {
+        dragPointerId = null;
+        return;
+      }
+
+      dragPointerId = pointerId;
+
+      dragStartX = point.x;
+      dragStartY = point.y;
+
+      dragOriginX = panX;
+      dragOriginY = panY;
+
+      mapWrap.classList.add("dragging");
+    }
+
+    function beginPinch() {
+
+      if (activePointers.size < 2) {
+        return;
+      }
+
+      const points =
+        Array.from(
+          activePointers.values()
+        ).slice(0, 2);
+
+      pinchStartDistance =
+        pointerDistance(
+          points[0],
+          points[1]
+        );
+
+      pinchStartScale =
+        mapScale;
+
+      pinchStartPanX =
+        panX;
+
+      pinchStartPanY =
+        panY;
+
+      const midpoint =
+        pointerMidpoint(
+          points[0],
+          points[1]
+        );
+
+      pinchAnchorX =
+        midpoint.x;
+
+      pinchAnchorY =
+        midpoint.y;
+
+      dragPointerId = null;
+
+      mapWrap.classList.remove("dragging");
+    }
+
+    mapWrap.addEventListener(
+      "pointerdown",
+      event => {
+
+        if (
+          event.target.closest(
+            ".map-controls"
+          )
+        ) {
+          return;
+        }
+
+        hideMapHint();
+
+        event.preventDefault();
+
+        const point =
+          screenToMapPoint(
+            event.clientX,
+            event.clientY
+          );
+
+        activePointers.set(
+          event.pointerId,
+          point
+        );
+
+        try {
+          mapWrap.setPointerCapture(
+            event.pointerId
+          );
+        } catch (error) {
+          /* Safe fallback */
+        }
+
+        if (
+          activePointers.size === 1
+        ) {
+
+          beginDrag(
+            event.pointerId,
+            point
+          );
+
+        } else if (
+          activePointers.size === 2
+        ) {
+
+          beginPinch();
+        }
+      }
+    );
+
+    mapWrap.addEventListener(
+      "pointermove",
+      event => {
+
+        if (
+          !activePointers.has(
+            event.pointerId
+          )
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+
+        const point =
+          screenToMapPoint(
+            event.clientX,
+            event.clientY
+          );
+
+        activePointers.set(
+          event.pointerId,
+          point
+        );
+
+        /*
+          TWO POINTERS:
+          continuous pinch-to-zoom.
+        */
+
+        if (
+          activePointers.size >= 2
+        ) {
+
+          const points =
+            Array.from(
+              activePointers.values()
+            ).slice(0, 2);
+
+          const currentDistance =
+            pointerDistance(
+              points[0],
+              points[1]
+            );
+
+          if (
+            pinchStartDistance <= 0
+          ) {
+            beginPinch();
+            return;
+          }
+
+          const scaleRatio =
+            currentDistance /
+            pinchStartDistance;
+
+          const newScale =
+            clamp(
+              pinchStartScale *
+              scaleRatio,
+              MIN_ZOOM,
+              MAX_ZOOM
+            );
+
+          const midpoint =
+            pointerMidpoint(
+              points[0],
+              points[1]
+            );
+
+          /*
+            Restore the pan that existed when
+            this pinch began, then calculate
+            the scale around the original
+            midpoint.
+
+            We additionally move the anchor by
+            the change in midpoint so the user
+            can naturally pan while pinching.
+          */
+
+          mapScale =
+            pinchStartScale;
+
+          panX =
+            pinchStartPanX;
+
+          panY =
+            pinchStartPanY;
+
+          const midpointShiftX =
+            midpoint.x -
+            pinchAnchorX;
+
+          const midpointShiftY =
+            midpoint.y -
+            pinchAnchorY;
+
+          setZoomAroundPoint(
+            newScale,
+            pinchAnchorX,
+            pinchAnchorY
+          );
+
+          if (mapScale > 1) {
+            panX +=
+              midpointShiftX /
+              mapScale;
+
+            panY +=
+              midpointShiftY /
+              mapScale;
+
+            updateMapTransform();
+          }
+
+          return;
+        }
+
+        /*
+          ONE POINTER:
+          drag the enlarged map.
+        */
+
+        if (
+          activePointers.size === 1 &&
+          dragPointerId ===
+          event.pointerId &&
+          mapScale > 1
+        ) {
+
+          const dx =
+            point.x -
+            dragStartX;
+
+          const dy =
+            point.y -
+            dragStartY;
+
+          /*
+            Keep dragging responsive at high
+            zoom levels. We intentionally do
+            not divide these movements by
+            mapScale.
+          */
+
+          panX =
+            dragOriginX + dx;
+
+          panY =
+            dragOriginY + dy;
+
+          updateMapTransform();
+        }
+      }
+    );
+
+    function removePointer(event) {
+
+      activePointers.delete(
+        event.pointerId
+      );
+
+      try {
+
+        if (
+          mapWrap.hasPointerCapture(
+            event.pointerId
+          )
+        ) {
+
+          mapWrap.releasePointerCapture(
+            event.pointerId
+          );
+        }
+
+      } catch (error) {
+        /* Safe fallback */
+      }
+
+      /*
+        If one finger remains after a pinch,
+        immediately turn that remaining finger
+        into a new drag origin.
+      */
+
+      if (
+        activePointers.size === 1
+      ) {
+
+        const remaining =
+          Array.from(
+            activePointers.entries()
+          )[0];
+
+        beginDrag(
+          remaining[0],
+          remaining[1]
+        );
+
+      } else {
+
+        dragPointerId = null;
+
+        mapWrap.classList.remove(
+          "dragging"
+        );
+      }
+
+      if (
+        activePointers.size < 2
+      ) {
+        pinchStartDistance = 0;
+      }
+    }
+
+    mapWrap.addEventListener(
+      "pointerup",
+      removePointer
+    );
+
+    mapWrap.addEventListener(
+      "pointercancel",
+      removePointer
+    );
+
+    /* ------------------------------
+       MAP DRAWING
+    ------------------------------ */
+
+    function drawGraticule() {
+
+      graticuleLayer.innerHTML = "";
+
+      for (
+        let lon = -150;
+        lon <= 150;
+        lon += 30
+      ) {
+
+        const top =
+          project(lon, 90);
+
+        const bottom =
+          project(lon, -90);
+
+        graticuleLayer.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: top.x,
+              y1: top.y,
+              x2: bottom.x,
+              y2: bottom.y,
+              class: "graticule"
+            }
+          )
+        );
+      }
+
+      for (
+        let lat = -60;
+        lat <= 60;
+        lat += 30
+      ) {
+
+        const left =
+          project(-180, lat);
+
+        const right =
+          project(180, lat);
+
+        graticuleLayer.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: left.x,
+              y1: left.y,
+              x2: right.x,
+              y2: right.y,
+              class: "graticule"
+            }
+          )
+        );
+      }
+    }
+
+    function ringToPath(ring) {
+
+      if (
+        !ring ||
+        !ring.length
+      ) {
+        return "";
+      }
+
+      return ring
+        .map(
+          (coord, index) => {
+
+            const point =
+              project(
+                coord[0],
+                coord[1]
+              );
+
+            return (
+              (
+                index === 0
+                  ? "M"
+                  : "L"
+              ) +
+              point.x.toFixed(2) +
+              " " +
+              point.y.toFixed(2)
+            );
+          }
+        )
+        .join(" ") +
+        " Z";
+    }
+
+    function geometryToPath(
+      geometry
+    ) {
+
+      if (!geometry) {
+        return "";
+      }
+
+      if (
+        geometry.type ===
+        "Polygon"
+      ) {
+
+        return geometry.coordinates
+          .map(ringToPath)
+          .join(" ");
+      }
+
+      if (
+        geometry.type ===
+        "MultiPolygon"
+      ) {
+
+        return geometry.coordinates
+          .flatMap(
+            polygon =>
+              polygon.map(
+                ringToPath
+              )
+          )
+          .join(" ");
+      }
+
+      return "";
+    }
+
+    async function loadWorldMap() {
+
+      drawGraticule();
+
+      try {
+
+        const response =
+          await fetch(
+            WORLD_DATA_URL
+          );
+
+        if (!response.ok) {
+
+          throw new Error(
+            "Map data could not be loaded."
+          );
+        }
+
+        const data =
+          await response.json();
+
+        countriesLayer.innerHTML =
+          "";
+
+        data.features.forEach(
+          feature => {
+
+            const properties =
+              feature.properties ||
+              {};
+
+            const name =
+              properties.ADMIN ||
+              properties.NAME ||
+              "";
+
+            if (
+              name.toLowerCase() ===
+              "antarctica"
+            ) {
+              return;
+            }
+
+            const d =
+              geometryToPath(
+                feature.geometry
+              );
+
+            if (!d) {
+              return;
+            }
+
+            countriesLayer.appendChild(
+              createSVGElement(
+                "path",
+                {
+                  d,
+                  class: "country"
+                }
+              )
+            );
+          }
+        );
+
+        worldDataLoaded = true;
+
+        mapLoading.style.display =
+          "none";
+
+      } catch (error) {
+
+        worldDataLoaded = false;
+
+        mapLoading.textContent =
+          "Map could not be loaded.";
+      }
+    }
+
+    function addTextLabel(
+      x,
+      y,
+      text,
+      className,
+      anchor = "start"
+    ) {
+
+      const label =
+        createSVGElement(
+          "text",
+          {
+            x,
+            y,
+            class: className,
+            "text-anchor": anchor
+          }
+        );
+
+      label.textContent =
+        text;
+
+      markerLayer.appendChild(
+        label
+      );
+
+      return label;
+    }
+
+    function drawMapMarkers(
+      cityName,
+      countryName,
+      lat,
+      lon
+    ) {
+
+      routeLayer.innerHTML = "";
+      markerLayer.innerHTML = "";
+
+      const city =
+        project(lon, lat);
+
+      const makkah =
+        project(
+          KABAH.lon,
+          KABAH.lat
+        );
+
+      let cityX =
+        city.x;
+
+      let makkahX =
+        makkah.x;
+
+      const difference =
+        makkahX - cityX;
+
+      if (
+        Math.abs(difference) >
+        MAP_WIDTH / 2
+      ) {
+
+        if (difference > 0) {
+          cityX += MAP_WIDTH;
+        } else {
+          makkahX += MAP_WIDTH;
+        }
+      }
+
+      const midX =
+        (cityX + makkahX) / 2;
+
+      const midY =
+        Math.min(
+          city.y,
+          makkah.y
+        ) -
+        Math.max(
+          28,
+          Math.abs(
+            cityX - makkahX
+          ) * 0.09
+        );
+
+      const route =
+        createSVGElement(
+          "path",
+          {
+            d:
+              `M ${cityX} ${city.y}
+               Q ${midX} ${midY}
+               ${makkahX} ${makkah.y}`,
+            class: "route"
+          }
+        );
+
+      routeLayer.appendChild(
+        route
+      );
+
+      if (
+        cityX > MAP_WIDTH ||
+        makkahX > MAP_WIDTH
+      ) {
+
+        const copy =
+          route.cloneNode();
+
+        copy.setAttribute(
+          "transform",
+          `translate(-${MAP_WIDTH},0)`
+        );
+
+        routeLayer.appendChild(
+          copy
+        );
+      }
+
+      if (
+        cityX < 0 ||
+        makkahX < 0
+      ) {
+
+        const copy =
+          route.cloneNode();
+
+        copy.setAttribute(
+          "transform",
+          `translate(${MAP_WIDTH},0)`
+        );
+
+        routeLayer.appendChild(
+          copy
+        );
+      }
+
+      markerLayer.appendChild(
+        createSVGElement(
+          "circle",
+          {
+            cx: city.x,
+            cy: city.y,
+            r: 5.5,
+            class: "city-dot"
+          }
+        )
+      );
+
+      const cityAnchor =
+        city.x >
+        MAP_WIDTH * 0.76
+          ? "end"
+          : "start";
+
+      const cityOffset =
+        cityAnchor === "end"
+          ? -9
+          : 9;
+
+      addTextLabel(
+        city.x + cityOffset,
+        city.y - 7,
+        cityName,
+        "map-label",
+        cityAnchor
+      );
+
+      if (countryName) {
+
+        addTextLabel(
+          city.x + cityOffset,
+          city.y + 6,
+          countryName,
+          "map-sub-label",
+          cityAnchor
+        );
+      }
+
+      markerLayer.appendChild(
+        createSVGElement(
+          "circle",
+          {
+            cx: makkah.x,
+            cy: makkah.y,
+            r: 5.8,
+            class: "makkah-dot"
+          }
+        )
+      );
+
+      addTextLabel(
+        makkah.x + 9,
+        makkah.y - 15,
+        "🕋",
+        "kabah-symbol"
+      );
+
+      addTextLabel(
+        makkah.x + 9,
+        makkah.y - 2,
+        "Makkah",
+        "map-label"
+      );
+
+      addTextLabel(
+        makkah.x + 9,
+        makkah.y + 11,
+        "Saudi Arabia",
+        "map-sub-label"
+      );
+    }
+
+    /* ------------------------------
+       CITY LOOKUP
+    ------------------------------ */
+
+    async function geocodeCity(city) {
+      const knownCities = {
+        toronto:{lat:43.6532,lon:-79.3832,city:'Toronto',country:'Canada'},
+        london:{lat:51.5074,lon:-0.1278,city:'London',country:'United Kingdom'},
+        tokyo:{lat:35.6762,lon:139.6503,city:'Tokyo',country:'Japan'},
+        'cape town':{lat:-33.9249,lon:18.4241,city:'Cape Town',country:'South Africa'},
+        sydney:{lat:-33.8688,lon:151.2093,city:'Sydney',country:'Australia'}
+      };
+      const known = knownCities[city.trim().toLowerCase()];
+      if (known) return known;
+
+
+      const url =
+        "https://nominatim.openstreetmap.org/search" +
+        "?format=jsonv2" +
+        "&limit=1" +
+        "&addressdetails=1" +
+        "&q=" +
+        encodeURIComponent(city);
+
+      const response =
+        await fetch(
+          url,
+          {
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+      if (!response.ok) {
+
+        throw new Error(
+          "The city lookup could not be completed."
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if (!data.length) {
+
+        throw new Error(
+          "City not found. Try another city or include the country."
+        );
+      }
+
+      const result =
+        data[0];
+
+      const address =
+        result.address || {};
+
+      const cityName =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.county ||
+        city;
+
+      const countryName =
+        address.country || "";
+
+      return {
+        lat:
+          parseFloat(
+            result.lat
+          ),
+
+        lon:
+          parseFloat(
+            result.lon
+          ),
+
+        city:
+          cityName,
+
+        country:
+          countryName
+      };
+    }
+
+    function setLoading(
+      isLoading
+    ) {
+
+      calculateBtn.disabled =
+        isLoading;
+
+      calculateBtn.textContent =
+        isLoading
+          ? "Calculating..."
+          : "Calculate Distance";
+    }
+
+    function resetPerspective() {
+
+      perspective.classList.remove(
+        "open"
+      );
+
+      perspectiveButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+    }
+
+    async function calculate(
+      cityOverride = null
+    ) {
+
+      const city =
+        (
+          cityOverride ||
+          cityInput.value
+        ).trim();
+
+      if (!city) {
+
+        message.textContent =
+          "Enter a city to begin.";
+
+        cityInput.focus();
+
+        return;
+      }
+
+      message.textContent = "";
+
+      setLoading(true);
+
+      resetPerspective();
+
+      /*
+        Every new city begins with
+        the complete world map at 1×.
+      */
+
+      resetMapView();
+
+      /*
+        Restore the map interaction
+        hint for a new result.
+      */
+
+      mapHasBeenInteractedWith =
+        false;
+
+      mapHint.classList.remove(
+        "hidden"
+      );
+
+      try {
+
+        const location =
+          await geocodeCity(
+            city
+          );
+
+        const distance =
+          haversineDistance(
+            location.lat,
+            location.lon,
+            KABAH.lat,
+            KABAH.lon
+          );
+
+        const bearing =
+          initialBearing(
+            location.lat,
+            location.lon,
+            KABAH.lat,
+            KABAH.lon
+          );
+
+        const direction =
+          compassDirection(
+            bearing
+          );
+
+        const roundedDistance =
+          Math.round(
+            distance
+          );
+
+        const roundedBearing =
+          Math.round(
+            bearing
+          );
+
+        summaryCity.textContent =
+          location.city;
+
+        summaryCountry.textContent =
+          location.country ||
+          "Selected location";
+
+        distanceNumber.textContent =
+          roundedDistance
+            .toLocaleString();
+
+        directionText.textContent =
+          direction;
+
+        bearingText.textContent =
+          roundedBearing +
+          "°";
+
+        const earthPercentage =
+          (
+            distance /
+            EARTH_CIRCUMFERENCE_KM
+          ) * 100;
+
+        earthComparison.textContent =
+          `This distance is about ${earthPercentage.toFixed(1)}% of the distance around Earth at the equator.`;
+
+        const conceptualHours =
+          distance /
+          CONCEPTUAL_SPEED_KMH;
+
+        flightComparison.textContent =
+          `At 900 km/h, covering the same distance continuously would take roughly ${conceptualHours.toFixed(1)} hours.`;
+
+        reflection.textContent =
+          `From ${location.city}, the Kaʿbah is approximately ${roundedDistance.toLocaleString()} km away. Wherever Muslims are in the world, they turn toward the Kaʿbah in Makkah during Ṣalāh.`;
+
+        drawMapMarkers(
+          location.city,
+          location.country,
+          location.lat,
+          location.lon
+        );
+
+        placeholder.style.display =
+          "none";
+
+        results.style.display =
+          "block";
+
+        if (worldDataLoaded) {
+          mapLoading.style.display =
+            "none";
+        }
+
+      } catch (error) {
+
+        message.textContent =
+          error.message ||
+          "Something went wrong. Please try another city.";
+
+      } finally {
+
+        setLoading(false);
+      }
+    }
+
+    /* ------------------------------
+       GENERAL CONTROLS
+    ------------------------------ */
+
+    calculateBtn.addEventListener(
+      "click",
+      () => calculate()
+    );
+
+    cityInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key ===
+          "Enter"
+        ) {
+          calculate();
+        }
+      }
+    );
+
+    document
+      .querySelectorAll(
+        ".example"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const city =
+                button.dataset.city;
+
+              cityInput.value =
+                city;
+
+              calculate(
+                city
+              );
+            }
+          );
+        }
+      );
+
+    perspectiveButton.addEventListener(
+      "click",
+      () => {
+
+        const open =
+          perspective
+            .classList
+            .toggle(
+              "open"
+            );
+
+        perspectiveButton.setAttribute(
+          "aria-expanded",
+          String(open)
+        );
+      }
+    );
+
+    tryAgainBtn.addEventListener(
+      "click",
+      () => {
+
+        results.style.display =
+          "none";
+
+        placeholder.style.display =
+          "block";
+
+        resetPerspective();
+        resetMapView();
+
+        message.textContent =
+          "";
+
+        cityInput.value =
+          "";
+
+        cityInput.focus();
+      }
+    );
+
+    /* INITIALIZE */
+
+    resetMapView();
+    loadWorldMap();
+
+  </script>
+
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer></body>
+</html>
+

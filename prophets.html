@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>The Prophets | AKS Ilm</title>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  color: #27313b;
+
+  background:
+    radial-gradient(
+      circle at 8% 5%,
+      rgba(91,124,108,.07),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 92% 26%,
+      rgba(173,128,92,.06),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 10% 75%,
+      rgba(91,104,145,.05),
+      transparent 22%
+    ),
+    #fffdf9;
+}
+
+.app {
+  width: 100%;
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  padding: 32px 16px 55px;
+}
+
+
+/* =========================================================
+   TOP RETURN NAVIGATION
+   ========================================================= */
+
+.top-back-nav {
+  max-width: 720px;
+
+  margin: 0 auto 18px;
+}
+
+.top-back-link {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: #68766d;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    color .2s ease,
+    transform .2s ease;
+}
+
+.top-back-link:hover {
+  color: #405a4b;
+
+  transform: translateX(-2px);
+}
+
+.top-back-link:focus-visible {
+  outline: 2px solid #6f8878;
+
+  outline-offset: 4px;
+
+  border-radius: 4px;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.intro {
+  max-width: 720px;
+
+  margin: 0 auto 26px;
+
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+
+  color: #263c35;
+
+  font-size: 34px;
+  line-height: 1.2;
+}
+
+.description {
+  max-width: 670px;
+
+  margin: 12px auto 0;
+
+  color: #69736e;
+
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.title-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 19px;
+}
+
+.title-decoration::before,
+.title-decoration::after {
+  content: "";
+
+  width: 42px;
+  height: 1px;
+
+  background: #c7c4b8;
+}
+
+.title-diamond {
+  width: 8px;
+  height: 8px;
+
+  border: 1.5px solid #798b7d;
+
+  transform: rotate(45deg);
+}
+
+
+/* =========================================================
+   JOURNEY START
+   ========================================================= */
+
+.start {
+  margin: 30px auto 27px;
+
+  text-align: center;
+}
+
+.start-label {
+  color: #7b827d;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 2.2px;
+}
+
+.start-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  margin: 10px auto 0;
+
+  border: 1px solid #b9b8ac;
+  border-radius: 50%;
+
+  color: #6c8174;
+
+  background: #fffdf9;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   JOURNEY
+   ========================================================= */
+
+.journey {
+  position: relative;
+
+  max-width: 760px;
+
+  margin: 0 auto;
+
+  padding: 8px 0;
+}
+
+
+/* =========================================================
+   CONTINUOUS PATH
+   ========================================================= */
+
+.path-svg {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.path-shadow {
+  fill: none;
+
+  stroke: rgba(91,106,95,.07);
+
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.path-line {
+  fill: none;
+
+  stroke: #b2b9b0;
+
+  stroke-width: 2.1;
+  stroke-linecap: round;
+}
+
+
+/* =========================================================
+   STEP
+   ========================================================= */
+
+.step {
+  --accent: #537a68;
+  --accent-dark: #355746;
+  --soft: #edf5f0;
+  --soft2: #f8fbf9;
+  --marker: #6f9482;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 198px;
+
+  z-index: 2;
+}
+
+.step.left {
+  justify-content: flex-start;
+}
+
+.step.right {
+  justify-content: flex-end;
+}
+
+
+/* =========================================================
+   NUMBERED MARKER
+   ========================================================= */
+
+.marker {
+  position: absolute;
+
+  top: 50%;
+
+  width: 38px;
+  height: 38px;
+
+  transform:
+    translateY(-50%)
+    rotate(45deg);
+
+  border: 2px solid var(--marker);
+
+  border-radius: 10px;
+
+  background: #fffdf9;
+
+  box-shadow:
+    0 0 0 6px rgba(255,253,249,.92),
+    0 5px 14px rgba(50,55,51,.12);
+
+  z-index: 5;
+}
+
+.marker span {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: rotate(-45deg);
+
+  color: var(--accent-dark);
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.step.left .marker {
+  left: 48%;
+}
+
+.step.right .marker {
+  right: 48%;
+}
+
+
+/* =========================================================
+   BRANCH
+   ========================================================= */
+
+.branch {
+  position: absolute;
+
+  top: 50%;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--marker),
+      rgba(190,190,180,.5)
+    );
+
+  opacity: .65;
+
+  z-index: 1;
+}
+
+.step.left .branch {
+  left: 42%;
+
+  width: 9%;
+}
+
+.step.right .branch {
+  right: 42%;
+
+  width: 9%;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+  position: relative;
+
+  width: 43%;
+
+  min-height: 166px;
+
+  padding: 23px 22px 20px;
+
+  border:
+    1px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 35%,
+      #ffffff
+    );
+
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--soft) 0%,
+      var(--soft2) 48%,
+      #ffffff 100%
+    );
+
+  box-shadow:
+    0 8px 25px rgba(42,48,44,.10),
+    inset 0 1px 0 rgba(255,255,255,.95);
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 17%;
+  right: 17%;
+
+  height: 4px;
+
+  border-radius: 0 0 10px 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--accent),
+      transparent
+    );
+
+  opacity: .8;
+}
+
+.card::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 0;
+  left: 28%;
+
+  width: 44%;
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--accent),
+      transparent
+    );
+
+  opacity: .35;
+}
+
+@media (hover:hover) and (pointer:fine) {
+
+  .card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+      0 14px 32px rgba(42,48,44,.15),
+      0 0 0 2px
+      color-mix(
+        in srgb,
+        var(--accent) 9%,
+        transparent
+      );
+  }
+
+}
+
+.card:focus-visible {
+  outline:
+    3px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 25%,
+      transparent
+    );
+
+  outline-offset: 4px;
+}
+
+
+/* =========================================================
+   GEOMETRIC CORNER
+   ========================================================= */
+
+.pattern {
+  position: absolute;
+
+  width: 105px;
+  height: 105px;
+
+  top: -44px;
+  right: -44px;
+
+  opacity: .30;
+
+  pointer-events: none;
+}
+
+.pattern span {
+  position: absolute;
+
+  border: 1px solid var(--accent);
+
+  transform: rotate(45deg);
+}
+
+.pattern-1 {
+  width: 74px;
+  height: 74px;
+
+  top: 15px;
+  left: 15px;
+}
+
+.pattern-2 {
+  width: 50px;
+  height: 50px;
+
+  top: 27px;
+  left: 27px;
+}
+
+.pattern-3 {
+  width: 25px;
+  height: 25px;
+
+  top: 39px;
+  left: 39px;
+}
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.card-main {
+  position: relative;
+
+  text-align: center;
+
+  z-index: 2;
+}
+
+.prophet-name {
+  margin: 0;
+
+  color: var(--accent-dark);
+
+  font-size: 21px;
+  line-height: 1.3;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ARABIC MEDALLION
+   ========================================================= */
+
+.arabic-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 10px auto 3px;
+}
+
+.arabic-medallion {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 64px;
+  min-height: 52px;
+
+  padding: 4px 12px;
+}
+
+.arabic-medallion::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 2px;
+
+  border:
+    1px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 35%,
+      transparent
+    );
+
+  border-radius:
+    50%
+    42%
+    50%
+    42%;
+
+  transform: rotate(8deg);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--soft) 75%,
+      white
+    );
+}
+
+.arabic {
+  position: relative;
+
+  color: var(--accent-dark);
+
+  font-size: 30px;
+  line-height: 1.35;
+
+  direction: rtl;
+
+  z-index: 1;
+}
+
+.english {
+  margin-top: 2px;
+
+  color: #727b76;
+
+  font-size: 14px;
+
+  font-style: italic;
+}
+
+
+/* =========================================================
+   REVEAL CONTROL
+   ========================================================= */
+
+.reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 15px;
+
+  padding: 7px 12px;
+
+  border:
+    1px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 20%,
+      transparent
+    );
+
+  border-radius: 999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--soft) 76%,
+      white
+    );
+
+  color: var(--accent-dark);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: .45px;
+}
+
+.reveal-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 15px;
+  height: 15px;
+
+  border-radius: 50%;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--accent) 14%,
+      transparent
+    );
+
+  font-size: 10px;
+
+  transition: transform .3s ease;
+}
+
+
+/* =========================================================
+   EXPANDED CONTENT
+   ========================================================= */
+
+.details {
+  max-height: 0;
+
+  opacity: 0;
+
+  overflow: hidden;
+
+  margin-top: 0;
+
+  transition:
+    max-height .43s ease,
+    opacity .3s ease,
+    margin-top .3s ease;
+}
+
+.card.open {
+  transform: translateY(-3px);
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--accent) 58%,
+      white
+    );
+
+  box-shadow:
+    0 16px 36px rgba(42,48,44,.16),
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--accent) 8%,
+      transparent
+    );
+}
+
+.card.open .details {
+  max-height: 320px;
+
+  opacity: 1;
+
+  margin-top: 18px;
+}
+
+.card.open .reveal-symbol {
+  transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   A GLIMPSE
+   ========================================================= */
+
+.details-box {
+  position: relative;
+
+  padding: 16px 15px 14px;
+
+  border:
+    1px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 22%,
+      white
+    );
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(
+        in srgb,
+        var(--soft) 88%,
+        white
+      ),
+      rgba(255,255,255,.88)
+    );
+
+  text-align: left;
+}
+
+.details-ornament {
+  position: absolute;
+
+  top: 11px;
+  right: 13px;
+
+  color:
+    color-mix(
+      in srgb,
+      var(--accent) 60%,
+      white
+    );
+
+  font-size: 12px;
+}
+
+.glimpse-title {
+  margin: 0 0 7px;
+
+  color: var(--accent-dark);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1.1px;
+
+  text-transform: uppercase;
+}
+
+.glimpse {
+  margin: 0;
+
+  color: #39443f;
+
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+
+/* =========================================================
+   QUR'AN REFERENCE
+   ========================================================= */
+
+.reference {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 13px;
+
+  padding: 7px 10px;
+
+  border:
+    1px
+    solid
+    color-mix(
+      in srgb,
+      var(--accent) 25%,
+      white
+    );
+
+  border-radius: 9px;
+
+  background: rgba(255,255,255,.9);
+
+  color: var(--accent-dark);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.reference:hover {
+  background: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 10px rgba(40,45,42,.08);
+}
+
+.reference:focus-visible {
+  outline: 2px solid var(--accent);
+
+  outline-offset: 3px;
+}
+
+.book {
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   JOURNEY END
+   ========================================================= */
+
+.end {
+  max-width: 700px;
+
+  margin: 28px auto 0;
+
+  text-align: center;
+}
+
+.end-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 35px;
+  height: 35px;
+
+  border: 1px solid #aaa99d;
+
+  border-radius: 50%;
+
+  background: #fffdf9;
+
+  color: #697b6e;
+
+  font-size: 13px;
+}
+
+.end-text {
+  margin-top: 12px;
+
+  color: #737a74;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1.35px;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   FINAL NOTE
+   ========================================================= */
+
+.reference-note {
+  position: relative;
+
+  max-width: 650px;
+
+  margin: 24px auto 0;
+
+  padding: 16px 18px;
+
+  border: 1px solid #dddcd2;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(248,246,239,.9),
+      rgba(255,255,255,.95)
+    );
+
+  color: #656c67;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+
+  text-align: left;
+}
+
+.reference-note strong {
+  color: #405248;
+}
+
+.note-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  margin-right: 5px;
+
+  border-radius: 50%;
+
+  background: #edf1eb;
+
+  color: #657a6c;
+
+  font-size: 9px;
+
+  vertical-align: 1px;
+}
+
+
+/* =========================================================
+   BOTTOM RETURN TO AKS ILM
+   ========================================================= */
+
+.back-area {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 24px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 10px 16px;
+
+  border: 1px solid #d3d8d2;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.78);
+
+  color: #52665a;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 4px 12px rgba(42,48,44,.06);
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+.back-arrow {
+  font-size: 14px;
+
+  transition: transform .2s ease;
+}
+
+.back-link:hover {
+  transform: translateY(-2px);
+
+  border-color: #aebcaf;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 17px rgba(42,48,44,.09);
+}
+
+.back-link:hover .back-arrow {
+  transform: translateX(-2px);
+}
+
+.back-link:focus-visible {
+  outline: 2px solid #6f8878;
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .app {
+    padding: 22px 9px 38px;
+  }
+
+  .top-back-nav {
+    margin: 0 10px 17px;
+  }
+
+  .top-back-link {
+    font-size: 11.5px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .start {
+    margin: 24px auto 18px;
+  }
+
+  .journey {
+    padding-left: 22px;
+  }
+
+  .step {
+    min-height: 181px;
+  }
+
+  .step.left,
+  .step.right {
+    justify-content: flex-start;
+  }
+
+  .step:nth-of-type(odd) .card {
+    margin-left: 8%;
+  }
+
+  .step:nth-of-type(even) .card {
+    margin-left: 14%;
+  }
+
+  .card {
+    width: 79%;
+
+    min-height: 153px;
+
+    padding: 20px 15px 17px;
+
+    border-radius: 20px;
+  }
+
+  .marker {
+    width: 30px;
+    height: 30px;
+
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  .marker span {
+    font-size: 8px;
+  }
+
+  .branch {
+    left: 15px !important;
+    right: auto !important;
+
+    width: 15% !important;
+  }
+
+  .path-svg {
+    left: -47.5%;
+
+    width: 100%;
+  }
+
+  .prophet-name {
+    font-size: 20px;
+  }
+
+  .arabic {
+    font-size: 29px;
+  }
+
+  .pattern {
+    opacity: .25;
+  }
+
+  .end {
+    margin-top: 23px;
+  }
+
+  .reference-note {
+    margin-top: 20px;
+
+    padding: 14px 15px;
+
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .back-area {
+    margin-top: 20px;
+  }
+
+  .back-link {
+    padding: 10px 15px;
+
+    font-size: 12px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .card,
+  .details,
+  .reveal-symbol,
+  .reference,
+  .top-back-link,
+  .back-link,
+  .back-arrow {
+    transition: none;
+  }
+
+}
+
+</style>
+
+<link rel="stylesheet" href="./shared.css"><style>body{background:#fff}.title{color:#164b88;font:normal 36px Georgia,serif}.description{font-size:16px;color:#647b90}.app{padding-top:0}.top-back-nav,.back-area{display:none}.card{border-radius:14px;box-shadow:0 6px 20px #1534510a}.glimpse{font-size:16px;line-height:1.7}.card.open .details{max-height:1200px}.reference{font-size:14px}.reference-note{font-size:14px}.reveal{font-size:12px}.arabic{font-size:32px}.path-line{stroke:#a8bbd0}.start-label,.end-text{font-size:12px}.english{font-size:14px}@media(max-width:650px){.description{font-size:16px}.glimpse{font-size:16px}.reference-note{font-size:14px}.top-back-link{font-size:14px}}</style></head>
+
+
+<body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html">AKS Ilm<small>ISLAMIC TRIVIA & LEARNING</small></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
+
+
+<main class="app">
+
+
+<nav
+  class="top-back-nav"
+  aria-label="Return to AKS Ilm"
+>
+
+  <a
+    class="top-back-link"
+    href="./index.html"
+  >
+
+    <span aria-hidden="true">
+      ←
+    </span>
+
+    <span>
+      Back to AKS Ilm
+    </span>
+
+  </a>
+
+</nav>
+
+
+<header class="intro">
+
+  <h1 class="title">
+    🌿 The Prophets
+  </h1>
+
+  <p class="description">
+    Journey through the 25 Prophets mentioned by name in the Qur’an.
+    Tap each Prophet to reveal a brief glimpse from their story and
+    its Qur’anic reference.
+  </p>
+
+  <div
+    class="title-decoration"
+    aria-hidden="true"
+  >
+    <span class="title-diamond"></span>
+  </div>
+
+</header>
+
+
+<div class="start">
+
+  <div class="start-label">
+    BEGIN THE JOURNEY
+  </div>
+
+  <div
+    class="start-symbol"
+    aria-hidden="true"
+  >
+    ✦
+  </div>
+
+</div>
+
+
+<section
+  class="journey"
+  id="journey"
+  aria-label="Journey through the Prophets"
+>
+
+
+<svg
+  class="path-svg"
+  viewBox="0 0 760 5125"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+>
+
+<path
+  class="path-shadow"
+  d="
+  M380 70
+  C500 150 500 260 380 350
+  C260 440 260 550 380 640
+  C500 730 500 840 380 930
+  C260 1020 260 1130 380 1220
+  C500 1310 500 1420 380 1510
+  C260 1600 260 1710 380 1800
+  C500 1890 500 2000 380 2090
+  C260 2180 260 2290 380 2380
+  C500 2470 500 2580 380 2670
+  C260 2760 260 2870 380 2960
+  C500 3050 500 3160 380 3250
+  C260 3340 260 3450 380 3540
+  C500 3630 500 3740 380 3830
+  C260 3920 260 4030 380 4120
+  C500 4210 500 4320 380 4410
+  C260 4500 260 4610 380 4700
+  C500 4790 500 4900 380 5050
+  "
+/>
+
+<path
+  class="path-line"
+  d="
+  M380 70
+  C500 150 500 260 380 350
+  C260 440 260 550 380 640
+  C500 730 500 840 380 930
+  C260 1020 260 1130 380 1220
+  C500 1310 500 1420 380 1510
+  C260 1600 260 1710 380 1800
+  C500 1890 500 2000 380 2090
+  C260 2180 260 2290 380 2380
+  C500 2470 500 2580 380 2670
+  C260 2760 260 2870 380 2960
+  C500 3050 500 3160 380 3250
+  C260 3340 260 3450 380 3540
+  C500 3630 500 3740 380 3830
+  C260 3920 260 4030 380 4120
+  C500 4210 500 4320 380 4410
+  C260 4500 260 4610 380 4700
+  C500 4790 500 4900 380 5050
+  "
+/>
+
+</svg>
+
+
+</section>
+
+
+<footer class="end">
+
+  <div
+    class="end-symbol"
+    aria-hidden="true"
+  >
+    ✦
+  </div>
+
+  <div class="end-text">
+    25 Prophets Mentioned by Name in the Qur’an
+  </div>
+
+
+  <div class="reference-note">
+
+    <span
+      class="note-symbol"
+      aria-hidden="true"
+    >
+      i
+    </span>
+
+    <strong>Note:</strong>
+    Each Prophet includes one relevant Qur’anic reference specifically
+    connected to the fact highlighted above. This is not intended to be
+    an exhaustive reference, as many of the Prophets are mentioned in
+    other verses throughout the Qur’an as well.
+
+  </div>
+
+
+  <div class="back-area">
+
+    <a
+      class="back-link"
+      href="./index.html"
+      aria-label="Back to AKS Ilm"
+    >
+
+      <span
+        class="back-arrow"
+        aria-hidden="true"
+      >
+        ←
+      </span>
+
+      <span>
+        Back to AKS Ilm
+      </span>
+
+    </a>
+
+  </div>
+
+</footer>
+
+
+</main>
+
+
+<script>
+
+
+/* =========================================================
+   CURATED COLOUR PALETTE
+   ========================================================= */
+
+const palettes = [
+
+  {
+    accent:"#4f8068",
+    dark:"#315a47",
+    soft:"#e8f3ed",
+    soft2:"#f8fbf9",
+    marker:"#67947c"
+  },
+
+  {
+    accent:"#b5843e",
+    dark:"#795722",
+    soft:"#f8efd9",
+    soft2:"#fffaf0",
+    marker:"#c1985a"
+  },
+
+  {
+    accent:"#b56f58",
+    dark:"#7b4637",
+    soft:"#f7e9e3",
+    soft2:"#fff8f5",
+    marker:"#c28672"
+  },
+
+  {
+    accent:"#6673a5",
+    dark:"#414d7d",
+    soft:"#eaecf6",
+    soft2:"#f9f9fd",
+    marker:"#7e89b5"
+  },
+
+  {
+    accent:"#4e8b88",
+    dark:"#306461",
+    soft:"#e5f2f1",
+    soft2:"#f7fbfa",
+    marker:"#69a09d"
+  },
+
+  {
+    accent:"#8a668b",
+    dark:"#624564",
+    soft:"#f1e8f1",
+    soft2:"#fcf8fc",
+    marker:"#9e7da0"
+  },
+
+  {
+    accent:"#7c8951",
+    dark:"#566133",
+    soft:"#eef1e3",
+    soft2:"#fafbf6",
+    marker:"#929e69"
+  },
+
+  {
+    accent:"#aa6978",
+    dark:"#774654",
+    soft:"#f6e8ec",
+    soft2:"#fff8fa",
+    marker:"#bd8190"
+  },
+
+  {
+    accent:"#647d89",
+    dark:"#405965",
+    soft:"#e8eff2",
+    soft2:"#f8fafb",
+    marker:"#7d949f"
+  },
+
+  {
+    accent:"#a78a62",
+    dark:"#705b3e",
+    soft:"#f5eee3",
+    soft2:"#fcfaf6",
+    marker:"#b69c78"
+  }
+
+];
+
+
+/* =========================================================
+   PROPHETS
+   ========================================================= */
+
+const prophets = [
+
+{
+  name:"Ādam",
+  arabic:"آدم",
+  english:"Adam",
+  honorific:"AS",
+  glimpse:"Allah taught him the names of all things.",
+  reference:"Qur’an 2:31",
+  url:"https://quran.com/2/31"
+},
+
+{
+  name:"Idrīs",
+  arabic:"إدريس",
+  english:"Enoch",
+  honorific:"AS",
+  glimpse:"Allah raised him to a high position.",
+  reference:"Qur’an 19:57",
+  url:"https://quran.com/19/57"
+},
+
+{
+  name:"Nūḥ",
+  arabic:"نوح",
+  english:"Noah",
+  honorific:"AS",
+  glimpse:"Allah commanded him to build the Ark.",
+  reference:"Qur’an 11:37",
+  url:"https://quran.com/11/37"
+},
+
+{
+  name:"Hūd",
+  arabic:"هود",
+  english:"Hud",
+  honorific:"AS",
+  glimpse:"He called the people of ʿĀd to worship Allah alone.",
+  reference:"Qur’an 11:50",
+  url:"https://quran.com/11/50"
+},
+
+{
+  name:"Saleh",
+  arabic:"صالح",
+  english:"Saleh",
+  honorific:"AS",
+  glimpse:"Allah gave his people the she-camel as a sign.",
+  reference:"Qur’an 7:73",
+  url:"https://quran.com/7/73"
+},
+
+{
+  name:"Ibrāhīm",
+  arabic:"إبراهيم",
+  english:"Abraham",
+  honorific:"AS",
+  glimpse:"He built the Kaʿbah with his son Ismael (AS).",
+  reference:"Qur’an 2:127",
+  url:"https://quran.com/2/127"
+},
+
+{
+  name:"Lūṭ",
+  arabic:"لوط",
+  english:"Lot",
+  honorific:"AS",
+  glimpse:"Allah saved him from a people who committed wicked deeds.",
+  reference:"Qur’an 21:74",
+  url:"https://quran.com/21/74"
+},
+
+{
+  name:"Ismael",
+  arabic:"إسماعيل",
+  english:"Ishmael",
+  honorific:"AS",
+  glimpse:"He helped his father Ibrāhīm (AS) build the Kaʿbah.",
+  reference:"Qur’an 2:127",
+  url:"https://quran.com/2/127"
+},
+
+{
+  name:"Isḥāq",
+  arabic:"إسحاق",
+  english:"Isaac",
+  honorific:"AS",
+  glimpse:"Allah gave glad tidings of him as a righteous Prophet.",
+  reference:"Qur’an 37:112",
+  url:"https://quran.com/37/112"
+},
+
+{
+  name:"Yaʿqūb",
+  arabic:"يعقوب",
+  english:"Jacob",
+  honorific:"AS",
+  glimpse:"He remained patient through his separation from his son Yūsuf (AS).",
+  reference:"Qur’an 12:83–86",
+  url:"https://quran.com/12/83-86"
+},
+
+{
+  name:"Yūsuf",
+  arabic:"يوسف",
+  english:"Joseph",
+  honorific:"AS",
+  glimpse:"He dreamed of eleven stars, the sun and the moon prostrating to him.",
+  reference:"Qur’an 12:4",
+  url:"https://quran.com/12/4"
+},
+
+{
+  name:"Ayyūb",
+  arabic:"أيوب",
+  english:"Job",
+  honorific:"AS",
+  glimpse:"He called upon Allah during a time of great hardship.",
+  reference:"Qur’an 21:83",
+  url:"https://quran.com/21/83"
+},
+
+{
+  name:"Shuaib",
+  arabic:"شعيب",
+  english:"Shuaib",
+  honorific:"AS",
+  glimpse:"He called his people to give full measure and weight.",
+  reference:"Qur’an 7:85",
+  url:"https://quran.com/7/85"
+},
+
+{
+  name:"Mūsā",
+  arabic:"موسى",
+  english:"Moses",
+  honorific:"AS",
+  glimpse:"Allah spoke to him from the blessed valley.",
+  reference:"Qur’an 28:30",
+  url:"https://quran.com/28/30"
+},
+
+{
+  name:"Hārūn",
+  arabic:"هارون",
+  english:"Aaron",
+  honorific:"AS",
+  glimpse:"Allah appointed him to support his brother Mūsā (AS).",
+  reference:"Qur’an 20:29–36",
+  url:"https://quran.com/20/29-36"
+},
+
+{
+  name:"Dhul-Kifl",
+  arabic:"ذو الكفل",
+  english:"Dhul-Kifl",
+  honorific:"AS",
+  glimpse:"Allah mentions him among those who were steadfast.",
+  reference:"Qur’an 21:85",
+  url:"https://quran.com/21/85"
+},
+
+{
+  name:"Dāwūd",
+  arabic:"داوود",
+  english:"David",
+  honorific:"AS",
+  glimpse:"Allah made iron pliable for him.",
+  reference:"Qur’an 34:10",
+  url:"https://quran.com/34/10"
+},
+
+{
+  name:"Sulaiman",
+  arabic:"سليمان",
+  english:"Solomon",
+  honorific:"AS",
+  glimpse:"Allah taught him the communication of birds.",
+  reference:"Qur’an 27:16",
+  url:"https://quran.com/27/16"
+},
+
+{
+  name:"Ilyās",
+  arabic:"إلياس",
+  english:"Elijah",
+  honorific:"AS",
+  glimpse:"He called his people to worship Allah instead of Baʿl.",
+  reference:"Qur’an 37:123–126",
+  url:"https://quran.com/37/123-126"
+},
+
+{
+  name:"Al-Yasaʿ",
+  arabic:"اليسع",
+  english:"Elisha",
+  honorific:"AS",
+  glimpse:"Allah mentions him among His chosen servants.",
+  reference:"Qur’an 38:48",
+  url:"https://quran.com/38/48"
+},
+
+{
+  name:"Yūnus",
+  arabic:"يونس",
+  english:"Jonah",
+  honorific:"AS",
+  glimpse:"He called upon Allah from within the darknesses.",
+  reference:"Qur’an 21:87",
+  url:"https://quran.com/21/87"
+},
+
+{
+  name:"Zakariya",
+  arabic:"زكريا",
+  english:"Zechariah",
+  honorific:"AS",
+  glimpse:"He prayed to Allah for righteous offspring.",
+  reference:"Qur’an 3:38",
+  url:"https://quran.com/3/38"
+},
+
+{
+  name:"Yaḥyā",
+  arabic:"يحيى",
+  english:"John",
+  honorific:"AS",
+  glimpse:"Allah gave him wisdom while he was still a child.",
+  reference:"Qur’an 19:12",
+  url:"https://quran.com/19/12"
+},
+
+{
+  name:"ʿĪsā",
+  arabic:"عيسى",
+  english:"Jesus",
+  honorific:"AS",
+  glimpse:"He was born miraculously to Maryam without a father.",
+  reference:"Qur’an 3:45–47",
+  url:"https://quran.com/3/45-47"
+},
+
+{
+  name:"Muḥammad",
+  arabic:"محمد",
+  english:"Muhammad",
+  honorific:"SAW",
+  glimpse:"Allah describes him as His Messenger and the seal of the Prophets.",
+  reference:"Qur’an 33:40",
+  url:"https://quran.com/33/40"
+}
+
+];
+
+
+/* =========================================================
+   BUILD JOURNEY
+   ========================================================= */
+
+const journey =
+  document.getElementById("journey");
+
+
+function closeOtherCards(current) {
+
+  document
+    .querySelectorAll(".card.open")
+    .forEach(card => {
+
+      if (card !== current) {
+
+        card.classList.remove("open");
+
+        card.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+        const text =
+          card.querySelector(
+            ".reveal-text"
+          );
+
+        if (text) {
+          text.textContent =
+            "TAP TO REVEAL";
+        }
+
+      }
+
+    });
+
+}
+
+
+function toggleCard(card) {
+
+  const isOpen =
+    card.classList.contains(
+      "open"
+    );
+
+  closeOtherCards(card);
+
+  card.classList.toggle(
+    "open",
+    !isOpen
+  );
+
+  card.setAttribute(
+    "aria-expanded",
+    String(!isOpen)
+  );
+
+  const text =
+    card.querySelector(
+      ".reveal-text"
+    );
+
+  if (text) {
+
+    text.textContent =
+      !isOpen
+        ? "CLOSE"
+        : "TAP TO REVEAL";
+
+  }
+
+}
+
+
+prophets.forEach(
+  (prophet,index) => {
+
+    const palette =
+      palettes[
+        index %
+        palettes.length
+      ];
+
+
+    const step =
+      document.createElement(
+        "article"
+      );
+
+
+    step.className =
+      `step ${
+        index % 2 === 0
+          ? "left"
+          : "right"
+      }`;
+
+
+    step.style.setProperty(
+      "--accent",
+      palette.accent
+    );
+
+    step.style.setProperty(
+      "--accent-dark",
+      palette.dark
+    );
+
+    step.style.setProperty(
+      "--soft",
+      palette.soft
+    );
+
+    step.style.setProperty(
+      "--soft2",
+      palette.soft2
+    );
+
+    step.style.setProperty(
+      "--marker",
+      palette.marker
+    );
+
+
+    const marker =
+      document.createElement(
+        "div"
+      );
+
+    marker.className =
+      "marker";
+
+    marker.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    marker.innerHTML = `
+
+      <span>
+        ${
+          String(index + 1)
+            .padStart(2,"0")
+        }
+      </span>
+
+    `;
+
+
+    const branch =
+      document.createElement(
+        "span"
+      );
+
+    branch.className =
+      "branch";
+
+    branch.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    const card =
+      document.createElement(
+        "div"
+      );
+
+    card.className =
+      "card";
+
+    card.tabIndex = 0;
+
+    card.setAttribute(
+      "role",
+      "button"
+    );
+
+    card.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    card.setAttribute(
+      "aria-label",
+      `${prophet.name}, ${prophet.english}. Tap to reveal a glimpse.`
+    );
+
+
+    card.innerHTML = `
+
+      <div
+        class="pattern"
+        aria-hidden="true"
+      >
+
+        <span class="pattern-1"></span>
+        <span class="pattern-2"></span>
+        <span class="pattern-3"></span>
+
+      </div>
+
+
+      <div class="card-main">
+
+        <h2 class="prophet-name">
+          ${prophet.name}
+          (${prophet.honorific})
+        </h2>
+
+
+        <div class="arabic-wrap">
+
+          <div class="arabic-medallion">
+
+            <div
+              class="arabic"
+              lang="ar"
+            >
+              ${prophet.arabic}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="english">
+          ${prophet.english}
+        </div>
+
+
+        <div class="reveal">
+
+          <span class="reveal-text">
+            TAP TO REVEAL
+          </span>
+
+          <span
+            class="reveal-symbol"
+            aria-hidden="true"
+          >
+            ↓
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="details">
+
+        <div class="details-box">
+
+          <span
+            class="details-ornament"
+            aria-hidden="true"
+          >
+            ✦
+          </span>
+
+
+          <p class="glimpse-title">
+            A Glimpse
+          </p>
+
+
+          <p class="glimpse">
+            ${prophet.glimpse}
+          </p>
+
+
+          <a
+            class="reference"
+            href="${prophet.url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Read ${prophet.reference} on Quran.com"
+          >
+
+            <span
+              class="book"
+              aria-hidden="true"
+            >
+              📖
+            </span>
+
+            <span>
+              ${prophet.reference}
+            </span>
+
+            <span aria-hidden="true">
+              ↗
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    card.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.closest(
+            ".reference"
+          )
+        ) {
+          return;
+        }
+
+        toggleCard(card);
+
+      }
+    );
+
+
+    card.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.target.closest(
+            ".reference"
+          )
+        ) {
+          return;
+        }
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+
+          event.preventDefault();
+
+          toggleCard(card);
+
+        }
+
+      }
+    );
+
+
+    step.appendChild(marker);
+    step.appendChild(branch);
+    step.appendChild(card);
+
+    journey.appendChild(step);
+
+  }
+);
+
+
+</script>
+
+
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer></body>
+
+</html>
+
