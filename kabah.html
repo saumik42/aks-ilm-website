@@ -730,7 +730,19 @@
       }
     }
   </style>
-<link rel="stylesheet" href="./shared.css"><style>body{background:#fff}.feature{box-shadow:none}.intro h1,h1{color:#164b88;font-family:Georgia,serif;font-weight:normal}button{font-size:14px}input{font-size:16px}.placeholder-text,.reflection{font-size:16px}</style></head>
+<link rel="stylesheet" href="./shared.css"><style>body{background:#fff}.feature{box-shadow:none}.intro h1,h1{color:#164b88;font-family:Georgia,serif;font-weight:normal}button{font-size:14px}input{font-size:16px}.placeholder-text,.reflection{font-size:16px}</style><style id="kabah-mobile-navigation">
+@media(max-width:600px){
+.site-nav{width:calc(100% - 24px)}
+.site-nav>div{grid-template-columns:max-content max-content;align-items:start}
+.site-nav>div>a{white-space:nowrap}
+}
+@media(max-width:380px){
+.site-nav{gap:10px}
+.site-nav .site-brand{font-size:22px}
+.site-brand small{font-size:7px;letter-spacing:1px}
+.site-nav>div{font-size:12px;column-gap:10px}
+}
+</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html">AKS Ilm<small>ISLAMIC TRIVIA & LEARNING</small></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
 
