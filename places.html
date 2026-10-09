@@ -833,6 +833,7 @@ function retryMap() {
 }
 
 let currentView = "regional";
+let selectedPlaceKey = null;
 
 
 /* ---------------------------------------------------------
@@ -985,7 +986,8 @@ function initialiseMap() {
         hideNativeLabels();
         addPalestineLabel();
         setupLocationLayers();
-        showRegionalMap();
+        if (selectedPlaceKey) showPlace(selectedPlaceKey);
+        else showRegionalMap();
 
         scheduleResizePasses();
 
@@ -1454,10 +1456,41 @@ function returnToRegionalMap() {
 }
 
 
+function focusSelectedPlace(key) {
+  const p = places[key];
+  selectedPlaceKey = key;
+  document.getElementById("place-select").value = key;
+  if (!map || !mapLoadedSuccessfully || !locationLayersReady || mapUnavailable) return;
+
+  currentView = "place";
+  clearLabelMarkers();
+  document.getElementById("backButton").style.display = "inline-block";
+  document.getElementById("mapTitle").textContent = p.name;
+  document.getElementById("mapCount").textContent = "Selected location";
+  setLocationData(Object.entries(places).map(([placeKey, place]) =>
+    makeFeature(placeKey, place.lng, place.lat)
+  ));
+  addClickableLabel(key, p.name, p.lng, p.lat, 0, -30, false);
+  forceMapResize();
+  map.stop();
+  const zoomLevels = {makkah:11, madinah:11, sinai:9, hijr:10.5, badr:11.5, khaybar:11, taif:11, uhud:11.5};
+  const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  map.flyTo({
+    center: [p.lng, p.lat],
+    zoom: zoomLevels[key] || 12,
+    padding: {top: 45, bottom: 35, left: 35, right: 35},
+    bearing: 0,
+    pitch: 0,
+    duration: reducedMotion ? 0 : 900
+  });
+}
+
 function showPlace(key) {
 
   const p =
     places[key];
+  if (!p) return;
+  focusSelectedPlace(key);
 
   const imageURL =
     commonsImage(
@@ -1542,6 +1575,9 @@ function resetInfo(text) {
 
 
 function showRegionalMap() {
+
+  selectedPlaceKey = null;
+  document.getElementById("place-select").value = "";
 
   currentView = "regional";
   clearLabelMarkers();
@@ -1637,6 +1673,9 @@ function showRegionalMap() {
 
 
 function showMakkahArea() {
+
+  selectedPlaceKey = null;
+  document.getElementById("place-select").value = "";
 
   currentView = "makkah";
   clearLabelMarkers();
@@ -1787,6 +1826,9 @@ function showMakkahArea() {
 
 
 function showMadinahArea() {
+
+  selectedPlaceKey = null;
+  document.getElementById("place-select").value = "";
 
   currentView = "madinah";
   clearLabelMarkers();
