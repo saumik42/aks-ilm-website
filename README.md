@@ -39,7 +39,7 @@ Each entry follows this order:
 [number, "Question text", "Option A", "Option B", "Option C", "Option D", "B"]
 ```
 
-The last value is the correct option letter, A–D. Add a comma after the previous entry and insert the next question before the final `];`. Use the next unused question number. The current collection ends at 262, so the next question is 263. Keep numbers sequential, because the quiz displays them for correction reports.
+The last value is the correct option letter, A–D. Add a comma after the previous entry and insert the next question before the final `];`. Use the next unused question number. The current collection ends at 263, so the next question is 264. Keep numbers sequential, because the quiz displays them for correction reports.
 
 Use `\"` for a quotation mark inside a double-quoted string. Do not add invented references; the Library currently provides answers, without a reference field.
 
