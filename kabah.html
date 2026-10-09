@@ -758,7 +758,7 @@
 #calculateBtn{background:#2466a9;color:#fff}
 #calculateBtn:hover{background:#1c5793}
 @media(max-width:380px){.example-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.example-grid .example:nth-child(n+3){border-top:1px solid #dce7f2}}
-</style></head>
+</style><style>.city-input-help{margin:0 0 12px;color:#667784;font:13px/1.5 Arial,Helvetica,sans-serif}</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
 
@@ -774,6 +774,8 @@
 
     <section class="search-card">
 
+      <p class="city-input-help" id="city-input-help">Enter any city, or tap a suggested city below.</p>
+
       <div class="search-row">
         <input
           id="cityInput"
@@ -781,6 +783,7 @@
           placeholder="Enter a city..."
           autocomplete="off"
           aria-label="Enter a city"
+          aria-describedby="city-input-help"
         />
 
         <button id="calculateBtn" type="button">
@@ -788,7 +791,7 @@
         </button>
       </div>
 
-      <div class="examples"><span class="example-label">Try a city</span><div class="example-grid"><button type="button" class="example" data-city="Toronto">Toronto</button><button type="button" class="example" data-city="London">London</button><button type="button" class="example" data-city="Dubai">Dubai</button><button type="button" class="example" data-city="Istanbul">Istanbul</button><button type="button" class="example" data-city="Los Angeles">Los Angeles</button><button type="button" class="example" data-city="Dhaka">Dhaka</button><button type="button" class="example" data-city="Moscow">Moscow</button><button type="button" class="example" data-city="Barcelona">Barcelona</button></div></div>
+      <div class="examples"><span class="example-label">Try a city</span><div class="example-grid"><button type="button" class="example" data-city="Toronto">Toronto</button><button type="button" class="example" data-city="London">London</button><button type="button" class="example" data-city="Dubai">Dubai</button><button type="button" class="example" data-city="Buenos Aires">Buenos Aires</button><button type="button" class="example" data-city="Los Angeles">Los Angeles</button><button type="button" class="example" data-city="Dhaka">Dhaka</button><button type="button" class="example" data-city="Jakarta">Jakarta</button><button type="button" class="example" data-city="Barcelona">Barcelona</button></div></div>
 
       <div id="message" class="message" aria-live="polite"></div>
 
@@ -2217,6 +2220,8 @@
       const knownCities = {
         toronto:{lat:43.6532,lon:-79.3832,city:'Toronto',country:'Canada'},
         london:{lat:51.5074,lon:-0.1278,city:'London',country:'United Kingdom'},
+        'buenos aires':{lat:-34.6037,lon:-58.3816,city:'Buenos Aires',country:'Argentina'},
+        jakarta:{lat:-6.2088,lon:106.8456,city:'Jakarta',country:'Indonesia'},
         dubai:{lat:25.2048,lon:55.2708,city:'Dubai',country:'United Arab Emirates'},
         istanbul:{lat:41.0082,lon:28.9784,city:'Istanbul',country:'Türkiye'},
         'los angeles':{lat:34.0522,lon:-118.2437,city:'Los Angeles',country:'United States'},
