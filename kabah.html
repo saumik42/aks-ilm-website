@@ -758,7 +758,7 @@
 #calculateBtn{background:#2466a9;color:#fff}
 #calculateBtn:hover{background:#1c5793}
 @media(max-width:380px){.example-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.example-grid .example:nth-child(n+3){border-top:1px solid #dce7f2}}
-</style><style>.city-input-help{margin:0 0 12px;color:#667784;font:13px/1.5 Arial,Helvetica,sans-serif}</style></head>
+</style><style>.city-input-help{margin:0 0 12px;color:#667784;font:13px/1.5 Arial,Helvetica,sans-serif}</style><style id="route-plane-style">.route-plane{pointer-events:none}.route-plane path{fill:#fff5cf;stroke:#102a43;stroke-width:1;stroke-linejoin:round}</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
 
@@ -868,6 +868,7 @@
               <g id="graticuleLayer"></g>
               <g id="countriesLayer"></g>
               <g id="routeLayer"></g>
+              <g id="planeLayer" aria-hidden="true"></g>
               <g id="markerLayer"></g>
             </g>
           </svg>
@@ -2029,6 +2030,48 @@
       return label;
     }
 
+    let routePlaneFrame = null;
+    function clearRoutePlane() {
+      if (routePlaneFrame !== null) cancelAnimationFrame(routePlaneFrame);
+      routePlaneFrame = null;
+      document.getElementById("planeLayer").replaceChildren();
+    }
+
+    function animateRoutePlane(startX, startY, controlX, controlY, endX, endY) {
+      clearRoutePlane();
+      const layer = document.getElementById("planeLayer");
+      const plane = createSVGElement("g", {class: "route-plane", "aria-hidden": "true"});
+      const silhouette = createSVGElement("path", {
+        d: "M12 0 L3 -2 L-3 -10 L-6 -10 L-3 -2 L-10 -2 L-13 -5 L-15 -5 L-13 0 L-15 5 L-13 5 L-10 2 L-3 2 L-6 10 L-3 10 L3 2 Z"
+      });
+      plane.appendChild(silhouette);
+      layer.appendChild(plane);
+      function position(t) {
+        const u = 1 - t;
+        const x = u*u*startX + 2*u*t*controlX + t*t*endX;
+        const y = u*u*startY + 2*u*t*controlY + t*t*endY;
+        const dx = 2*u*(controlX-startX) + 2*t*(endX-controlX);
+        const dy = 2*u*(controlY-startY) + 2*t*(endY-controlY);
+        const angle = Math.atan2(dy, dx)*180/Math.PI;
+        const visibleX = ((x % MAP_WIDTH) + MAP_WIDTH) % MAP_WIDTH;
+        plane.setAttribute("transform", "translate("+visibleX+" "+(y-15)+") rotate("+angle+") scale(.85)");
+      }
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        position(.5);
+        return;
+      }
+      let started = null;
+      function step(now) {
+        if (started === null) started = now;
+        const progress = Math.min((now-started)/2800, 1);
+        position(.1 + .8*progress);
+        plane.style.opacity = String(progress > .85 ? (1-progress)/.15 : 1);
+        if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
+        else { routePlaneFrame = null; layer.replaceChildren(); }
+      }
+      routePlaneFrame = requestAnimationFrame(step);
+    }
+
     function drawMapMarkers(
       cityName,
       countryName,
@@ -2038,6 +2081,7 @@
 
       routeLayer.innerHTML = "";
       markerLayer.innerHTML = "";
+      clearRoutePlane();
 
       const city =
         project(lon, lat);
@@ -2210,6 +2254,7 @@
         "Saudi Arabia",
         "map-sub-label"
       );
+      animateRoutePlane(cityX, city.y, midX, midY, makkahX, makkah.y);
     }
 
     /* ------------------------------
@@ -2356,6 +2401,7 @@
       message.textContent = "";
 
       setLoading(true);
+      clearRoutePlane();
 
       resetPerspective();
 
@@ -2558,6 +2604,7 @@
         placeholder.style.display =
           "block";
 
+        clearRoutePlane();
         resetPerspective();
         resetMapView();
 
