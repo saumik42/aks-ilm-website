@@ -749,10 +749,15 @@
 @media(max-width:600px){.summary-location strong{font-size:16px}.summary-location span{font-size:12px}}
 </style><link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48 64x64"><link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><style id="suggested-city-grid">
 .examples{display:block;margin-top:16px}
-.examples .example-label{display:block;margin:0 0 10px;text-align:center;font-size:13px}
-.example-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.example-grid .example{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:8px 6px;font-size:12px;line-height:1.4;white-space:normal}
-@media(max-width:380px){.example-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.examples .example-label{display:block;margin:0 0 8px;text-align:center;font-size:13px}
+.example-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 8px}
+.example-grid .example{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:10px 4px;border:0;border-radius:0;background:transparent;color:#2466a9;font-size:12px;font-weight:600;line-height:1.4;white-space:normal;box-shadow:none}
+.example-grid .example:nth-child(n+5){border-top:1px solid #dce7f2}
+.example-grid .example:hover,.example-grid .example:active{background:transparent;color:#164b88;text-decoration:underline;text-underline-offset:4px}
+.example-grid .example:focus-visible{outline:3px solid #377fc5;outline-offset:1px}
+#calculateBtn{background:#2466a9;color:#fff}
+#calculateBtn:hover{background:#1c5793}
+@media(max-width:380px){.example-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.example-grid .example:nth-child(n+3){border-top:1px solid #dce7f2}}
 </style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
