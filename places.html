@@ -14,7 +14,7 @@
     rel="stylesheet">
 
   <script
-    src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js">
+    defer src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js">
   </script>
 
   <style>
@@ -467,7 +467,7 @@
     }
 
   </style>
-<link rel="stylesheet" href="./shared.css"><style>body{padding:0;background:#fff}.map-card{border-radius:12px}.map-title{color:#164b88}.info{font-size:16px}.info p{font-size:16px}.note{font-size:14px}.page-heading{max-width:1000px;padding:0 24px}</style><style>.place-picker{padding:14px 20px;display:flex;align-items:center;gap:18px;border-top:1px solid #dce7f2}.place-picker label{font-size:14px;color:#164b88}.place-picker select{font:16px Arial,sans-serif;padding:10px;border:1px solid #c9d9e9;border-radius:5px;background:white;max-width:100%;flex:1}@media(max-width:600px){.place-picker{flex-direction:column;align-items:stretch;gap:8px}}</style></head>
+<link rel="stylesheet" href="./shared.css"><style>body{padding:0;background:#fff}.map-card{border-radius:12px}.map-title{color:#164b88}.info{font-size:16px}.info p{font-size:16px}.note{font-size:14px}.page-heading{max-width:1000px;padding:0 24px}</style><style>.place-picker{padding:14px 20px;display:flex;align-items:center;gap:18px;border-top:1px solid #dce7f2}.place-picker label{font-size:14px;color:#164b88}.place-picker select{font:16px Arial,sans-serif;padding:10px;border:1px solid #c9d9e9;border-radius:5px;background:white;max-width:100%;flex:1}@media(max-width:600px){.place-picker{flex-direction:column;align-items:stretch;gap:8px}}</style><style>.loading-inner{max-width:320px;padding:24px;line-height:1.65}.loading-inner p{margin:0 0 16px}#retry-map{min-height:44px;padding:10px 20px;background:#164b88;color:#fff;border:0;border-radius:6px;font:600 14px Arial,sans-serif;cursor:pointer}#retry-map:focus-visible{outline:3px solid #377fc5;outline-offset:3px}</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html">AKS Ilm<small>ISLAMIC TRIVIA & LEARNING</small></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav><div class="page-heading"><h1>Explore Islamic Places</h1><p>Discover significant locations connected to the Qur’an, Sunnah, and Islamic history.</p></div>
 
@@ -801,6 +801,37 @@ let labelMarkers = [];
 let locationLayersReady = false;
 let mapLoadedSuccessfully = false;
 let initialising = false;
+let mapLoadTimer = null;
+let mapStartAttempts = 0;
+let mapUnavailable = false;
+function showMapUnavailable() {
+ if (mapLoadedSuccessfully) return;
+ mapUnavailable = true;
+ initialising = false;
+ clearTimeout(mapLoadTimer);
+ const loading = document.getElementById("mapLoading");
+ loading.classList.remove("hidden");
+ loading.innerHTML = '<div class="loading-inner"><p>The map could not load. Locations can still be explored using the selector above.</p><button type="button" id="retry-map">Retry map</button></div>';
+ document.getElementById("retry-map").addEventListener("click", retryMap);
+}
+function revealMap() {
+ if (mapUnavailable) return;
+ clearTimeout(mapLoadTimer);
+ document.getElementById("map").classList.add("ready");
+ document.getElementById("mapLoading").classList.add("hidden");
+}
+function retryMap() {
+ clearTimeout(mapLoadTimer);
+ if (map) { try { map.remove(); } catch(error) {} }
+ map = null; labelMarkers = []; locationLayersReady = false;
+ mapLoadedSuccessfully = false; initialising = false;
+ mapUnavailable = false; mapStartAttempts = 0;
+ document.getElementById("map").classList.remove("ready");
+ document.getElementById("mapLoading").innerHTML = '<div class="loading-inner"><div class="loading-dot"></div>Loading map…</div>';
+ mapLoadTimer = setTimeout(showMapUnavailable, 12000);
+ initialiseMap();
+}
+
 let currentView = "regional";
 
 
@@ -864,7 +895,7 @@ function scheduleResizePasses() {
 
 function initialiseMap() {
 
-  if (map || initialising) return;
+  if (map || initialising || mapUnavailable) return;
 
   if (
     document.visibilityState === "hidden" ||
@@ -879,6 +910,9 @@ function initialiseMap() {
     return;
   }
 
+  if (!mapLoadTimer) mapLoadTimer = setTimeout(showMapUnavailable, 12000);
+  if (typeof maplibregl === "undefined") { setTimeout(initialiseMap, 200); return; }
+  if (++mapStartAttempts > 3) { showMapUnavailable(); return; }
   initialising = true;
 
   /*
@@ -893,7 +927,7 @@ function initialiseMap() {
 
         map = new maplibregl.Map({
           container: "map",
-          style: "https://tiles.waymorphic.com/styles/bright",
+          style: {version:8,sources:{basemap:{type:"raster",tiles:["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],tileSize:256,maxzoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}},layers:[{id:"basemap",type:"raster",source:"basemap"}]},
           center: [39.2, 26.5],
           zoom: 4.5,
           attributionControl: true,
@@ -911,11 +945,7 @@ function initialiseMap() {
         initialising = false;
         map = null;
 
-        /*
-          Do not replace the feature with a fallback.
-          Retry after the in-app browser has had more time
-          to establish its rendering environment.
-        */
+        /* Retry failed WebGL starts at most three times. */
         setTimeout(
           initialiseMap,
           800
@@ -948,6 +978,7 @@ function initialiseMap() {
 
       map.on("load", function() {
 
+        if (mapUnavailable) return;
         mapLoadedSuccessfully = true;
 
         applyEnglishLabels();
@@ -958,21 +989,10 @@ function initialiseMap() {
 
         scheduleResizePasses();
 
-        map.once("idle", function() {
-
-          forceMapResize();
-
-          document
-            .getElementById("map")
-            .classList
-            .add("ready");
-
-          document
-            .getElementById("mapLoading")
-            .classList
-            .add("hidden");
-
-        });
+        initialising = false;
+        map.once("render", revealMap);
+        requestAnimationFrame(revealMap);
+        forceMapResize();
 
       });
 
@@ -1123,71 +1143,11 @@ function hideNativeLabels() {
 
 
 function addPalestineLabel() {
-
-  if (
-    map.getSource(
-      "palestine-custom-label"
-    )
-  ) return;
-
-  map.addSource(
-    "palestine-custom-label",
-    {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: {
-              name: "Palestine"
-            },
-            geometry: {
-              type: "Point",
-              coordinates: [
-                35.10,
-                31.70
-              ]
-            }
-          }
-        ]
-      }
-    }
-  );
-
-  map.addLayer({
-    id: "palestine-custom-label",
-    type: "symbol",
-    source: "palestine-custom-label",
-    minzoom: 3,
-
-    layout: {
-      "text-field": ["get", "name"],
-
-      "text-size": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        3, 11,
-        5, 13,
-        8, 15
-      ],
-
-      "text-letter-spacing": .02,
-      "text-allow-overlap": true,
-      "text-ignore-placement": true
-    },
-
-    paint: {
-      "text-color": "#394b59",
-      "text-halo-color":
-        "rgba(255,255,255,.96)",
-      "text-halo-width": 1.5
-    }
-  });
-
+ const label = document.createElement("span");
+ label.textContent = "Palestine";
+ label.style.cssText = "color:#394b59;font:600 12px Arial,sans-serif;text-shadow:0 0 3px white,0 0 3px white;pointer-events:none";
+ new maplibregl.Marker({element:label}).setLngLat([35.10,31.70]).addTo(map);
 }
-
 
 function setupLocationLayers() {
 
@@ -1862,12 +1822,15 @@ function showMadinahArea() {
 }
 
 
+setTimeout(initialiseMap, 0);
+mapLoadTimer = setTimeout(showMapUnavailable, 12000);
+
 /* ---------------------------------------------------------
    EMBED / WEBVIEW LIFECYCLE
 --------------------------------------------------------- */
 
-window.addEventListener(
-  "load",
+document.addEventListener(
+  "DOMContentLoaded",
   function() {
 
     setTimeout(
