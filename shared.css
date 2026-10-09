@@ -4,3 +4,9 @@ body{background:#fff;color:#153451;font-family:Arial,Helvetica,sans-serif;margin
 .site-nav a{text-decoration:none;color:#164b88}.site-nav .site-brand{font:bold 30px Georgia,serif;letter-spacing:-1px;white-space:nowrap}.site-brand small{display:block;font:10px Arial,sans-serif;letter-spacing:2px;margin-top:7px;color:#527490}.site-nav>div{display:flex;gap:24px;font-size:14px}.site-nav a:hover{color:#377fc5}a:focus-visible,button:focus-visible{outline:3px solid #377fc5;outline-offset:4px}.page-heading{max-width:860px;margin:0 auto 28px}.page-heading h1{font:normal 40px/1.15 Georgia,serif;color:#164b88;margin:0 0 12px}.page-heading p{color:#647b90;line-height:1.75;margin:0}.page-foot{max-width:1104px;margin:45px auto 0;border-top:1px solid #dce7f2;padding:25px 0 32px;color:#71859a;font-size:13px}.page-foot a{color:#164b88}.page-shell{max-width:1104px;margin:auto;padding:0 24px}.site-nav{width:calc(100% - 48px)}
 @media(max-width:600px){.site-nav{padding:22px 0;align-items:start;gap:15px}.site-nav .site-brand{font-size:25px}.site-nav>div{display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;font-size:13px}.site-brand small{font-size:8px;letter-spacing:1.4px}.page-heading h1{font-size:33px}.page-foot{margin:30px 24px 0}.page-heading{margin:0 24px 24px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Compact shared branding */
+.site-nav .site-brand{display:block;flex:0 0 auto;line-height:0}
+.site-logo{display:block;width:185px;max-width:100%;height:auto}
+@media(max-width:600px){.site-logo{width:150px}.site-nav>div{grid-template-columns:max-content max-content}.site-nav>div>a{white-space:nowrap}}
+@media(max-width:380px){.site-logo{width:120px}.site-nav{gap:10px}.site-nav>div{font-size:12px;column-gap:10px}}
