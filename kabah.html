@@ -2415,6 +2415,9 @@
         clearTimeout(settleTimer);
         clearTimeout(maximumTimer);
         cancelAnimationFrame(revealFrame);
+        window.removeEventListener("touchstart", cleanup);
+        window.removeEventListener("wheel", cleanup);
+        window.removeEventListener("keydown", cleanup);
         if (viewport) viewport.removeEventListener("resize", schedule);
       };
       const reveal = () => {
@@ -2422,7 +2425,29 @@
         revealFrame = requestAnimationFrame(() => {
           if (results.style.display !== "block" || document.activeElement === cityInput) return;
           const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          results.scrollIntoView({block: "start", behavior: reduced ? "instant" : "smooth"});
+          const startY = window.scrollY;
+          const targetY = Math.max(0, startY + results.getBoundingClientRect().top - 12);
+          if (reduced || Math.abs(targetY - startY) < 2) {
+            window.scrollTo({top: targetY, behavior: "instant"});
+            return;
+          }
+          // A gentle one-second glide, with no change to the map's zoom.
+          const duration = 1000;
+          let startTime;
+          window.addEventListener("touchstart", cleanup, {passive: true});
+          window.addEventListener("wheel", cleanup, {passive: true});
+          window.addEventListener("keydown", cleanup);
+          const glide = time => {
+            if (startTime === undefined) startTime = time;
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = progress < .5
+              ? 4 * progress * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            window.scrollTo({top: startY + (targetY - startY) * eased, behavior: "instant"});
+            if (progress < 1) revealFrame = requestAnimationFrame(glide);
+            else cleanup();
+          };
+          revealFrame = requestAnimationFrame(glide);
         });
       };
       const schedule = () => {
