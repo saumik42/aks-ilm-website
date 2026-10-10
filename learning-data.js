@@ -30,56 +30,67 @@ const benefits=[
   {
     arabic:"رَّبِّ زِدْنِي عِلْمًا",
     text:"“My Lord, increase me in knowledge.”",
+    url:"https://quran.com/20/114",
     source:"Surah Taha — Qur’an 20:114"
   },
   {
     text:"Allah raises those who believe and those who have been given knowledge in rank.",
+    url:"https://quran.com/58/11",
     source:"Surah Al-Mujadila — Qur’an 58:11",
     note:"Excerpt shown"
   },
   {
     text:"“Are those who know equal to those who do not know?”",
+    url:"https://quran.com/39/9",
     source:"Surah Az-Zumar — Qur’an 39:9",
     note:"Excerpt shown"
   },
   {
     text:"Whoever is granted wisdom has certainly been granted abundant good.",
+    url:"https://quran.com/2/269",
     source:"Surah Al-Baqarah — Qur’an 2:269",
     note:"Excerpt shown"
   },
   {
     text:"“Ask those who have knowledge if you do not know.”",
+    url:"https://quran.com/16/43",
     source:"Surah An-Nahl — Qur’an 16:43",
     note:"Excerpt shown"
   },
   {
     text:"Whoever follows a path in pursuit of knowledge, Allah will make easy for him a path to Paradise.",
+    url:"https://sunnah.com/muslim:2699a",
     source:"Sahih Muslim 2699a",
     note:"Excerpt from a longer hadith"
   },
   {
     text:"When a person dies, their deeds come to an end except for three, including knowledge from which benefit is gained.",
+    url:"https://sunnah.com/muslim:1631",
     source:"Sahih Muslim 1631",
     note:"Excerpt from a longer hadith"
   },
   {
     text:"When Allah intends good for someone, He gives them understanding of the religion.",
+    url:"https://sunnah.com/bukhari:71",
     source:"Sahih al-Bukhari 71",
     note:"Excerpt from a longer hadith"
   },
   {
     text:"“Convey from me, even if one verse.”",
+    url:"https://sunnah.com/bukhari:3461",
     source:"Sahih al-Bukhari 3461",
     note:"Excerpt from a longer hadith"
   },
   {
     arabic:"اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلاً مُتَقَبَّلاً",
     text:"“O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds.”",
+    url:"https://sunnah.com/ibnmajah:925",
     source:"Sunan Ibn Majah 925",
     note:"Graded Sahih (Darussalam)"
   },
   {
     text:"The Prophet ﷺ sought refuge in Allah from knowledge that does not benefit.",
+    url:"https://sunnah.com/muslim:2722",
     source:"Sahih Muslim 2722",
     note:"Excerpt from a longer supplication"
   }
