@@ -847,12 +847,6 @@
         </p>
       </div>
 
-      <div class="placeholder-reflection">
-        <strong>A shared direction</strong>
-        Wherever Muslims are in the world, they turn toward the Kaʿbah
-        in Makkah during Ṣalāh.
-      </div>
-
       <p class="placeholder-note">
         Distances and directions are approximate and are calculated using
         representative coordinates for each city and the Kaʿbah in Makkah.
@@ -2076,7 +2070,7 @@
       let started = null;
       function step(now) {
         if (started === null) started = now;
-        const progress = Math.min((now-started)/2800, 1);
+        const progress = Math.min((now-started)/2200, 1);
         position(.1 + .8*progress);
         plane.style.opacity = String(progress > .85 ? (1-progress)/.15 : 1);
         if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
