@@ -2267,7 +2267,7 @@
         "Saudi Arabia",
         "map-sub-label"
       );
-      animateRoutePlane(cityX, city.y, midX, midY, makkahX, makkah.y);
+      return () => animateRoutePlane(cityX, city.y, midX, midY, makkahX, makkah.y);
     }
 
     /* ------------------------------
@@ -2405,9 +2405,9 @@
     phoneResults.addEventListener("change", arrangeDistanceSummary);
 
     let cancelResultPresentation = () => {};
-    function presentMobileResult() {
+    function presentMobileResult(startPlane) {
       cancelResultPresentation();
-      if (!phoneResults.matches) return;
+      if (!phoneResults.matches) { startPlane(); return; }
       cityInput.blur();
       const viewport = window.visualViewport;
       let settleTimer, maximumTimer, revealFrame;
@@ -2429,10 +2429,11 @@
           const targetY = Math.max(0, startY + results.getBoundingClientRect().top - 12);
           if (reduced || Math.abs(targetY - startY) < 2) {
             window.scrollTo({top: targetY, behavior: "instant"});
+            startPlane();
             return;
           }
-          // A gentle one-second glide, with no change to the map's zoom.
-          const duration = 1000;
+          // A relaxed glide, followed by the plane once the card has settled.
+          const duration = 1600;
           let startTime;
           window.addEventListener("touchstart", cleanup, {passive: true});
           window.addEventListener("wheel", cleanup, {passive: true});
@@ -2445,7 +2446,10 @@
               : 1 - Math.pow(-2 * progress + 2, 3) / 2;
             window.scrollTo({top: startY + (targetY - startY) * eased, behavior: "instant"});
             if (progress < 1) revealFrame = requestAnimationFrame(glide);
-            else cleanup();
+            else {
+              cleanup();
+              settleTimer = setTimeout(startPlane, 180);
+            }
           };
           revealFrame = requestAnimationFrame(glide);
         });
@@ -2582,7 +2586,7 @@
         reflection.textContent =
           `From ${location.city}, the Kaʿbah is approximately ${roundedDistance.toLocaleString()} km away. Wherever Muslims are in the world, they turn toward the Kaʿbah in Makkah during Ṣalāh.`;
 
-        drawMapMarkers(
+        const startPlane = drawMapMarkers(
           location.city,
           location.country,
           location.lat,
@@ -2600,7 +2604,7 @@
             "none";
         }
 
-        presentMobileResult();
+        presentMobileResult(startPlane);
 
       } catch (error) {
 
