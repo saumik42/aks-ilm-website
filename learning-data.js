@@ -48,11 +48,6 @@ const benefits=[
     note:"Excerpt shown"
   },
   {
-    text:"Do not pursue that of which you have no knowledge.",
-    source:"Surah Al-Isra — Qur’an 17:36",
-    note:"Excerpt shown"
-  },
-  {
     text:"“Ask those who have knowledge if you do not know.”",
     source:"Surah An-Nahl — Qur’an 16:43",
     note:"Excerpt shown"
