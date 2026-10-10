@@ -1179,6 +1179,19 @@ function setupLocationLayers() {
   });
 
   map.addLayer({
+    id: "location-selected-halo",
+    type: "circle",
+    source: "islamic-locations",
+    filter: ["==", ["get", "selected"], true],
+    paint: {
+      "circle-radius": 19,
+      "circle-color": "#2466a9",
+      "circle-opacity": 0.18,
+      "circle-blur": 0.35
+    }
+  });
+
+  map.addLayer({
     id: "location-ring",
     type: "circle",
     source: "islamic-locations",
@@ -1188,9 +1201,9 @@ function setupLocationLayers() {
         "interpolate",
         ["linear"],
         ["zoom"],
-        3, 7,
-        7, 8,
-        12, 9
+        3, ["case", ["get", "selected"], 11, 7],
+        7, ["case", ["get", "selected"], 12, 8],
+        12, ["case", ["get", "selected"], 13, 9]
       ],
 
       "circle-color": "#ffffff",
@@ -1210,12 +1223,12 @@ function setupLocationLayers() {
         "interpolate",
         ["linear"],
         ["zoom"],
-        3, 4.8,
-        7, 5.7,
-        12, 6.5
+        3, ["case", ["get", "selected"], 7, 4.8],
+        7, ["case", ["get", "selected"], 8, 5.7],
+        12, ["case", ["get", "selected"], 9, 6.5]
       ],
 
-      "circle-color": "#1a73e8",
+      "circle-color": ["case", ["get", "selected"], "#2466a9", "#1a73e8"],
       "circle-stroke-width": 1,
       "circle-stroke-color":
         "#174ea6"
@@ -1318,7 +1331,8 @@ function makeFeature(
     type: "Feature",
 
     properties: {
-      key: key
+      key: key,
+      selected: key === selectedPlaceKey
     },
 
     geometry: {
