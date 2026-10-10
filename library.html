@@ -25,5 +25,5 @@ for(const group of searchGroups){const visible=group.entries.some(entry=>!entry.
 libraryEnd.hidden=Boolean(raw);
 searchStatus.textContent=!raw?'':count===0?'No matching questions. Try another keyword or question number.':count+' matching question'+(count===1?'':'s')+'.';
 }
-searchInput.addEventListener('input',filterLibrary);searchClear.addEventListener('click',()=>{searchInput.value='';filterLibrary();searchInput.focus()});filterLibrary();
+searchInput.addEventListener('input',filterLibrary);searchClear.addEventListener('click',()=>{searchInput.value='';filterLibrary();if(/^#question-\d+$/.test(location.hash)){requestAnimationFrame(()=>{const target=document.getElementById(location.hash.slice(1));if(target)target.scrollIntoView({block:"start",behavior:"instant"});})};searchInput.focus()});filterLibrary();
 </script><footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer></body></html>
