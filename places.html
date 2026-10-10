@@ -804,8 +804,14 @@ let initialising = false;
 let mapLoadTimer = null;
 let mapStartAttempts = 0;
 let mapUnavailable = false;
+let useFallbackBasemap = false;
 function showMapUnavailable() {
  if (mapLoadedSuccessfully) return;
+ if (!useFallbackBasemap) {
+  useFallbackBasemap = true;
+  retryMap();
+  return;
+ }
  mapUnavailable = true;
  initialising = false;
  clearTimeout(mapLoadTimer);
@@ -928,7 +934,7 @@ function initialiseMap() {
 
         map = new maplibregl.Map({
           container: "map",
-          style: {version:8,sources:{basemap:{type:"raster",tiles:["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],tileSize:256,maxzoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}},layers:[{id:"basemap",type:"raster",source:"basemap"}]},
+          style: useFallbackBasemap ? {version:8,sources:{basemap:{type:"raster",tiles:["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],tileSize:256,maxzoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}},layers:[{id:"basemap",type:"raster",source:"basemap"}]} : "https://tiles.openfreemap.org/styles/liberty",
           center: [39.2, 26.5],
           zoom: 4.5,
           attributionControl: true,
@@ -1047,7 +1053,8 @@ function applyEnglishLabels() {
     if (
       layer.type === "symbol" &&
       layer.layout &&
-      layer.layout["text-field"]
+      layer.layout["text-field"] &&
+      /name/.test(JSON.stringify(layer.layout["text-field"]))
     ) {
 
       try {
@@ -1060,7 +1067,8 @@ function applyEnglishLabels() {
             ["get", "name:en"],
             ["get", "name_en"],
             ["get", "name:latin"],
-            ["get", "name"]
+            ["get", "name"],
+            ""
           ]
         );
 
