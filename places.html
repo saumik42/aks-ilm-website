@@ -553,7 +553,7 @@ const places = {
   },
 
   madinah: {
-    name: "Madinah",
+    name: "Masjid an-Nabawi",
     location: "Madinah, Saudi Arabia",
     lat: 24.4672,
     lng: 39.6111,
@@ -601,7 +601,7 @@ const places = {
   },
 
   makkah: {
-    name: "Makkah",
+    name: "Masjid al-Haram",
     location: "Makkah, Saudi Arabia",
     lat: 21.42252,
     lng: 39.82618,
@@ -1747,7 +1747,7 @@ function showMakkahArea() {
 
   addClickableLabel(
     "makkah",
-    "Makkah",
+    places.makkah.name,
     places.makkah.lng,
     places.makkah.lat,
     -52,
@@ -1848,7 +1848,7 @@ function showMadinahArea() {
     makeFeature("qiblatayn", places.qiblatayn.lng, places.qiblatayn.lat)
   ]);
 
-  addClickableLabel("madinah", "Madinah", places.madinah.lng, places.madinah.lat, 58, 18, false);
+  addClickableLabel("madinah", places.madinah.name, places.madinah.lng, places.madinah.lat, 58, 18, false);
   addClickableLabel("uhud", "Mount Uhud", places.uhud.lng, places.uhud.lat, 0, -30, false);
   addClickableLabel("quba", "Masjid Quba", places.quba.lng, places.quba.lat, 54, 26, false);
   addClickableLabel("qiblatayn", "Masjid al-Qiblatayn", places.qiblatayn.lng, places.qiblatayn.lat, -74, -6, false);
