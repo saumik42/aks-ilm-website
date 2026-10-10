@@ -558,9 +558,9 @@ const places = {
     lat: 24.4672,
     lng: 39.6111,
     description:
-      "Madinah became the home of the Prophet Muhammad ﷺ and the Muslim community following the Hijrah from Makkah. The Prophet ﷺ also declared the area between its two mountains a sanctuary.",
-    reference: "Sahih al-Bukhari 4084",
-    url: "https://sunnah.com/bukhari:4084",
+      "Masjid an-Nabawi is the Prophet Muhammad’s ﷺ mosque in Madinah, established following his Hijrah from Makkah. He personally helped build it alongside his Companions, carrying bricks during its construction.",
+    reference: "Sahih al-Bukhari 3906",
+    url: "https://sunnah.com/bukhari:3906",
     photoFile: "Al-Masjid al-Nabawi, Medina - panoramio.jpg",
     photoAlt: "Exterior view of Al-Masjid an-Nabawi in Madinah",
     photoCaption: "Al-Masjid an-Nabawi, Madinah",
@@ -606,9 +606,13 @@ const places = {
     lat: 21.42252,
     lng: 39.82618,
     description:
-      "Makkah is home to Al-Masjid Al-Haram and the Kaʿbah, the sacred House toward which Muslims face in prayer. It is also the city from which the Prophet Muhammad ﷺ began the Night Journey.",
+      "Masjid al-Haram is the Sacred Mosque in Makkah, toward which Muslims face in prayer. The Qur’an describes the Prophet Muhammad’s ﷺ Night Journey from this mosque to Masjid al-Aqsa.",
     reference: "Qur’an 17:1",
     url: "https://quran.com/17/1",
+    references: [
+      {label: "Qur’an 2:144", url: "https://quran.com/2/144"},
+      {label: "Qur’an 17:1", url: "https://quran.com/17/1"}
+    ],
     photoFile: "Kaaba, Makkah.jpg",
     photoAlt: "The Kaʿbah at Al-Masjid Al-Haram in Makkah",
     photoCaption: "The Kaʿbah, Makkah",
@@ -1561,15 +1565,12 @@ function showPlace(key) {
       <div class="reference">
 
         <strong>
-          📖 Primary Reference:
+          📖 Primary Reference${p.references && p.references.length > 1 ? "s" : ""}:
         </strong>
 
-        <a
-          href="${p.url}"
-          target="_blank"
-          rel="noopener noreferrer">
-          ${p.reference}
-        </a>
+        ${(p.references || [{label: p.reference, url: p.url}]).map(ref =>
+          `<a href="${ref.url}" target="_blank" rel="noopener noreferrer">${ref.label}</a>`
+        ).join(" · ")}
 
       </div>
 
