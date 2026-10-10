@@ -1248,7 +1248,15 @@ body {
 .app .honorific-guide{max-width:720px}
 .corrections .contact-email{color:#164b88;font-weight:600;overflow-wrap:anywhere}
 @media(max-width:600px){.honorific-guide dl>div{grid-template-columns:60px minmax(0,1fr);gap:8px}.honorific-guide{font-size:13px}.app .honorific-guide{margin-left:10px;margin-right:10px}}
-</style><link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48 64x64"><link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"></head>
+</style><link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48 64x64"><link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><style id="prophet-jump-styles">
+.prophet-jump{max-width:320px;margin:18px auto 0;text-align:left}
+.prophet-jump label{display:block;margin-bottom:6px;color:#596c62;font-size:13px;font-weight:600}
+.prophet-jump select{display:block;width:100%;min-height:44px;padding:10px 12px;border:1px solid #bfcfc5;border-radius:6px;background:#fffdf9;color:#263c35;font:16px Arial,Helvetica,sans-serif}
+.prophet-jump select:focus-visible{outline:2px solid #537a68;outline-offset:3px}
+.step{scroll-margin-top:24px}
+@media(max-width:600px){.prophet-jump{margin-top:14px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head>
 
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
@@ -1291,6 +1299,11 @@ body {
     Tap each Prophet to reveal a brief glimpse from their story and
     its Qur’anic reference.
   </p>
+
+  <div class="prophet-jump">
+    <label for="prophet-jump">Jump to a Prophet</label>
+    <select id="prophet-jump"><option value="">Choose a Prophet</option></select>
+  </div>
 
   <div
     class="title-decoration"
@@ -1876,6 +1889,15 @@ function toggleCard(card) {
 }
 
 
+const prophetJump = document.getElementById("prophet-jump");
+prophetJump.addEventListener("change", () => {
+  const step = document.getElementById(prophetJump.value);
+  if (!step) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  step.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth", block: "start" });
+  step.querySelector(".card").focus({ preventScroll: true });
+});
+
 prophets.forEach(
   (prophet,index) => {
 
@@ -1891,6 +1913,12 @@ prophets.forEach(
         "article"
       );
 
+
+    step.id = `prophet-${index + 1}`;
+    const option = document.createElement("option");
+    option.value = step.id;
+    option.textContent = `${prophet.name} (${prophet.honorific})`;
+    prophetJump.appendChild(option);
 
     step.className =
       `step ${
