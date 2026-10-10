@@ -33,7 +33,21 @@
     el('benefit-arabic').textContent = b.arabic || '';
     el('benefit-arabic').hidden = !b.arabic;
     el('benefit-text').textContent = b.text;
-    el('benefit-source').textContent = b.source;
+    const source = el('benefit-source');
+    source.replaceChildren();
+    if (b.url) {
+      const link = document.createElement('a');
+      link.href = b.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = b.source;
+      link.style.color = 'inherit';
+      link.style.textDecoration = 'underline';
+      link.style.textUnderlineOffset = '3px';
+      source.appendChild(link);
+    } else {
+      source.textContent = b.source;
+    }
     el('benefit-note').textContent = b.note || '';
   }
   el('another-term').addEventListener('click', showTerm);
