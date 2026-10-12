@@ -67,17 +67,32 @@
 <script>
 (function(){
   const bank = questions;
+  const baseIntroduction="Test yourself with questions from the AKS Ilm Islamic Trivia Library.";
+  const challengeIntroductions={"10":"Complete 10 questions and see how you do.","25":"Complete 25 questions and see how you do.","unlimited":"Keep exploring questions at your own pace."};
   const root=document.getElementById("sk-trivia-randomizer"), modeScreen=root.querySelector("#sk-mode"), quiz=root.querySelector("#sk-quiz"), finish=root.querySelector("#sk-finish"), reviewScreen=root.querySelector("#sk-review-screen"), score=root.querySelector("#sk-score"), progress=root.querySelector("#sk-progress"), number=root.querySelector("#sk-number"), question=root.querySelector("#sk-question"), options=root.querySelector("#sk-options"), answer=root.querySelector("#sk-answer"), milestone=root.querySelector("#sk-milestone"), next=root.querySelector("#sk-next"), reset=root.querySelector("#sk-reset"), exit=root.querySelector("#sk-exit"), again=root.querySelector("#sk-again"), review=root.querySelector("#sk-review"), reviewList=root.querySelector("#sk-review-list"), backResults=root.querySelector("#sk-back-results"), reviewAgain=root.querySelector("#sk-review-again"), finalScore=root.querySelector("#sk-final-score"), finalMessage=root.querySelector("#sk-final-message"), reviewScore=root.querySelector("#sk-review-score"), foot=root.querySelector("#sk-foot");
+  const introduction=root.querySelector(".sk-sub");
+  function positionPhoneQuiz(initial=false){
+    if(!window.matchMedia("(max-width:600px)").matches)return;
+    requestAnimationFrame(()=>{
+      if(!root.classList.contains("is-active-quiz"))return;
+      const target=initial?root:quiz;
+      if(!initial&&question.getBoundingClientRect().top>=12)return;
+      const top=Math.max(0,window.scrollY+target.getBoundingClientRect().top-12);
+      const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({top,behavior:reduceMotion?"instant":"smooth"});
+    });
+  }
   let deck=[],current=null,answered=false,correctCount=0,answeredCount=0,mode=null,limit=null,missed=[];
   const tenMessages={0:"Keep going! Every question is an opportunity to learn something new. 📖",1:"A start is a start! Keep learning and building your knowledge. 🌱",2:"Keep going! Each answer you learn is knowledge gained. 📚",3:"Good effort! Keep seeking knowledge and try again. 🌱",4:"You're making progress! Keep learning and improving. 📖",5:"Halfway there! A good effort — keep building your knowledge. 🌟",6:"Good job! Your knowledge is growing — keep going. 📚",7:"MashaAllah, well done! A strong result — keep learning. 🌟",8:"MashaAllah! Keep seeking beneficial knowledge. 🤲",9:"MashaAllah, excellent! Just one away from a perfect score. ⭐",10:"MashaAllah, perfect score! May Allah increase you in beneficial knowledge. 🤲✨"};
   function shuffleDeck(){deck=Array.from({length:bank.length},(_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
   function updateScore(){const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
-  function startMode(value){mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw()}
+  function startMode(value){root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[value];mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();positionPhoneQuiz(true)}
   function draw(){if(!deck.length)shuffleDeck();current=bank[deck.pop()];answered=false;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Question #"+n;question.textContent=q;const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";next.hidden=true;quiz.hidden=false}
   function drawNextQuestion(){
     if(mode!=="unlimited"&&answered&&answeredCount>=limit){completeChallenge();return;}
     draw();
     question.focus({preventScroll:true});
+    if(window.matchMedia("(max-width:600px)").matches){positionPhoneQuiz();return;}
     requestAnimationFrame(()=>{
       if(question.getBoundingClientRect().top>=0)return;
       const top=Math.max(0,window.scrollY+quiz.getBoundingClientRect().top-20);
@@ -87,10 +102,10 @@
   }
   function unlimitedMessage(){if(answeredCount===bank.length)return `🏆 MashaAllah! You’ve completed the entire Randomizer — all ${bank.length} questions. May Allah increase you in beneficial knowledge and understanding. 🤲`;if(answeredCount===25)return "🌟 25 questions completed! Keep seeking beneficial knowledge.";if(answeredCount===50)return "📚 50 questions completed! MashaAllah, keep it going.";if(answeredCount===75)return "🌟 75 questions completed! Your consistency is showing — keep learning.";if(answeredCount===100)return "🤲 MashaAllah, 100 questions completed! May Allah increase you in beneficial knowledge.";if(answeredCount>100&&answeredCount%25===0)return `📖 ${answeredCount} questions completed! Keep learning, reflecting, and growing in knowledge.`;return ""}
   function twentyFiveMessage(n){if(n<=5)return "Keep going! Every question is a chance to learn and grow in knowledge. 📖";if(n<=10)return "Good effort! Keep building your knowledge one question at a time. 🌱";if(n<=15)return "Well done! You're making good progress — keep seeking beneficial knowledge. 📚";if(n<=20)return "MashaAllah, strong performance! Keep learning and striving for more. 🌟";if(n<25)return "MashaAllah, excellent result! Your knowledge really showed in this challenge. ⭐";return "MashaAllah, a perfect 25/25! May Allah increase you in beneficial knowledge and understanding. 🤲✨"}
-  function completeChallenge(){quiz.hidden=true;score.hidden=true;finish.hidden=false;reviewScreen.hidden=true;const pct=Math.round(correctCount/answeredCount*100);finalScore.textContent=`${correctCount} / ${limit} correct • ${pct}%`;finalMessage.textContent=limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);if(missed.length){review.textContent=`📚 Review ${missed.length} Missed ${missed.length===1?"Question":"Questions"}`;review.hidden=false}else{review.hidden=true}again.focus()}
+  function completeChallenge(){root.classList.remove("is-active-quiz");introduction.textContent=baseIntroduction+" Your "+limit+"-question challenge is complete.";quiz.hidden=true;score.hidden=true;finish.hidden=false;reviewScreen.hidden=true;const pct=Math.round(correctCount/answeredCount*100);finalScore.textContent=`${correctCount} / ${limit} correct • ${pct}%`;finalMessage.textContent=limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);if(missed.length){review.textContent=`📚 Review ${missed.length} Missed ${missed.length===1?"Question":"Questions"}`;review.hidden=false}else{review.hidden=true}again.focus()}
   function checkAnswer(selected){if(!current||answered)return;answered=true;const[,,a,b,c,d,correct]=current;answeredCount++;if(selected===correct)correctCount++;else if(mode!=="unlimited")missed.push({item:current,selected});updateScore();const vals={A:a,B:b,C:c,D:d};options.querySelectorAll(".sk-option").forEach(btn=>{const letter=btn.dataset.letter;btn.disabled=true;if(letter===correct)btn.classList.add("sk-correct");if(letter===selected&&selected!==correct)btn.classList.add("sk-wrong")});if(selected===correct){answer.textContent="Correct! ✓  Answer: "+correct+") "+vals[correct];answer.classList.add("sk-result-correct")}else{answer.textContent="Incorrect. The correct answer is "+correct+") "+vals[correct];answer.classList.add("sk-result-wrong")}answer.hidden=false;if(mode==="unlimited"){const msg=unlimitedMessage();if(msg){milestone.textContent=msg;milestone.hidden=false}next.hidden=false;next.focus()}else if(answeredCount>=limit){next.textContent="See results";next.hidden=false;next.focus()}else{next.hidden=false;next.focus()}}
   function resetUnlimited(){if(mode!=="unlimited")return;correctCount=0;answeredCount=0;answered=false;shuffleDeck();updateScore();draw()}
-  function chooseAgain(){mode=null;limit=null;current=null;missed=[];quiz.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=true;reset.hidden=true;exit.hidden=true;review.hidden=true;modeScreen.hidden=false;modeScreen.querySelector(".sk-mode-btn").focus()}
+  function chooseAgain(){root.classList.remove("is-active-quiz");introduction.textContent=baseIntroduction+" Choose a challenge below to begin.";mode=null;limit=null;current=null;missed=[];quiz.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=true;reset.hidden=true;exit.hidden=true;review.hidden=true;modeScreen.hidden=false;modeScreen.querySelector(".sk-mode-btn").focus()}
   function showReview(){if(!missed.length)return;finish.hidden=true;reviewScreen.hidden=false;const pct=Math.round(correctCount/answeredCount*100);reviewScore.textContent=`Your result: ${correctCount} / ${limit} correct • ${pct}%`;reviewList.innerHTML="";missed.forEach(entry=>{const[n,q,a,b,c,d,correct]=entry.item,vals={A:a,B:b,C:c,D:d};const item=document.createElement("div");item.className="sk-review-item";const num=document.createElement("div");num.className="sk-review-number";num.textContent="Question #"+n;const qEl=document.createElement("div");qEl.className="sk-review-question";qEl.textContent=q;const userAns=document.createElement("div");userAns.className="sk-review-user-answer";const userStrong=document.createElement("strong");userStrong.textContent="Your answer: ";userAns.appendChild(userStrong);userAns.appendChild(document.createTextNode("❌ "+entry.selected+") "+vals[entry.selected]));const ans=document.createElement("div");ans.className="sk-review-answer";const strong=document.createElement("strong");strong.textContent="Correct answer: ";ans.appendChild(strong);ans.appendChild(document.createTextNode("✓ "+correct+") "+vals[correct]));item.appendChild(num);item.appendChild(qEl);item.appendChild(userAns);item.appendChild(ans);reviewList.appendChild(item)});backResults.focus()}
   function showResults(){reviewScreen.hidden=true;finish.hidden=false;review.focus()}
   root.querySelectorAll(".sk-mode-btn").forEach(btn=>btn.addEventListener("click",()=>startMode(btn.dataset.mode)));next.addEventListener("click",drawNextQuestion);reset.addEventListener("click",resetUnlimited);exit.addEventListener("click",chooseAgain);again.addEventListener("click",chooseAgain);review.addEventListener("click",showReview);backResults.addEventListener("click",showResults);reviewAgain.addEventListener("click",chooseAgain);foot.textContent=`${bank.length} questions in the current randomizer pool.`;shuffleDeck();
@@ -109,4 +124,24 @@
 #sk-mode .sk-mode-btn:hover{background:#eaf3fc!important;opacity:1}
 #sk-mode .sk-mode-btn:focus-visible{outline:3px solid #a9d3f6;outline-offset:3px}
 @media(max-width:600px){#sk-trivia-randomizer{width:calc(100% - 32px);padding:24px 18px}#sk-trivia-randomizer .sk-title{font-size:29px}#sk-mode{padding:24px 18px}#sk-mode .sk-mode-btn{font-size:14px}}
+</style><style id="compact-active-phone-quiz">
+@media(max-width:600px){
+#sk-trivia-randomizer.is-active-quiz{width:calc(100% - 24px);padding:14px}
+#sk-trivia-randomizer.is-active-quiz .sk-head{margin-bottom:8px}
+#sk-trivia-randomizer.is-active-quiz .sk-title{font-size:24px;line-height:1.2;margin-bottom:6px}
+#sk-trivia-randomizer.is-active-quiz .sk-sub{font-size:13px;line-height:1.45}
+#sk-trivia-randomizer.is-active-quiz .sk-score{max-width:100%;font-size:11.5px;line-height:1.4;padding:4px 8px;margin-top:7px}
+#sk-trivia-randomizer.is-active-quiz .sk-quiz{padding-top:0}
+#sk-trivia-randomizer.is-active-quiz .sk-progress{display:inline-block;font-size:11.5px;line-height:1.4;padding:4px 8px;margin:0 8px 8px 0}
+#sk-trivia-randomizer.is-active-quiz .sk-number{display:inline-block;font-size:10.5px;line-height:1.4;margin:0 0 8px}
+#sk-trivia-randomizer.is-active-quiz .sk-question{font-size:16px;line-height:1.4;margin-bottom:10px}
+#sk-trivia-randomizer.is-active-quiz .sk-options{gap:7px;margin-bottom:10px}
+#sk-trivia-randomizer.is-active-quiz .sk-option{min-height:44px;padding:8px 11px;font-size:15px;line-height:1.35}
+#sk-trivia-randomizer.is-active-quiz .sk-answer{font-size:14px;line-height:1.4;padding:8px 11px}
+#sk-trivia-randomizer.is-active-quiz .sk-milestone{margin-top:8px;padding:8px 11px;font-size:13px;line-height:1.4}
+#sk-trivia-randomizer.is-active-quiz .sk-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+#sk-trivia-randomizer.is-active-quiz #sk-next{grid-column:1/-1;min-height:44px;padding:10px 12px;font-size:14px}
+#sk-trivia-randomizer.is-active-quiz .sk-actions .sk-secondary{min-height:44px;padding:8px;font-size:12px;line-height:1.35}
+#sk-trivia-randomizer.is-active-quiz .sk-foot{display:none}
+}
 </style></body></html>
