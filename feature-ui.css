@@ -1,0 +1,12 @@
+/* Shared presentation for feature introductions and compact secondary controls. */
+.feature-page-heading h1{font:normal 40px/1.2 Georgia,'Times New Roman',serif;margin:0 0 12px;letter-spacing:normal;text-wrap:balance}
+.feature-page-heading>p{font:16px/1.65 Arial,Helvetica,sans-serif;max-width:680px;margin:0 auto}
+.feature-page-heading{margin-bottom:28px}
+.feature-page-heading>.page-title-illustration{width:46px;height:46px;margin:0 auto 10px}
+.secondary-control.secondary-control{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;border-radius:6px;font:600 14px/1.4 Arial,Helvetica,sans-serif;text-align:center;white-space:normal;cursor:pointer}
+.secondary-control:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+@media(max-width:600px){
+.feature-page-heading h1{font-size:clamp(28px,8vw,32px)}
+.feature-page-heading{margin-bottom:24px}
+.feature-page-heading>.page-title-illustration{width:42px;height:42px;margin-bottom:9px}
+}
