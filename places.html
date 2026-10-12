@@ -479,6 +479,11 @@
 #photo-viewer-caption{margin-top:10px;text-align:center;font:14px/1.5 Arial,sans-serif}
 #photo-viewer-source{display:inline-block;color:#164b88;font:12px/1.5 Arial,sans-serif;text-decoration:underline;text-underline-offset:3px}
 .photo-viewer-credit{text-align:center;margin-top:4px}
+</style><style id="selected-place-heading-style">
+.info .selected-place-heading{border-left:3px solid #2466a9;padding-left:12px;margin-bottom:15px}
+.info .selected-place-heading h3{margin:0 0 4px;color:#164b88;line-height:1.35;overflow-wrap:anywhere}
+.info .selected-place-heading .location{margin:0;color:#647b90;font-size:13px;line-height:1.5}
+@media(max-width:600px){.info .selected-place-heading{padding-left:10px}.info .selected-place-heading h3{font-size:19px}}
 </style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav><div class="page-heading"><h1>Explore Islamic Places</h1><p>Discover significant locations connected to the Qur’an, Sunnah, and Islamic history.</p></div>
@@ -1538,10 +1543,9 @@ function showPlace(key) {
   document
     .getElementById("info")
     .innerHTML = `
-      <h3>📍 ${p.name}</h3>
-
-      <div class="location">
-        ${p.location}
+      <div class="selected-place-heading">
+        <h3>${p.name}</h3>
+        <div class="location">${p.location}</div>
       </div>
 
       <div class="photo-wrap">
