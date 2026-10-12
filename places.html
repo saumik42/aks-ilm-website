@@ -467,7 +467,19 @@
     }
 
   </style>
-<link rel="stylesheet" href="./shared.css"><style>body{padding:0;background:#fff}.map-card{border-radius:12px}.map-title{color:#164b88}.info{font-size:16px}.info p{font-size:16px}.note{font-size:14px}.page-heading{max-width:1000px;padding:0 24px}</style><style>.place-picker{padding:14px 20px;display:flex;align-items:center;gap:18px;border-top:1px solid #dce7f2}.place-picker label{font-size:14px;color:#164b88}.place-picker select{font:16px Arial,sans-serif;padding:10px;border:1px solid #c9d9e9;border-radius:5px;background:white;max-width:100%;flex:1}@media(max-width:600px){.place-picker{flex-direction:column;align-items:stretch;gap:8px}}</style><style>.loading-inner{max-width:320px;padding:24px;line-height:1.65}.loading-inner p{margin:0 0 16px}#retry-map{min-height:44px;padding:10px 20px;background:#164b88;color:#fff;border:0;border-radius:6px;font:600 14px Arial,sans-serif;cursor:pointer}#retry-map:focus-visible{outline:3px solid #377fc5;outline-offset:3px}</style><link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48 64x64"><link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><style id="mobile-page-heading-balance">@media(max-width:600px){.page-heading h1{text-wrap:balance}}</style></head>
+<link rel="stylesheet" href="./shared.css"><style>body{padding:0;background:#fff}.map-card{border-radius:12px}.map-title{color:#164b88}.info{font-size:16px}.info p{font-size:16px}.note{font-size:14px}.page-heading{max-width:1000px;padding:0 24px}</style><style>.place-picker{padding:14px 20px;display:flex;align-items:center;gap:18px;border-top:1px solid #dce7f2}.place-picker label{font-size:14px;color:#164b88}.place-picker select{font:16px Arial,sans-serif;padding:10px;border:1px solid #c9d9e9;border-radius:5px;background:white;max-width:100%;flex:1}@media(max-width:600px){.place-picker{flex-direction:column;align-items:stretch;gap:8px}}</style><style>.loading-inner{max-width:320px;padding:24px;line-height:1.65}.loading-inner p{margin:0 0 16px}#retry-map{min-height:44px;padding:10px 20px;background:#164b88;color:#fff;border:0;border-radius:6px;font:600 14px Arial,sans-serif;cursor:pointer}#retry-map:focus-visible{outline:3px solid #377fc5;outline-offset:3px}</style><link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48 64x64"><link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><style id="mobile-page-heading-balance">@media(max-width:600px){.page-heading h1{text-wrap:balance}}</style><style id="location-photo-viewer-style">
+.photo-enlarge{display:block;width:100%;padding:0;border:0;border-radius:12px;background:transparent;cursor:zoom-in}
+.photo-enlarge:focus-visible{outline:3px solid #2466a9;outline-offset:4px}
+#location-photo-viewer{width:min(1100px,calc(100% - 24px));max-width:none;max-height:calc(100svh - 24px);padding:14px;border:0;border-radius:12px;background:#fff;color:#153451;box-shadow:0 20px 70px #0005;overflow:auto}
+#location-photo-viewer::backdrop{background:rgba(7,26,43,.82)}
+.photo-viewer-tools{display:flex;justify-content:flex-end;margin-bottom:10px}
+#photo-viewer-close{min-width:44px;min-height:44px;padding:8px 14px;border:1px solid #c9d9e9;border-radius:6px;background:#f2f7fc;color:#164b88;font:600 16px Arial,sans-serif;cursor:pointer}
+#location-photo-viewer figure{margin:0}
+#photo-viewer-image{display:block;max-width:100%;width:auto;height:auto;max-height:72vh;max-height:72svh;object-fit:contain;margin:0 auto;border-radius:6px}
+#photo-viewer-caption{margin-top:10px;text-align:center;font:14px/1.5 Arial,sans-serif}
+#photo-viewer-source{display:inline-block;color:#164b88;font:12px/1.5 Arial,sans-serif;text-decoration:underline;text-underline-offset:3px}
+.photo-viewer-credit{text-align:center;margin-top:4px}
+</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav><div class="page-heading"><h1>Explore Islamic Places</h1><p>Discover significant locations connected to the Qur’an, Sunnah, and Islamic history.</p></div>
 
@@ -1534,12 +1546,14 @@ function showPlace(key) {
 
       <div class="photo-wrap">
 
+        <button type="button" class="photo-enlarge" aria-label="Enlarge location photo" aria-haspopup="dialog">
         <img
           class="location-photo"
           src="${imageURL}"
           alt="${p.photoAlt}"
           loading="lazy"
           referrerpolicy="no-referrer">
+        </button>
 
         <div class="photo-caption">
 
@@ -2023,5 +2037,43 @@ if (
 
 </script>
 
-<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value)});</script></body>
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value)});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
+<div class="photo-viewer-tools"><button id="photo-viewer-close" type="button" autofocus>Close ×</button></div>
+<figure><img id="photo-viewer-image" alt="" referrerpolicy="no-referrer"><figcaption id="photo-viewer-caption"></figcaption></figure>
+<div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Photo source: Wikimedia Commons ↗</a></div>
+</dialog><script id="location-photo-viewer-script">(()=>{
+  const viewer=document.getElementById('location-photo-viewer');
+  const info=document.getElementById('info');
+  let trigger=null, savedY=0, savedOverflow='';
+  info.addEventListener('click',event=>{
+    const button=event.target.closest('.photo-enlarge');
+    if(!button||viewer.open)return;
+    const photo=button.querySelector('.location-photo');
+    const caption=button.parentElement.querySelector('.photo-caption');
+    const source=caption.querySelector('a');
+    const enlarged=document.getElementById('photo-viewer-image');
+    enlarged.src=photo.currentSrc||photo.src;
+    enlarged.alt=photo.alt;
+    document.getElementById('photo-viewer-caption').textContent=caption.querySelector('span').textContent.trim();
+    document.getElementById('photo-viewer-source').href=source.href;
+    trigger=button;
+    savedY=window.scrollY;
+    savedOverflow=document.documentElement.style.overflow;
+    viewer.showModal();
+    document.documentElement.style.overflow='hidden';
+  });
+  document.getElementById('photo-viewer-close').addEventListener('click',()=>viewer.close());
+  viewer.addEventListener('click',event=>{
+    if(event.target!==viewer)return;
+    const bounds=viewer.getBoundingClientRect();
+    if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom)viewer.close();
+  });
+  viewer.addEventListener('close',()=>{
+    document.documentElement.style.overflow=savedOverflow;
+    if(trigger&&trigger.isConnected)trigger.focus({preventScroll:true});
+    window.scrollTo({top:savedY,behavior:'instant'});
+    document.getElementById('photo-viewer-image').removeAttribute('src');
+    trigger=null;
+  });
+})();</script></body>
 </html>
