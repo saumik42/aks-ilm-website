@@ -766,7 +766,14 @@
   .mobile-distance-slot{display:block;margin:12px -9px -9px;padding:15px 16px 17px;background:#fff;border-top:1px solid var(--border);text-align:center}
   .mobile-distance-slot .distance-value{font-size:36px}
 }
-</style><style id="mobile-page-heading-balance">@media(max-width:600px){.feature .header h1{text-wrap:balance}}</style></head>
+</style><style id="mobile-page-heading-balance">@media(max-width:600px){.feature .header h1{text-wrap:balance}}</style><style id="distance-unit-switch-style">
+.distance-unit-switch{display:inline-flex;align-items:center;gap:2px;margin-left:4px;vertical-align:middle;font:600 14px/1.2 Arial,Helvetica,sans-serif}
+.distance-unit-switch label{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:44px;cursor:pointer}
+.distance-unit-switch input{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.distance-unit-switch label>span{padding:5px 2px;color:#667784;border-bottom:2px solid transparent}
+.distance-unit-switch input:checked+span{color:#2466a9;border-bottom-color:#2466a9}
+.distance-unit-switch input:focus-visible+span{outline:3px solid #377fc5;outline-offset:4px;border-radius:2px}
+</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
 
@@ -936,7 +943,10 @@
 
         <div class="distance-value">
           <span id="distanceNumber">—</span>
-          <span class="distance-unit">km</span>
+          <span class="distance-unit-switch" role="group" aria-label="Distance unit">
+            <label><input type="radio" name="distance-unit" value="km" checked><span>km</span></label>
+            <label><input type="radio" name="distance-unit" value="mi"><span>mi</span></label>
+          </span>
         </div>
 
         </div>
@@ -1044,6 +1054,27 @@
     const perspective = document.getElementById("perspective");
     const perspectiveButton = document.getElementById("perspectiveButton");
     const tryAgainBtn = document.getElementById("tryAgainBtn");
+
+    let currentDistanceKm = null;
+    let currentDistanceCity = "";
+    let selectedDistanceUnit = "km";
+    function renderDistanceUnit() {
+      if (currentDistanceKm === null) return;
+      const value = Math.round(selectedDistanceUnit === "mi" ? currentDistanceKm / 1.609344 : currentDistanceKm);
+      const formatted = value.toLocaleString();
+      distanceNumber.textContent = formatted;
+      distanceNumber.setAttribute("aria-label", formatted + (selectedDistanceUnit === "mi" ? " miles" : " kilometres"));
+      reflection.textContent = `From ${currentDistanceCity}, the Kaʿbah is approximately ${formatted} ${selectedDistanceUnit} away. Wherever Muslims are in the world, they turn toward the Kaʿbah in Makkah during Ṣalāh.`;
+    }
+    document.querySelectorAll('input[name="distance-unit"]').forEach(input => {
+      input.addEventListener("change", () => {
+        if (!input.checked) return;
+        selectedDistanceUnit = input.value;
+        renderDistanceUnit();
+      });
+    });
+
+
 
     const mapWrap = document.getElementById("mapWrap");
     const mapViewport = document.getElementById("mapViewport");
@@ -2548,9 +2579,8 @@
           location.country ||
           "Selected location";
 
-        distanceNumber.textContent =
-          roundedDistance
-            .toLocaleString();
+        currentDistanceKm = distance;
+        currentDistanceCity = location.city;
 
         directionText.textContent =
           direction;
@@ -2575,8 +2605,7 @@
         flightComparison.textContent =
           `At 900 km/h, covering the same distance continuously would take roughly ${conceptualHours.toFixed(1)} hours.`;
 
-        reflection.textContent =
-          `From ${location.city}, the Kaʿbah is approximately ${roundedDistance.toLocaleString()} km away. Wherever Muslims are in the world, they turn toward the Kaʿbah in Makkah during Ṣalāh.`;
+        renderDistanceUnit();
 
         const startPlane = drawMapMarkers(
           location.city,
