@@ -547,11 +547,11 @@
 
 <script>
 
-function commonsImage(filename) {
+function commonsImage(filename, width = 960) {
   return (
     "https://commons.wikimedia.org/wiki/Special:Redirect/file/" +
     encodeURIComponent(filename) +
-    "?width=1800"
+    "?width=" + width
   );
 }
 
@@ -1558,6 +1558,10 @@ function showPlace(key) {
         <img
           class="location-photo"
           src="${imageURL}"
+          srcset="${commonsImage(p.photoFile,480)} 480w, ${imageURL} 960w"
+          sizes="(max-width:620px) calc(100vw - 50px), (max-width:990px) calc(100vw - 82px), 908px"
+          data-full-src="${commonsImage(p.photoFile,1800)}"
+          decoding="async"
           alt="${p.photoAlt}"
           loading="lazy"
           referrerpolicy="no-referrer">
@@ -1684,6 +1688,9 @@ function showRegionalMap() {
 
       </div>
     `;
+
+  // The introductory card can reset even while the map is loading or unavailable.
+  if (!map || !mapLoadedSuccessfully || !locationLayersReady || mapUnavailable) return;
 
   setLocationData([
     makeFeature("quds", places.quds.lng, places.quds.lat),
@@ -2045,7 +2052,7 @@ if (
 
 </script>
 
-<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value)});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
 <div class="photo-viewer-tools"><button id="photo-viewer-close" type="button" autofocus>Close ×</button></div>
 <figure><img id="photo-viewer-image" alt="" referrerpolicy="no-referrer"><figcaption id="photo-viewer-caption"></figcaption></figure>
 <div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Photo source: Wikimedia Commons ↗</a></div>
@@ -2060,7 +2067,7 @@ if (
     const caption=button.parentElement.querySelector('.photo-caption');
     const source=caption.querySelector('a');
     const enlarged=document.getElementById('photo-viewer-image');
-    enlarged.src=photo.currentSrc||photo.src;
+    enlarged.src=photo.dataset.fullSrc||photo.currentSrc||photo.src;
     enlarged.alt=photo.alt;
     document.getElementById('photo-viewer-caption').textContent=caption.querySelector('span').textContent.trim();
     document.getElementById('photo-viewer-source').href=source.href;
