@@ -773,7 +773,7 @@
 .distance-unit-switch label>span{padding:5px 2px;color:#667784;border-bottom:2px solid transparent}
 .distance-unit-switch input:checked+span{color:#2466a9;border-bottom-color:#2466a9}
 .distance-unit-switch input:focus-visible+span{outline:3px solid #377fc5;outline-offset:4px;border-radius:2px}
-</style></head>
+</style><style id="route-journey-style">.route{stroke:url(#route-gradient)}#planeLayer{pointer-events:none}</style></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-480.webp" srcset="./assets/logo-480.webp 480w, ./assets/logo-960.webp 960w" sizes="(max-width: 380px) 120px, (max-width: 600px) 150px, 185px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a></div></nav>
 
@@ -873,6 +873,7 @@
             role="img"
             aria-label="World map showing the selected city and Makkah"
           >
+            <defs><linearGradient id="route-gradient" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9acfff"/><stop offset="1" stop-color="#f0d88a"/></linearGradient></defs>
             <g id="mapViewport">
               <g id="graticuleLayer"></g>
               <g id="countriesLayer"></g>
@@ -2068,6 +2069,44 @@
       return label;
     }
 
+    function greatCircleRoute(lat, lon) {
+      const vector = (latitude, longitude) => {
+        const phi = toRadians(latitude), lambda = toRadians(longitude);
+        return [Math.cos(phi)*Math.cos(lambda), Math.cos(phi)*Math.sin(lambda), Math.sin(phi)];
+      };
+      const a = vector(lat, lon), b = vector(KABAH.lat, KABAH.lon);
+      const dot = Math.max(-1, Math.min(1, a.reduce((sum, value, i) => sum + value*b[i], 0)));
+      const angle = Math.acos(dot);
+      let tangent = b.map((value, i) => value - dot*a[i]);
+      let length = Math.hypot(...tangent);
+      if (length < 1e-10 && dot < 0) {
+        // Opposite points have multiple equally short routes; choose a stable one.
+        const axis = Math.abs(a[2]) < .9 ? [0,0,1] : [0,1,0];
+        tangent = [axis[1]*a[2]-axis[2]*a[1], axis[2]*a[0]-axis[0]*a[2], axis[0]*a[1]-axis[1]*a[0]];
+        length = Math.hypot(...tangent);
+      }
+      const basis = length ? tangent.map(value => value/length) : [0,0,0];
+      const points = [];
+      for (let i = 0; i <= 128; i++) {
+        const t = i/128;
+        let latitude = lat, longitude = lon;
+        if (i === 128) { latitude = KABAH.lat; longitude = KABAH.lon; }
+        else if (angle > 1e-10) {
+          const v = a.map((value, index) => value*Math.cos(angle*t) + basis[index]*Math.sin(angle*t));
+          latitude = Math.atan2(v[2], Math.hypot(v[0],v[1]))*180/Math.PI;
+          longitude = Math.atan2(v[1],v[0])*180/Math.PI;
+        }
+        const point = project(longitude, latitude);
+        if (points.length) {
+          const previous = points[points.length-1].x;
+          while (point.x-previous > MAP_WIDTH/2) point.x -= MAP_WIDTH;
+          while (point.x-previous < -MAP_WIDTH/2) point.x += MAP_WIDTH;
+        }
+        points.push(point);
+      }
+      return points;
+    }
+
     let routePlaneFrame = null;
     function clearRoutePlane() {
       if (routePlaneFrame !== null) cancelAnimationFrame(routePlaneFrame);
@@ -2075,9 +2114,36 @@
       document.getElementById("planeLayer").replaceChildren();
     }
 
-    function animateRoutePlane(startX, startY, controlX, controlY, endX, endY) {
+    function pulseRouteArrival() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const layer = document.getElementById("planeLayer");
+      const destination = project(KABAH.lon, KABAH.lat);
+      const halo = createSVGElement("circle", {
+        cx: destination.x, cy: destination.y, r: 7, fill: "none",
+        stroke: "#f0d88a", "stroke-width": 1.5,
+        "vector-effect": "non-scaling-stroke", "aria-hidden": "true"
+      });
+      layer.appendChild(halo);
+      let started = null;
+      function step(now) {
+        if (started === null) started = now;
+        const progress = Math.min((now-started)/650, 1);
+        const eased = 1-Math.pow(1-progress,2);
+        halo.setAttribute("r", 7+11*eased);
+        halo.setAttribute("opacity", .55*(1-progress));
+        if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
+        else { routePlaneFrame = null; halo.remove(); }
+      }
+      routePlaneFrame = requestAnimationFrame(step);
+    }
+
+    function animateRoutePlane(points) {
       clearRoutePlane();
       const layer = document.getElementById("planeLayer");
+      if (points.every(point => Math.hypot(point.x-points[0].x, point.y-points[0].y) < 2)) {
+        pulseRouteArrival();
+        return;
+      }
       const plane = createSVGElement("g", {class: "route-plane", "aria-hidden": "true"});
       const silhouette = createSVGElement("path", {
         d: "M12 0 L3 -2 L-3 -10 L-6 -10 L-3 -2 L-10 -2 L-13 -5 L-15 -5 L-13 0 L-15 5 L-13 5 L-10 2 L-3 2 L-6 10 L-3 10 L3 2 Z"
@@ -2085,16 +2151,16 @@
       plane.appendChild(silhouette);
       layer.appendChild(plane);
       function position(t) {
-        const u = 1 - t;
-        const x = u*u*startX + 2*u*t*controlX + t*t*endX;
-        const y = u*u*startY + 2*u*t*controlY + t*t*endY;
-        const dx = 2*u*(controlX-startX) + 2*t*(endX-controlX);
-        const dy = 2*u*(controlY-startY) + 2*t*(endY-controlY);
-        const angle = Math.atan2(dy, dx)*180/Math.PI;
+        const index = t*(points.length-1);
+        const segment = Math.min(Math.floor(index), points.length-2);
+        const fraction = index-segment;
+        const a = points[segment], b = points[segment+1];
+        const x = a.x+(b.x-a.x)*fraction, y = a.y+(b.y-a.y)*fraction;
+        const angle = Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
         const visibleX = ((x % MAP_WIDTH) + MAP_WIDTH) % MAP_WIDTH;
         plane.setAttribute("transform", "translate("+visibleX+" "+(y-15)+") rotate("+angle+") scale(.85)");
       }
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         position(.5);
         return;
       }
@@ -2102,10 +2168,10 @@
       function step(now) {
         if (started === null) started = now;
         const progress = Math.min((now-started)/2200, 1);
-        position(.1 + .8*progress);
+        position(.04 + .96*progress);
         plane.style.opacity = String(progress > .85 ? (1-progress)/.15 : 1);
         if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
-        else { routePlaneFrame = null; layer.replaceChildren(); }
+        else { routePlaneFrame = null; layer.replaceChildren(); pulseRouteArrival(); }
       }
       routePlaneFrame = requestAnimationFrame(step);
     }
@@ -2130,92 +2196,27 @@
           KABAH.lat
         );
 
-      let cityX =
-        city.x;
-
-      let makkahX =
-        makkah.x;
-
-      const difference =
-        makkahX - cityX;
-
-      if (
-        Math.abs(difference) >
-        MAP_WIDTH / 2
-      ) {
-
-        if (difference > 0) {
-          cityX += MAP_WIDTH;
-        } else {
-          makkahX += MAP_WIDTH;
-        }
+      const points = greatCircleRoute(lat, lon);
+      const first = points[0], last = points[points.length-1];
+      const gradient = document.getElementById("route-gradient");
+      gradient.setAttribute("x1", first.x);
+      gradient.setAttribute("y1", first.y);
+      gradient.setAttribute("x2", last.x);
+      gradient.setAttribute("y2", last.y);
+      const route = createSVGElement("path", {
+        d: points.map((point,index) => (index ? "L " : "M ") + point.x.toFixed(3) + " " + point.y.toFixed(3)).join(" "),
+        class: "route"
+      });
+      routeLayer.appendChild(route);
+      if (points.some(point => point.x > MAP_WIDTH)) {
+        const copy = route.cloneNode();
+        copy.setAttribute("transform", "translate(-"+MAP_WIDTH+",0)");
+        routeLayer.appendChild(copy);
       }
-
-      const midX =
-        (cityX + makkahX) / 2;
-
-      const midY =
-        Math.min(
-          city.y,
-          makkah.y
-        ) -
-        Math.max(
-          28,
-          Math.abs(
-            cityX - makkahX
-          ) * 0.09
-        );
-
-      const route =
-        createSVGElement(
-          "path",
-          {
-            d:
-              `M ${cityX} ${city.y}
-               Q ${midX} ${midY}
-               ${makkahX} ${makkah.y}`,
-            class: "route"
-          }
-        );
-
-      routeLayer.appendChild(
-        route
-      );
-
-      if (
-        cityX > MAP_WIDTH ||
-        makkahX > MAP_WIDTH
-      ) {
-
-        const copy =
-          route.cloneNode();
-
-        copy.setAttribute(
-          "transform",
-          `translate(-${MAP_WIDTH},0)`
-        );
-
-        routeLayer.appendChild(
-          copy
-        );
-      }
-
-      if (
-        cityX < 0 ||
-        makkahX < 0
-      ) {
-
-        const copy =
-          route.cloneNode();
-
-        copy.setAttribute(
-          "transform",
-          `translate(${MAP_WIDTH},0)`
-        );
-
-        routeLayer.appendChild(
-          copy
-        );
+      if (points.some(point => point.x < 0)) {
+        const copy = route.cloneNode();
+        copy.setAttribute("transform", "translate("+MAP_WIDTH+",0)");
+        routeLayer.appendChild(copy);
       }
 
       markerLayer.appendChild(
@@ -2292,7 +2293,7 @@
         "Saudi Arabia",
         "map-sub-label"
       );
-      return () => animateRoutePlane(cityX, city.y, midX, midY, makkahX, makkah.y);
+      return () => animateRoutePlane(points);
     }
 
     /* ------------------------------
