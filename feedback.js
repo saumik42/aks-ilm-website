@@ -2,7 +2,7 @@
  const form=document.getElementById('aks-feedback-form');
  if(!form)return;
  const panel=document.getElementById('feedback'),actionText=panel.querySelector('.feedback-action-text');
- function updateToggleLabel(){actionText.textContent=panel.open?'Close':'Leave feedback'}
+ function updateToggleLabel(){actionText.textContent=panel.open?'Hide form':'Leave feedback';panel.querySelector('.feedback-symbol').textContent=panel.open?'−':'+'}
  panel.addEventListener('toggle',updateToggleLabel);updateToggleLabel();
  const message=form.elements.feedback,button=form.querySelector('button[type="submit"]'),status=document.getElementById('aks-feedback-status'),counter=document.getElementById('aks-feedback-count');
  message.addEventListener('input',()=>{counter.textContent=message.value.length.toLocaleString()+' / 1,000';status.textContent='';status.removeAttribute('role');message.removeAttribute('aria-invalid')});
