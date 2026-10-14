@@ -1,0 +1,20 @@
+/* Compact map destinations in the existing feature-page navigation. */
+.site-nav>div{flex-wrap:wrap;justify-content:flex-end;row-gap:5px}
+.site-nav>div>a,.site-nav .nav-maps>.nav-maps-toggle{display:flex;align-items:center;min-height:29px}
+.site-nav .nav-maps{position:relative;flex:0 0 auto}
+.site-nav .nav-maps>.nav-maps-toggle{list-style:none;gap:4px;padding:0;border:0;background:transparent;color:#164b88;font:inherit;line-height:1.65;cursor:pointer;white-space:nowrap}
+.site-nav .nav-maps>.nav-maps-toggle::-webkit-details-marker{display:none}
+.site-nav .nav-maps>.nav-maps-toggle::marker{content:''}
+.site-nav .nav-maps>.nav-maps-toggle:hover{color:#377fc5}
+.site-nav .nav-maps>.nav-maps-toggle:focus-visible{outline:3px solid #377fc5;outline-offset:4px}
+.site-nav .nav-maps>.nav-maps-toggle svg{width:13px;height:13px;flex:0 0 13px;transition:transform .18s ease}
+.site-nav .nav-maps.is-open>.nav-maps-toggle svg{transform:rotate(180deg)}
+.site-nav .nav-map-links{position:absolute;right:0;top:calc(100% + 8px);box-sizing:border-box;width:230px;max-width:calc(100vw - 48px);padding:5px;background:#fff;border:1px solid #dce7f2;border-radius:8px;box-shadow:0 8px 22px #164b8815;z-index:100}
+.site-nav .nav-maps:not(.is-open) .nav-map-links,.site-nav .nav-map-links[hidden]{display:none!important}
+.site-nav .nav-map-links>a{display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:47px;padding:9px 10px;border-radius:5px;color:#164b88;white-space:normal;font:13px/1.4 Arial,Helvetica,sans-serif;text-decoration:none}
+.site-nav .nav-map-links>a:hover{background:#edf5fc}
+.site-nav .nav-map-links img{display:block;flex:0 0 26px;width:26px;height:26px;object-fit:contain}
+@media(max-width:600px){.site-nav>div{justify-content:initial}.site-nav .nav-maps{align-self:start}}
+@media(prefers-reduced-motion:reduce){.site-nav .nav-maps>.nav-maps-toggle svg{transition:none}}
+
+.site-nav .nav-maps-toggle{appearance:none;-webkit-appearance:none;border-radius:0;text-align:left;letter-spacing:normal;box-shadow:none}
