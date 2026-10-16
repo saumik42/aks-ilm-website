@@ -1,0 +1,18 @@
+.map-holder .map-expand-trigger{position:absolute;top:10px;right:10px;z-index:25;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 12px;border:1px solid #c9d9e9;border-radius:6px;background:#fff;color:#164b88;box-shadow:0 2px 8px #15345112;font:600 13px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
+.map-expand-trigger svg{width:17px;height:17px;flex:0 0 17px}
+.map-expand-trigger:focus-visible,#expanded-map-close:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+#expanded-map-dialog{box-sizing:border-box;position:fixed;inset:0;width:100%;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:#fff;color:#153451;overflow:hidden}
+#expanded-map-dialog[open]{display:flex;flex-direction:column}
+#expanded-map-dialog::backdrop{background:#071a2bb8}
+.expanded-map-toolbar{display:flex;flex:0 0 auto;align-items:center;justify-content:space-between;gap:12px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));border-bottom:1px solid #dce7f2;background:#f6f9fd}
+.expanded-map-toolbar h2{margin:0;color:#164b88;font:600 15px/1.4 Arial,Helvetica,sans-serif}
+#expanded-map-close{flex:0 0 auto;min-width:80px;min-height:44px;padding:9px 13px;border:1px solid #c9d9e9;border-radius:6px;background:#fff;color:#164b88;font:600 14px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
+#expanded-map-dialog .map-shell{display:flex;flex:1 1 auto;flex-direction:column;width:100%;min-height:0;border:0;border-radius:0;box-shadow:none}
+#expanded-map-dialog .map-topbar{flex:0 0 auto;flex-wrap:wrap}
+#expanded-map-dialog .map-title{flex:1 1 100px;overflow-wrap:anywhere}
+#expanded-map-dialog .place-picker{flex:0 0 auto;flex-direction:row;align-items:center;gap:10px;padding:10px 12px}
+#expanded-map-dialog .place-picker label{flex:0 0 auto;font-size:12px}
+#expanded-map-dialog .place-picker select{min-width:0;width:0}
+#expanded-map-dialog .map-holder{flex:1 1 auto;height:auto;min-height:0}
+#expanded-map-dialog #map{min-height:0;height:100%}
+#expanded-map-dialog .map-expand-trigger{display:none}
