@@ -1,5 +1,6 @@
 /* A separate host-led activity; individual quiz styles and scoring stay isolated. */
 #sk-trivia-randomizer .aks-group-entry{display:grid;grid-template-columns:58px minmax(0,1fr);gap:14px;align-items:start;margin-top:25px;padding-top:21px;border-top:1px solid #dce7f2;text-align:left}
+#sk-trivia-randomizer.is-loading-questions .aks-group-entry,#sk-trivia-randomizer #sk-mode[hidden]+.aks-group-entry{display:none!important}
 #sk-trivia-randomizer .aks-group-art{display:block;width:58px;height:58px;object-fit:contain;margin-top:3px}
 #sk-trivia-randomizer .aks-group-entry h2{margin:0 0 5px;color:#164b88;font:normal 23px/1.25 Georgia,'Times New Roman',serif}
 #sk-trivia-randomizer .aks-group-entry p{margin:0 0 3px;max-width:460px;color:#647b90;font:13px/1.6 Arial,Helvetica,sans-serif}
