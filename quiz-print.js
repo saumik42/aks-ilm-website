@@ -49,6 +49,7 @@
  if(typeof questions!=='undefined')acceptBank(questions);
  trigger.addEventListener('click',()=>{
   if(!bank.length||dialog.open)return;
+  document.body.classList.remove('aks-printing-quiz');
   savedOverflow=document.documentElement.style.overflow;
   status.textContent='';dialog.showModal();document.documentElement.style.overflow='hidden';
  });
@@ -68,6 +69,7 @@
   const sheets=chunk(selected,4),keys=chunk(selected,20);
   output.innerHTML=sheets.map((rows,i)=>makeSheet(rows,false,i,sheets.length)).join('')+keys.map((rows,i)=>makeSheet(rows,true,i,keys.length)).join('');
   document.body.classList.add('aks-printing-quiz');
+  document.documentElement.style.overflow=savedOverflow;
   dialog.close();
   try{window.print()}catch(_){
    document.body.classList.remove('aks-printing-quiz');dialog.showModal();document.documentElement.style.overflow='hidden';
