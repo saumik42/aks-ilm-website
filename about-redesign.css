@@ -175,3 +175,16 @@ body{background:#f5f9fd}
 #aks-about-page .ae-chapter summary:focus-visible{outline:3px solid #377fc5;outline-offset:4px}
 
 #aks-about-page>.site-nav{margin-bottom:0}
+
+@media(min-width:761px){
+/* Keep all three closing sections in one consistent reading column. */
+#aks-about-page .ae-principles{display:block;margin-top:32px}
+#aks-about-page .ae-principles>section:nth-child(n){position:relative;display:block;max-width:790px;margin:0 auto 30px;padding:20px 0 0;border:0;background:none}
+#aks-about-page .ae-principles>section:nth-child(n):before{content:"";position:absolute;top:0;left:0;width:42px;height:2px;background:linear-gradient(90deg,#377fc5,#71aaa9)}
+#aks-about-page .ae-principles>section:nth-child(n) h2{position:static;font:normal 27px/1.25 Georgia,serif;color:#164b88;margin:0 0 14px;padding:0}
+#aks-about-page .ae-principles>section:nth-child(n) h2:before{display:none}
+#aks-about-page .ae-principles>section:nth-child(n) p,#aks-about-page .ae-principles>section:nth-child(n) p:last-child{max-width:none;font:normal 16px/1.85 Arial,Helvetica,sans-serif;margin:0 0 14px;padding:0;border:0}
+#aks-about-page .ae-principles>section:nth-child(n) p:last-child{margin-bottom:0}
+#aks-about-page .ae-publishing .ae-process{margin:24px 0 0;max-width:520px;width:100%}
+
+}
