@@ -7,6 +7,6 @@ body{background:#fff;color:#153451;font-family:Arial,Helvetica,sans-serif;margin
 
 /* Compact shared branding */
 .site-nav .site-brand{display:block;flex:0 0 auto;line-height:0}
-.site-logo{display:block;width:185px;max-width:100%;height:auto}
-@media(max-width:600px){.site-logo{width:150px}.site-nav>div{grid-template-columns:max-content max-content}.site-nav>div>a{white-space:nowrap}}
-@media(max-width:380px){.site-logo{width:120px}.site-nav{gap:10px}.site-nav>div{font-size:12px;column-gap:10px}}
+.site-logo{display:block;width:200px;max-width:100%;height:auto}
+@media(max-width:600px){.site-logo{width:160px}.site-nav>div{grid-template-columns:max-content max-content}.site-nav>div>a{white-space:nowrap}}
+@media(max-width:380px){.site-logo{width:126px}.site-nav{gap:10px}.site-nav>div{font-size:12px;column-gap:10px}}
