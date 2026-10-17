@@ -1,0 +1,12 @@
+/* Compact discovery stamps, scoped to the existing place card. */
+.info .selected-place-heading{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.info .selected-place-copy{flex:1;min-width:0}
+.info .place-discovery-stamp{box-sizing:border-box;display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:128px;min-height:58px;padding:6px 8px;border:1px solid #3a74a6;border-radius:3px;outline:1px solid #3a74a64a;outline-offset:2px;color:#2b689d;background:repeating-linear-gradient(0deg,transparent 0 2px,#377fc503 2px 3px);transform:rotate(-4deg);text-align:center;pointer-events:none}
+.info .place-stamp-label{font:600 8.5px/1.2 Arial,sans-serif;letter-spacing:1.8px;text-transform:uppercase}
+.info .place-stamp-name{font:normal 11.5px/1.2 Georgia,serif;overflow-wrap:anywhere}
+.info .place-stamp-brand{font:normal 7.5px/1.2 Arial,sans-serif;letter-spacing:1.5px;color:#527b9e}
+.info .place-discovery-stamp.is-new-discovery{animation:aks-place-stamp .42s ease-out both}
+@keyframes aks-place-stamp{0%{opacity:0;transform:rotate(-9deg) scale(1.1)}65%{opacity:1;transform:rotate(-4deg) scale(.98)}100%{opacity:1;transform:rotate(-4deg) scale(1)}}
+@media(max-width:600px){.info .selected-place-heading{gap:11px}.info .place-discovery-stamp{width:112px;padding:5px 6px;min-height:54px}}
+@media(max-width:380px){.info .selected-place-heading{flex-wrap:wrap}.info .selected-place-copy{flex-basis:100%}.info .place-discovery-stamp{margin:0 2px 2px auto}}
+@media(prefers-reduced-motion:reduce){.info .place-discovery-stamp.is-new-discovery{animation:none}}

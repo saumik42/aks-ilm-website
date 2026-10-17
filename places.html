@@ -488,7 +488,7 @@
 .page-title-illustration{display:block;width:46px;height:46px;object-fit:contain;margin:0 auto 10px}
 .page-heading{text-align:center}
 @media(max-width:600px){.page-title-illustration{width:42px;height:42px;margin-bottom:9px}}
-</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="places-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./map-expand.css?v=1"><script defer src="./map-expand.js?v=1"></script></head>
+</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="places-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./map-expand.css?v=1"><script defer src="./map-expand.js?v=1"></script><link rel="stylesheet" href="./discovery-stamps.css?v=1"></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-transparent-480.webp" srcset="./assets/logo-transparent-480.webp 480w, ./assets/logo-transparent-960.webp 960w" sizes="(max-width: 380px) 126px, (max-width: 600px) 160px, 200px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a><div class="nav-maps"><button type="button" class="nav-maps-toggle" aria-current="true" aria-expanded="false" aria-controls="nav-map-destinations">Maps<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="nav-map-links" id="nav-map-destinations" hidden><a href="./places.html" aria-current="page"><img src="./assets/feature-places.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Islamic Places</a><a href="./kabah.html"><img src="./assets/feature-kabah.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Distance to the Kaʿbah</a></div></div></div></nav><div class="page-heading feature-page-heading"><img class="page-title-illustration" src="./assets/feature-places.webp" width="256" height="256" alt="" aria-hidden="true" decoding="async"><h1>Explore Islamic Places</h1><p>Discover significant locations connected to the Qur’an, Sunnah, and Islamic history.</p></div>
 
@@ -820,6 +820,59 @@ const places = {
   }
 
 };
+
+/* Discovery state contains place identifiers only and stays in this browser. */
+const placeDiscoveries = (() => {
+  const storageKey = "aks-ilm:explored-places:v1";
+  const valid = key => typeof key === "string" && Object.prototype.hasOwnProperty.call(places, key);
+  function readStored() {
+    try {
+      const data = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      return Array.isArray(data) ? data.filter(valid) : [];
+    } catch (error) { return []; }
+  }
+  const explored = new Set(readStored());
+  function syncOptions() {
+    const select = document.getElementById("place-select");
+    if (!select) return;
+    Array.from(select.options).forEach(option => {
+      if (valid(option.value)) option.textContent = places[option.value].name + (explored.has(option.value) ? " ✓" : "");
+    });
+  }
+  function record(key) {
+    if (!valid(key)) return;
+    const firstOpening = !explored.has(key);
+    readStored().forEach(id => explored.add(id));
+    explored.add(key);
+    try { localStorage.setItem(storageKey, JSON.stringify(Array.from(explored))); } catch (error) {}
+    syncOptions();
+    const heading = document.querySelector("#info .selected-place-heading");
+    if (!heading || heading.querySelector(".place-discovery-stamp")) return;
+    const copy = document.createElement("div");
+    copy.className = "selected-place-copy";
+    while (heading.firstChild) copy.appendChild(heading.firstChild);
+    const stamp = document.createElement("div");
+    stamp.className = "place-discovery-stamp" + (firstOpening ? " is-new-discovery" : "");
+    stamp.setAttribute("role", "img");
+    stamp.setAttribute("aria-label", places[key].name + ", explored in Islamic Places");
+    [["place-stamp-label", "Explored"], ["place-stamp-name", places[key].name], ["place-stamp-brand", "AKS ILM"]].forEach(([className, text]) => {
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = text;
+      span.setAttribute("aria-hidden", "true");
+      stamp.appendChild(span);
+    });
+    heading.append(copy, stamp);
+  }
+  window.addEventListener("storage", event => {
+    if (event.key === storageKey || event.key === null) {
+      explored.clear();
+      readStored().forEach(id => explored.add(id));
+      syncOptions();
+    }
+  });
+  return { record, syncOptions };
+})();
 
 let map = null;
 let labelMarkers = [];
@@ -1610,6 +1663,7 @@ function showPlace(key) {
 
     `;
 
+  placeDiscoveries.record(key);
 }
 
 
@@ -2052,7 +2106,7 @@ if (
 
 </script>
 
-<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
+<footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeDiscoveries.syncOptions();placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
 <div class="photo-viewer-tools"><button id="photo-viewer-close" type="button" autofocus>Close ×</button></div>
 <figure><img id="photo-viewer-image" alt="" referrerpolicy="no-referrer"><figcaption id="photo-viewer-caption"></figcaption></figure>
 <div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Photo source: Wikimedia Commons ↗</a></div>
@@ -2092,5 +2146,6 @@ if (
   });
 })();</script><dialog id="expanded-map-dialog" aria-labelledby="expanded-map-title"><div class="expanded-map-toolbar"><h2 id="expanded-map-title">Islamic Places</h2><button id="expanded-map-close" type="button" autofocus>Close ×</button></div></dialog></body>
 </html>
+
 
 
