@@ -188,3 +188,7 @@ body{background:#f5f9fd}
 #aks-about-page .ae-publishing .ae-process{margin:24px 0 0;max-width:520px;width:100%}
 
 }
+
+/* Consistent closing-section headings on every screen size. */
+#aks-about-page .ae-principles>section:nth-child(n) h2{font-family:Georgia,serif;font-size:27px;font-weight:400;font-style:normal;line-height:1.25;letter-spacing:normal;color:#164b88}
+@media(max-width:760px){#aks-about-page .ae-principles>section:nth-child(n) h2{font-size:26px}}
