@@ -1,0 +1,10 @@
+/* Keep the illustration's existing footprint; the light is decorative only. */
+.reminder .reminder-lantern{position:relative;isolation:isolate;display:block;width:40px;height:40px;margin:0 auto 8px}
+.reminder .reminder-lantern .reminder-illustration{position:relative;z-index:1;width:100%;height:100%;margin:0}
+.reminder .lantern-halo{position:absolute;z-index:0;inset:-24px;border-radius:50%;background:radial-gradient(circle,#ffe3a16b 0%,#efbf633b 30%,#efbf6312 52%,transparent 72%);opacity:0;pointer-events:none}
+.reminder .reminder-lantern.is-glowing .lantern-halo{animation:aks-lantern-halo 1.15s ease-in-out 1}
+.reminder .reminder-lantern.is-glowing .reminder-illustration{animation:aks-lantern-light 1.15s ease-in-out 1}
+@keyframes aks-lantern-halo{0%,100%{opacity:0;transform:scale(.88)}35%,55%{opacity:1;transform:scale(1.05)}}
+@keyframes aks-lantern-light{0%,100%{filter:drop-shadow(0 0 0 transparent) brightness(1)}35%,55%{filter:drop-shadow(0 0 7px #f1c36ca6) brightness(1.16)}}
+@media(max-width:600px){.reminder .reminder-lantern{width:38px;height:38px;margin-bottom:7px}}
+@media(prefers-reduced-motion:reduce){.reminder .reminder-lantern.is-glowing .lantern-halo,.reminder .reminder-lantern.is-glowing .reminder-illustration{animation:none}.reminder .reminder-lantern.is-glowing .lantern-halo{opacity:.65}}
