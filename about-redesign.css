@@ -194,10 +194,10 @@ body{background:#f5f9fd}
 @media(max-width:760px){#aks-about-page .ae-principles>section:nth-child(n) h2{font-size:26px}}
 
 /* One gentle arrival for the final timeline milestone; no layout changes. */
-#aks-about-page .ae-journey li:last-child:after{content:"";position:absolute;left:-1px;top:12px;bottom:12px;width:1px;background:#9fc0dc;transform-origin:top;transform:scaleY(0);opacity:0;pointer-events:none}
+#aks-about-page .ae-journey li:last-child:after{content:"";position:absolute;left:-1px;top:12px;bottom:12px;width:2px;background:#7faad0;transform-origin:top;transform:scaleY(0);opacity:0;pointer-events:none}
 #aks-about-page .ae-journey li:last-child.is-journey-revealed:after{transform:scaleY(1);opacity:1}
-#aks-about-page .ae-journey li:last-child.is-journey-animated:after{animation:aks-journey-line 1.15s ease-out .25s 1 both}
-#aks-about-page .ae-journey li:last-child.is-journey-animated .ae-dot{animation:aks-journey-dot 1.2s ease-out 1}
+#aks-about-page .ae-journey li:last-child.is-journey-animated:after{animation:aks-journey-line 1.8s ease-out .35s 1 both}
+#aks-about-page .ae-journey li:last-child.is-journey-animated .ae-dot{animation:aks-journey-dot 1.8s ease-out 1}
 @keyframes aks-journey-line{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
-@keyframes aks-journey-dot{0%,100%{background:#456faf;box-shadow:0 0 0 5px #f5f9fd}45%{background:#377fc5;box-shadow:0 0 0 9px #377fc51a}}
+@keyframes aks-journey-dot{0%,100%{transform:scale(1);background:#456faf;box-shadow:0 0 0 5px #f5f9fd}35%{transform:scale(1.3);background:#377fc5;box-shadow:0 0 0 11px #377fc533,0 0 20px #377fc52b}70%{transform:scale(1.1);background:#2c70b6;box-shadow:0 0 0 15px #377fc50d,0 0 12px #377fc51a}}
 @media(prefers-reduced-motion:reduce){#aks-about-page .ae-journey li:last-child:after{transform:scaleY(1);opacity:1;animation:none!important}#aks-about-page .ae-journey li:last-child .ae-dot{animation:none!important}}
