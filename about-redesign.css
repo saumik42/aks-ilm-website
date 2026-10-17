@@ -215,3 +215,8 @@ body{background:#f5f9fd}
 #aks-about-page .ae-journey li:last-child .ae-continues{grid-column:1/-1;position:relative;margin-top:6px}
 #aks-about-page .ae-journey li:last-child .ae-continues .ae-ellipsis{position:absolute;left:-30px;top:3px;width:10px;margin-right:0;text-align:center}
 }
+
+/* Fine blue woven detail inside the existing bookmark. */
+#aks-about-page .ae-story-bookmark{--weave:4px;--edge:3px;--thread:.55px}
+#aks-about-page .ae-story-bookmark>span{position:absolute;inset:3px var(--edge) 6px;background:repeating-linear-gradient(45deg,transparent 0 calc(var(--weave) / 2 - var(--thread)),#b9dafa9c calc(var(--weave) / 2 - var(--thread)) calc(var(--weave) / 2),transparent calc(var(--weave) / 2) calc(var(--weave) - var(--thread)),#b9dafa9c calc(var(--weave) - var(--thread)) var(--weave)),repeating-linear-gradient(-45deg,transparent 0 calc(var(--weave) / 2 - var(--thread)),#b9dafa9c calc(var(--weave) / 2 - var(--thread)) calc(var(--weave) / 2),transparent calc(var(--weave) / 2) calc(var(--weave) - var(--thread)),#b9dafa9c calc(var(--weave) - var(--thread)) var(--weave));border-left:1px solid #c4e0f594;border-right:1px solid #c4e0f594;clip-path:polygon(0 0,100% 0,100% 100%,50% 84%,0 100%)}
+#aks-about-page .ae-story-bookmark:after{left:3px;right:3px;top:7px;height:2px;background:#9fc7ebaa;box-shadow:0 3px 0 #9fc7eb77;border:0}
