@@ -204,3 +204,8 @@ body{background:#f5f9fd}
 
 /* Preserve the shared current-page marker over the editorial link reset. */
 #aks-about-page .site-nav>div>a[aria-current="page"]{text-decoration:underline;text-decoration-color:#377fc5;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-skip-ink:auto}
+
+/* A small journal-style bookmark beside the story heading. */
+#aks-about-page .ae-story-heading{position:relative}
+#aks-about-page .ae-story-bookmark{display:block;position:absolute;right:0;top:2px;width:18px;height:45px;background:linear-gradient(90deg,#215996,#377fc5 48%,#2865a3);clip-path:polygon(0 0,100% 0,100% 100%,50% 81%,0 100%);pointer-events:none}
+#aks-about-page .ae-story-bookmark:after{content:"";position:absolute;left:3px;right:3px;top:3px;height:29px;border:1px solid #b5d6f17a;border-bottom:0}
