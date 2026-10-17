@@ -777,7 +777,7 @@
 .page-title-illustration{display:block;width:46px;height:46px;object-fit:contain;margin:0 auto 10px}
 
 @media(max-width:600px){.page-title-illustration{width:42px;height:42px;margin-bottom:9px}}
-</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="kabah-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature .header.feature-page-heading{margin-bottom:18px}.feature .header.feature-page-heading h1{margin-bottom:8px}.feature .header.feature-page-heading>p{line-height:1.55}}</style></head>
+</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="kabah-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature .header.feature-page-heading{margin-bottom:18px}.feature .header.feature-page-heading h1{margin-bottom:8px}.feature .header.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./bearing-compass.css?v=1"></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-transparent-480.webp" srcset="./assets/logo-transparent-480.webp 480w, ./assets/logo-transparent-960.webp 960w" sizes="(max-width: 380px) 126px, (max-width: 600px) 160px, 200px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a><div class="nav-maps"><button type="button" class="nav-maps-toggle" aria-current="true" aria-expanded="false" aria-controls="nav-map-destinations">Maps<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="nav-map-links" id="nav-map-destinations" hidden><a href="./places.html"><img src="./assets/feature-places.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Islamic Places</a><a href="./kabah.html" aria-current="page"><img src="./assets/feature-kabah.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Distance to the Kaʿbah</a></div></div></div></nav>
 
@@ -958,16 +958,19 @@
 
         <p class="distance-explanation">Approximate distance across Earth’s surface. Travel routes may be longer.</p>
 
-        <div class="detail-grid">
+        <div class="detail-grid bearing-overview">
 
-          <div class="detail-card">
+          <div class="detail-card direction-copy">
             <div class="result-label">Direction</div>
             <strong id="directionText">—</strong>
           </div>
 
-          <div class="detail-card">
+          <div class="detail-card bearing-copy">
             <div class="result-label">Initial Bearing</div>
             <strong id="bearingText">—</strong>
+          </div>
+          <div id="bearingCompass" class="bearing-compass" role="img" aria-label="Calculated direction to the Kaʿbah">
+            <span class="compass-letter compass-n" aria-hidden="true">N</span><span class="compass-letter compass-e" aria-hidden="true">E</span><span class="compass-letter compass-s" aria-hidden="true">S</span><span class="compass-letter compass-w" aria-hidden="true">W</span><span id="bearingCompassNeedle" class="compass-needle" aria-hidden="true"></span><span class="compass-pivot" aria-hidden="true"></span>
           </div>
 
         </div>
@@ -2422,6 +2425,48 @@
     }
 
 
+/* Shows a geographic bearing only; no device-orientation or location sensors. */
+const bearingCompassController = (() => {
+  const compass = document.getElementById("bearingCompass");
+  const needle = document.getElementById("bearingCompassNeedle");
+  let angle = 0, observer = null, frame = 0, generation = 0;
+  function clear() {
+    generation++;
+    if (observer) observer.disconnect();
+    observer = null;
+    cancelAnimationFrame(frame);
+  }
+  function update(bearing, city) {
+    clear();
+    if (!compass || !needle || !Number.isFinite(bearing)) return;
+    const normalized = ((bearing % 360) + 360) % 360;
+    compass.setAttribute("aria-label", "Direction to the Kaʿbah from " + city + ": " + Math.round(normalized) + " degrees clockwise from north. Calculated bearing, not a live device compass.");
+    const token = generation;
+    function turn() {
+      if (token !== generation) return;
+      if (observer) observer.disconnect();
+      observer = null;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const apply = () => {
+        if (token !== generation) return;
+        const previous = ((angle % 360) + 360) % 360;
+        angle += ((normalized - previous + 540) % 360) - 180;
+        needle.style.transform = "rotate(" + angle + "deg)";
+      };
+      if (reduced) apply();
+      else frame = requestAnimationFrame(() => { frame = requestAnimationFrame(apply); });
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) turn();
+    else {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .45)) turn();
+      }, {threshold: .45});
+      observer.observe(compass);
+    }
+  }
+  return {update, clear};
+})();
+
     /* Keep the primary result together on phones; preserve desktop placement. */
     const phoneResults = window.matchMedia("(max-width: 600px)");
     const distanceSummary = document.getElementById("distanceSummary");
@@ -2515,6 +2560,7 @@
       message.textContent = "";
 
       cancelResultPresentation();
+      bearingCompassController.clear();
       setLoading(true);
       clearRoutePlane();
 
@@ -2630,6 +2676,7 @@
             "none";
         }
 
+        bearingCompassController.update(bearing, location.city);
         presentMobileResult(startPlane);
 
       } catch (error) {
@@ -2714,6 +2761,7 @@
       () => {
 
         cancelResultPresentation();
+        bearingCompassController.clear();
         results.style.display =
           "none";
 
@@ -2743,5 +2791,6 @@
 
 <footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <a href="./index.html">Return home</a></footer></body>
 </html>
+
 
 
