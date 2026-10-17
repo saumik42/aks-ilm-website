@@ -209,3 +209,9 @@ body{background:#f5f9fd}
 #aks-about-page .ae-story-heading{position:relative}
 #aks-about-page .ae-story-bookmark{display:block;position:absolute;right:0;top:2px;width:18px;height:45px;background:linear-gradient(90deg,#215996,#377fc5 48%,#2865a3);clip-path:polygon(0 0,100% 0,100% 100%,50% 81%,0 100%);pointer-events:none}
 #aks-about-page .ae-story-bookmark:after{content:"";position:absolute;left:3px;right:3px;top:3px;height:29px;border:1px solid #b5d6f17a;border-bottom:0}
+
+/* Desktop continuation returns to the milestone-label column. */
+@media(min-width:761px){
+#aks-about-page .ae-journey li:last-child .ae-continues{grid-column:1/-1;position:relative;margin-top:6px}
+#aks-about-page .ae-journey li:last-child .ae-continues .ae-ellipsis{position:absolute;left:-30px;top:3px;width:10px;margin-right:0;text-align:center}
+}
