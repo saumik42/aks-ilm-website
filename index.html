@@ -129,7 +129,20 @@ header .brand .brand-tagline{display:block;margin-top:8px;color:#527490;font:12p
 @keyframes calendar-moon-shimmer{0%,100%{filter:none}45%{filter:brightness(1.2) drop-shadow(0 0 4px #f9df9a)}}
 @keyframes calendar-moon-sparkle{0%,100%{opacity:0;transform:scale(.4)}40%{opacity:.85;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.calendar-crescent.is-shimmering .crescent-shape,.calendar-crescent.is-shimmering .crescent-sparkle{animation:none}}
-</style><style id="latest-question-style">.library-main-link{display:flex;flex-direction:column;align-items:flex-start;flex:1;width:100%}.latest-question-link{font:13px/1.5 Arial,sans-serif;color:#2466a9;text-decoration:underline;text-underline-offset:3px;margin-top:8px;max-width:100%}.latest-question-link[hidden]{display:none}.latest-question-link:focus-visible{outline:3px solid #377fc5;outline-offset:3px}@media(max-width:600px){.supporting-features .card:not(.featured) .small-link{margin-top:0}.library-main-link{flex:0 0 auto}.latest-question-link{margin-top:2px;font-size:12px;line-height:1.5}}</style><style id="mobile-heading-alignment">@media(max-width:600px){.hero h1,.hero .hero-byline{text-align:center}}</style><style id="mobile-learning-heading">@media(max-width:600px){.learn>.section-head{text-align:center}}</style><style id="mobile-welcome-alignment">@media(max-width:600px){.hero .intro{text-align:center;margin-left:auto;margin-right:auto}}</style><style id="compact-mobile-opening">@media(max-width:600px){.hero h1{font-size:clamp(32px,9.5vw,38px);margin-bottom:12px}.hero .hero-byline{margin-bottom:14px}.hero .hero-location{margin-top:2px}}</style><style id="mobile-learning-heading-balance">@media(max-width:600px){.learn>.section-head>h2{text-wrap:balance}}</style><style id="detailed-feature-illustrations">
+</style><style id="latest-question-style">
+.library-main-link{display:flex;flex-direction:column;align-items:flex-start;flex:1;width:100%}
+.latest-question-link{font:13px/1.5 Arial,sans-serif;color:#2466a9;text-decoration:underline;text-underline-offset:3px;margin-top:8px;max-width:100%}
+.latest-question-link[hidden]{display:none}
+.latest-question-link:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+/* Match the library's secondary-link space so the primary actions share a baseline. */
+.supporting-features:has(.latest-question-link:not([hidden])) .card:nth-child(2)::after{content:"";display:block;flex:none;height:19.5px;margin-top:8px}
+@media(max-width:600px){
+ .supporting-features .card:not(.featured) .small-link{margin-top:auto}
+ .library-main-link{flex:1}
+ .latest-question-link{margin-top:2px;font-size:12px;line-height:1.5}
+ .supporting-features:has(.latest-question-link:not([hidden])) .card:nth-child(2)::after{height:18px;margin-top:2px}
+}
+</style><style id="mobile-heading-alignment">@media(max-width:600px){.hero h1,.hero .hero-byline{text-align:center}}</style><style id="mobile-learning-heading">@media(max-width:600px){.learn>.section-head{text-align:center}}</style><style id="mobile-welcome-alignment">@media(max-width:600px){.hero .intro{text-align:center;margin-left:auto;margin-right:auto}}</style><style id="compact-mobile-opening">@media(max-width:600px){.hero h1{font-size:clamp(32px,9.5vw,38px);margin-bottom:12px}.hero .hero-byline{margin-bottom:14px}.hero .hero-location{margin-top:2px}}</style><style id="mobile-learning-heading-balance">@media(max-width:600px){.learn>.section-head>h2{text-wrap:balance}}</style><style id="detailed-feature-illustrations">
 .supporting-features .feature-illustration{width:72px;height:72px;flex:none;background:transparent;border-radius:0;padding:0;margin-bottom:12px}
 .supporting-features .feature-illustration img{display:block;width:100%;height:100%;object-fit:contain}
 @media(max-width:600px){.supporting-features .feature-illustration{width:56px;height:56px;max-width:100%;margin-bottom:10px}}
