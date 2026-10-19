@@ -225,3 +225,8 @@ body{background:#f5f9fd}
 #aks-about-page .ae-ornament{gap:10px;height:16px;color:#377fc5;pointer-events:none}
 #aks-about-page .ae-ornament:before,#aks-about-page .ae-ornament:after{background:#aac8e2}
 #aks-about-page .ae-ornament .shahadah-star{display:block;flex:none;width:16px;height:16px}
+
+/* Compact contact line, in the same column as the closing About sections. */
+#aks-about-page .ae-contact{display:flex;flex-wrap:wrap;align-items:center;column-gap:6px;max-width:790px;margin:20px auto 0;color:#526d85;font:14px/1.8 Arial,Helvetica,sans-serif}
+#aks-about-page .ae-contact a{display:inline-flex;align-items:center;min-height:44px;color:#245fa6;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+#aks-about-page .ae-contact a:hover{color:#164b88}
