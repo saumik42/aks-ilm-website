@@ -1380,7 +1380,6 @@
 
     function layoutMapMarkers() {
       if (!currentMapRoute) return;
-      markerLayer.replaceChildren();
       const {cityName, countryName, city, makkah, distance, landmark} = currentMapRoute;
       const a = mapToScreen(city), b = mapToScreen(makkah), ui = mapUIScale();
       const occupied = [labelBox(MAP_WIDTH-54*ui, 0, 54*ui, 88*ui)];
@@ -1393,33 +1392,55 @@
       for (const location of locations) {
         if (onMap(location.point)) occupied.push(labelBox(location.point.x-8*ui, location.point.y-8*ui, 16*ui, 16*ui));
       }
-      for (const location of locations) {
-        const point = location.point;
-        if (!onMap(point)) continue;
-        const group = createSVGElement('g', {class:'map-location', 'data-location':location.destination?'makkah':'city'});
-        const name = createSVGElement('text', {x:0,y:12,class:'map-label'});
-        name.textContent = location.destination ? '🕋 '+location.name : location.name;
-        const country = createSVGElement('text', {x:0,y:26,class:'map-sub-label'});
-        country.textContent = location.country || '';
-        const label = createSVGElement('g');
-        const iconWidth = location.landmark ? 27 : 0;
-        if (location.landmark) {
-          const icon = createSVGElement('image', {href:location.landmark.src,x:0,y:0,width:22,height:22,role:'img','aria-label':location.landmark.name,class:'map-landmark'});
-          label.appendChild(icon);
-          name.setAttribute('x',iconWidth); country.setAttribute('x',iconWidth);
+      // Choose collision-free offsets once per route/size, not on every gesture.
+      // Re-clamping labels on every move pins them to the screen edge and makes
+      // them jump between candidates instead of following their city markers.
+      let layout = currentMapRoute.markerLayout;
+      if (!layout || Math.abs(layout.ui - ui) > .001) {
+        markerLayer.replaceChildren();
+        layout = currentMapRoute.markerLayout = {ui, items: []};
+        for (const location of locations) {
+          const point = location.point;
+          const group = createSVGElement('g', {class:'map-location', 'data-location':location.destination?'makkah':'city'});
+          const name = createSVGElement('text', {x:0,y:12,class:'map-label'});
+          name.textContent = location.destination ? '🕋 '+location.name : location.name;
+          const country = createSVGElement('text', {x:0,y:26,class:'map-sub-label'});
+          country.textContent = location.country || '';
+          const label = createSVGElement('g');
+          const iconWidth = location.landmark ? 27 : 0;
+          if (location.landmark) {
+            const icon = createSVGElement('image', {href:location.landmark.src,x:0,y:0,width:22,height:22,role:'img','aria-label':location.landmark.name,class:'map-landmark'});
+            label.appendChild(icon);
+            name.setAttribute('x',iconWidth); country.setAttribute('x',iconWidth);
+          }
+          label.append(name, country); group.appendChild(label); markerLayer.appendChild(group);
+          // getComputedTextLength uses the same SVG font that the visitor sees.
+          const width = (iconWidth + Math.max(name.getComputedTextLength(),country.getComputedTextLength(),30))*ui;
+          const height = (location.country ? 30 : 16)*ui;
+          const box = chooseLabelPosition(point, width, height, occupied, ui, point.x <= (a.x+b.x)/2);
+          occupied.push(box);
+          label.setAttribute('transform', `translate(${box.x} ${box.y}) scale(${ui})`);
+          label.setAttribute('data-label-box', [box.x,box.y,box.width,box.height].join(','));
+          const endX = clamp(point.x, box.x, box.x+box.width), endY = clamp(point.y, box.y, box.y+box.height);
+          const leader = createSVGElement('line', {x1:point.x,y1:point.y,x2:endX,y2:endY,stroke:location.destination?'#f0d88a':'#9acfff','stroke-width':ui,opacity:.7,'aria-hidden':'true'});
+          group.insertBefore(leader,label);
+          const dot = createSVGElement('circle',{cx:point.x,cy:point.y,r:(location.destination?5.8:5.5)*ui,class:location.destination?'makkah-dot':'city-dot'});
+          group.appendChild(dot);
+          layout.items.push({group,label,leader,dot,destination:location.destination,
+            dx:box.x-point.x,dy:box.y-point.y,width,height});
         }
-        label.append(name, country); group.appendChild(label); markerLayer.appendChild(group);
-        // getComputedTextLength uses the same SVG font that the visitor sees.
-        const width = (iconWidth + Math.max(name.getComputedTextLength(),country.getComputedTextLength(),30))*ui;
-        const height = (location.country ? 30 : 16)*ui;
-        const box = chooseLabelPosition(point, width, height, occupied, ui, point.x <= (a.x+b.x)/2);
-        occupied.push(box);
-        label.setAttribute('transform', `translate(${box.x} ${box.y}) scale(${ui})`);
-        label.setAttribute('data-label-box', [box.x,box.y,box.width,box.height].join(','));
-        const endX = clamp(point.x, box.x, box.x+box.width), endY = clamp(point.y, box.y, box.y+box.height);
-        const leader = createSVGElement('line', {x1:point.x,y1:point.y,x2:endX,y2:endY,stroke:location.destination?'#f0d88a':'#9acfff','stroke-width':ui,opacity:.7,'aria-hidden':'true'});
-        group.insertBefore(leader,label);
-        group.appendChild(createSVGElement('circle',{cx:point.x,cy:point.y,r:(location.destination?5.8:5.5)*ui,class:location.destination?'makkah-dot':'city-dot'}));
+      }
+      // Keep the same SVG nodes and translate the label by exactly the same
+      // screen delta as its marker. The map clips them naturally at its edges.
+      for (const item of layout.items) {
+        const point = item.destination ? b : a;
+        const x = point.x+item.dx, y = point.y+item.dy;
+        item.label.setAttribute('transform', `translate(${x} ${y}) scale(${ui})`);
+        item.label.setAttribute('data-label-box', [x,y,item.width,item.height].join(','));
+        item.dot.setAttribute('cx',point.x); item.dot.setAttribute('cy',point.y);
+        item.leader.setAttribute('x1',point.x); item.leader.setAttribute('y1',point.y);
+        item.leader.setAttribute('x2',clamp(point.x,x,x+item.width));
+        item.leader.setAttribute('y2',clamp(point.y,y,y+item.height));
       }
     }
 
