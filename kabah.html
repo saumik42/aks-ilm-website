@@ -875,16 +875,16 @@
             id="worldMap"
             viewBox="0 0 720 310"
             role="img"
-            aria-label="World map showing the selected city and Makkah"
+            aria-label="Map showing the selected city and Makkah"
           >
             <defs><linearGradient id="route-gradient" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9acfff"/><stop offset="1" stop-color="#f0d88a"/></linearGradient></defs>
             <g id="mapViewport">
               <g id="graticuleLayer"></g>
               <g id="countriesLayer"></g>
               <g id="routeLayer"></g>
-              <g id="planeLayer" aria-hidden="true"></g>
-              <g id="markerLayer"></g>
             </g>
+            <g id="planeLayer" aria-hidden="true"></g>
+            <g id="markerLayer"></g>
           </svg>
 
           <div id="mapLoading" class="map-loading">
@@ -1037,7 +1037,8 @@
     const CONCEPTUAL_SPEED_KMH = 900;
 
     const MIN_ZOOM = 1;
-    const MAX_ZOOM = 6;
+    const MAX_ZOOM = 160;
+    const REGIONAL_DISTANCE_KM = 2500;
     const BUTTON_ZOOM_FACTOR = 1.25;
 
     const WORLD_DATA_URL =
@@ -1124,6 +1125,8 @@
     let pinchAnchorY = MAP_HEIGHT / 2;
 
     let mapHasBeenInteractedWith = false;
+    let currentMapRoute = null;
+    let routePlanePosition = null;
 
     function hideMapHint() {
       if (mapHasBeenInteractedWith) {
@@ -1297,6 +1300,8 @@
         "zoomed",
         mapScale > 1
       );
+      layoutMapMarkers();
+      if (routePlanePosition) routePlanePosition();
     }
 
     function resetMapView() {
@@ -1313,6 +1318,108 @@
       mapWrap.classList.remove("dragging");
 
       updateMapTransform();
+    }
+
+    // Labels and symbols live in the unscaled overlay, independent of the map zoom.
+    function mapToScreen(point) {
+      return {
+        x: MAP_WIDTH / 2 + mapScale * (point.x - MAP_WIDTH / 2 + panX),
+        y: MAP_HEIGHT / 2 + mapScale * (point.y - MAP_HEIGHT / 2 + panY)
+      };
+    }
+
+    function mapUIScale() {
+      return clamp(MAP_WIDTH / (mapWrap.getBoundingClientRect().width || MAP_WIDTH), .75, 3.5);
+    }
+
+    function fitRouteView() {
+      if (!currentMapRoute) return;
+      const {points, distance} = currentMapRoute;
+      if (distance > REGIONAL_DISTANCE_KM) {
+        mapScale = 1; panX = 0; panY = 0;
+      } else {
+        const xs = points.map(point => point.x), ys = points.map(point => point.y);
+        const left = Math.min(...xs), right = Math.max(...xs);
+        const top = Math.min(...ys), bottom = Math.max(...ys);
+        mapScale = clamp(Math.min(MAP_WIDTH * .52 / Math.max(right-left, 1), MAP_HEIGHT * .46 / Math.max(bottom-top, 1)), 3, MAX_ZOOM);
+        panX = MAP_WIDTH / 2 - (left+right)/2;
+        panY = MAP_HEIGHT / 2 - (top+bottom)/2;
+      }
+      updateMapTransform();
+    }
+
+    function labelBox(x, y, width, height) { return {x, y, width, height}; }
+    function boxesOverlap(a, b, gap = 0) {
+      return a.x < b.x+b.width+gap && a.x+a.width+gap > b.x && a.y < b.y+b.height+gap && a.y+a.height+gap > b.y;
+    }
+
+    // Find a readable label position with space around both markers and map controls.
+    function chooseLabelPosition(point, width, height, occupied, ui, preferLeft) {
+      const margin = 10*ui, offset = 14*ui;
+      const sides = preferLeft ? [-1, 1] : [1, -1];
+      const candidates = [];
+      for (const dy of [-height-10*ui, 14*ui, -height/2]) {
+        for (const side of sides) candidates.push(labelBox(point.x+(side < 0 ? -width-offset : offset), point.y+dy, width, height));
+      }
+      // Vertical separation also works when two city centres nearly coincide.
+      for (let row = 0; row < 5; row++) {
+        for (const side of sides) candidates.push(labelBox(point.x+(side < 0 ? -width-offset : offset), 18*ui+row*(height+12*ui), width, height));
+      }
+      let best = null, bestScore = Infinity;
+      for (const raw of candidates) {
+        const box = labelBox(clamp(raw.x, margin, MAP_WIDTH-width-margin), clamp(raw.y, margin, MAP_HEIGHT-height-36*ui), width, height);
+        const collisions = occupied.filter(other => boxesOverlap(box, other, 6*ui)).length;
+        const score = collisions*1000000 + Math.hypot(box.x+width/2-point.x, box.y+height/2-point.y);
+        if (score < bestScore) { best = box; bestScore = score; }
+      }
+      return best;
+    }
+
+    function layoutMapMarkers() {
+      if (!currentMapRoute) return;
+      markerLayer.replaceChildren();
+      const {cityName, countryName, city, makkah, distance} = currentMapRoute;
+      const a = mapToScreen(city), b = mapToScreen(makkah), ui = mapUIScale();
+      const occupied = [labelBox(MAP_WIDTH-54*ui, 0, 54*ui, 88*ui)];
+      const onMap = point => point.x > -10 && point.x < MAP_WIDTH+10 && point.y > -10 && point.y < MAP_HEIGHT+10;
+      const sameCity = distance < 1 || /^(makkah|mecca|مكة|مكه)(\s|$)/i.test(cityName);
+      const locations = sameCity ? [{point:b,name:'Makkah',country:'Saudi Arabia',destination:true}] : [
+        {point:a,name:cityName,country:countryName,destination:false},
+        {point:b,name:'Makkah',country:'Saudi Arabia',destination:true}
+      ];
+      for (const location of locations) {
+        if (onMap(location.point)) occupied.push(labelBox(location.point.x-8*ui, location.point.y-8*ui, 16*ui, 16*ui));
+      }
+      for (const location of locations) {
+        const point = location.point;
+        if (!onMap(point)) continue;
+        const group = createSVGElement('g', {class:'map-location', 'data-location':location.destination?'makkah':'city'});
+        const name = createSVGElement('text', {x:0,y:12,class:'map-label'});
+        name.textContent = location.destination ? '🕋 '+location.name : location.name;
+        const country = createSVGElement('text', {x:0,y:26,class:'map-sub-label'});
+        country.textContent = location.country || '';
+        const label = createSVGElement('g');
+        label.append(name, country); group.appendChild(label); markerLayer.appendChild(group);
+        // getComputedTextLength uses the same SVG font that the visitor sees.
+        const width = Math.max(name.getComputedTextLength(),country.getComputedTextLength(),30)*ui;
+        const height = (location.country ? 30 : 16)*ui;
+        const box = chooseLabelPosition(point, width, height, occupied, ui, point.x <= (a.x+b.x)/2);
+        occupied.push(box);
+        label.setAttribute('transform', `translate(${box.x} ${box.y}) scale(${ui})`);
+        label.setAttribute('data-label-box', [box.x,box.y,box.width,box.height].join(','));
+        const endX = clamp(point.x, box.x, box.x+box.width), endY = clamp(point.y, box.y, box.y+box.height);
+        const leader = createSVGElement('line', {x1:point.x,y1:point.y,x2:endX,y2:endY,stroke:location.destination?'#f0d88a':'#9acfff','stroke-width':ui,opacity:.7,'aria-hidden':'true'});
+        group.insertBefore(leader,label);
+        group.appendChild(createSVGElement('circle',{cx:point.x,cy:point.y,r:(location.destination?5.8:5.5)*ui,class:location.destination?'makkah-dot':'city-dot'}));
+      }
+    }
+
+    if (typeof ResizeObserver === 'function') {
+      new ResizeObserver(() => {
+        if (!currentMapRoute || results.style.display !== 'block') return;
+        if (!mapHasBeenInteractedWith) fitRouteView();
+        else updateMapTransform();
+      }).observe(mapWrap);
     }
 
     /*
@@ -2118,15 +2225,17 @@
     function clearRoutePlane() {
       if (routePlaneFrame !== null) cancelAnimationFrame(routePlaneFrame);
       routePlaneFrame = null;
+      routePlanePosition = null;
       document.getElementById("planeLayer").replaceChildren();
     }
 
     function pulseRouteArrival() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const layer = document.getElementById("planeLayer");
-      const destination = project(KABAH.lon, KABAH.lat);
+      const destination = mapToScreen(project(KABAH.lon, KABAH.lat));
+      const ui = mapUIScale();
       const halo = createSVGElement("circle", {
-        cx: destination.x, cy: destination.y, r: 7, fill: "none",
+        cx: destination.x, cy: destination.y, r: 7*ui, fill: "none",
         stroke: "#f0d88a", "stroke-width": 1.5,
         "vector-effect": "non-scaling-stroke", "aria-hidden": "true"
       });
@@ -2136,7 +2245,9 @@
         if (started === null) started = now;
         const progress = Math.min((now-started)/650, 1);
         const eased = 1-Math.pow(1-progress,2);
-        halo.setAttribute("r", 7+11*eased);
+        const destination = mapToScreen(project(KABAH.lon, KABAH.lat));
+        halo.setAttribute('cx', destination.x); halo.setAttribute('cy', destination.y);
+        halo.setAttribute("r", (7+11*eased)*ui);
         halo.setAttribute("opacity", .55*(1-progress));
         if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
         else { routePlaneFrame = null; halo.remove(); }
@@ -2147,7 +2258,9 @@
     function animateRoutePlane(points) {
       clearRoutePlane();
       const layer = document.getElementById("planeLayer");
-      if (points.every(point => Math.hypot(point.x-points[0].x, point.y-points[0].y) < 2)) {
+      const ui = mapUIScale();
+      const routeLength = points.slice(1).reduce((length, point, i) => length + Math.hypot(point.x-points[i].x,point.y-points[i].y)*mapScale/ui, 0);
+      if (routeLength < 35) {
         pulseRouteArrival();
         return;
       }
@@ -2158,6 +2271,7 @@
       plane.appendChild(silhouette);
       layer.appendChild(plane);
       function position(t) {
+        const ui = mapUIScale();
         const index = t*(points.length-1);
         const segment = Math.min(Math.floor(index), points.length-2);
         const fraction = index-segment;
@@ -2165,20 +2279,25 @@
         const x = a.x+(b.x-a.x)*fraction, y = a.y+(b.y-a.y)*fraction;
         const angle = Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
         const visibleX = ((x % MAP_WIDTH) + MAP_WIDTH) % MAP_WIDTH;
-        plane.setAttribute("transform", "translate("+visibleX+" "+(y-15)+") rotate("+angle+") scale(.85)");
+        const point = mapToScreen({x:visibleX,y});
+        plane.setAttribute("transform", "translate("+point.x+" "+(point.y-12*ui)+") rotate("+angle+") scale("+(ui*clamp(routeLength/250,.5,.85))+")");
       }
+      let currentProgress = .04;
+      routePlanePosition = () => position(currentProgress);
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        currentProgress = .5;
         position(.5);
         return;
       }
       let started = null;
       function step(now) {
         if (started === null) started = now;
-        const progress = Math.min((now-started)/2200, 1);
-        position(.04 + .96*progress);
+        const progress = Math.min((now-started)/clamp(routeLength*4,900,2200), 1);
+        currentProgress = .04 + .96*progress;
+        position(currentProgress);
         plane.style.opacity = String(progress > .85 ? (1-progress)/.15 : 1);
         if (progress < 1) routePlaneFrame = requestAnimationFrame(step);
-        else { routePlaneFrame = null; layer.replaceChildren(); pulseRouteArrival(); }
+        else { routePlaneFrame = null; routePlanePosition = null; layer.replaceChildren(); pulseRouteArrival(); }
       }
       routePlaneFrame = requestAnimationFrame(step);
     }
@@ -2226,80 +2345,8 @@
         routeLayer.appendChild(copy);
       }
 
-      markerLayer.appendChild(
-        createSVGElement(
-          "circle",
-          {
-            cx: city.x,
-            cy: city.y,
-            r: 5.5,
-            class: "city-dot"
-          }
-        )
-      );
-
-      const cityAnchor =
-        city.x >
-        MAP_WIDTH * 0.76
-          ? "end"
-          : "start";
-
-      const cityOffset =
-        cityAnchor === "end"
-          ? -9
-          : 9;
-
-      addTextLabel(
-        city.x + cityOffset,
-        city.y - 7,
-        cityName,
-        "map-label",
-        cityAnchor
-      );
-
-      if (countryName) {
-
-        addTextLabel(
-          city.x + cityOffset,
-          city.y + 6,
-          countryName,
-          "map-sub-label",
-          cityAnchor
-        );
-      }
-
-      markerLayer.appendChild(
-        createSVGElement(
-          "circle",
-          {
-            cx: makkah.x,
-            cy: makkah.y,
-            r: 5.8,
-            class: "makkah-dot"
-          }
-        )
-      );
-
-      addTextLabel(
-        makkah.x + 9,
-        makkah.y - 15,
-        "🕋",
-        "kabah-symbol"
-      );
-
-      addTextLabel(
-        makkah.x + 9,
-        makkah.y - 2,
-        "Makkah",
-        "map-label"
-      );
-
-      addTextLabel(
-        makkah.x + 9,
-        makkah.y + 11,
-        "Saudi Arabia",
-        "map-sub-label"
-      );
+      currentMapRoute = {cityName,countryName,city,makkah,points,distance:haversineDistance(lat,lon,KABAH.lat,KABAH.lon)};
+      fitRouteView();
       return () => animateRoutePlane(points);
     }
 
@@ -2309,6 +2356,12 @@
 
     async function geocodeCity(city) {
       const knownCities = {
+        jeddah:{lat:21.4858,lon:39.1925,city:'Jeddah',country:'Saudi Arabia'},
+        dammam:{lat:26.4207,lon:50.0888,city:'Dammam',country:'Saudi Arabia'},
+        riyadh:{lat:24.7136,lon:46.6753,city:'Riyadh',country:'Saudi Arabia'},
+        madinah:{lat:24.4672,lon:39.6112,city:'Madinah',country:'Saudi Arabia'},
+        taif:{lat:21.2703,lon:40.4158,city:'Taif',country:'Saudi Arabia'},
+        makkah:{lat:21.3891,lon:39.8579,city:'Makkah',country:'Saudi Arabia'},
         toronto:{lat:43.6532,lon:-79.3832,city:'Toronto',country:'Canada'},
         london:{lat:51.5074,lon:-0.1278,city:'London',country:'United Kingdom'},
         'buenos aires':{lat:-34.6037,lon:-58.3816,city:'Buenos Aires',country:'Argentina'},
@@ -2323,7 +2376,9 @@
         'cape town':{lat:-33.9249,lon:18.4241,city:'Cape Town',country:'South Africa'},
         sydney:{lat:-33.8688,lon:151.2093,city:'Sydney',country:'Australia'}
       };
-      const known = knownCities[city.trim().toLowerCase()];
+      const aliases = {'jiddah':'jeddah','jeddah, saudi arabia':'jeddah','جدة':'jeddah','dammam, saudi arabia':'dammam','الدمام':'dammam','الرياض':'riyadh','medina':'madinah','al madinah':'madinah','المدينة المنورة':'madinah','mecca':'makkah','مكة':'makkah','مكة المكرمة':'makkah','taif, saudi arabia':'taif','الطائف':'taif'};
+      const normalized = city.trim().toLowerCase();
+      const known = knownCities[aliases[normalized] || normalized];
       if (known) return known;
 
 
@@ -2567,10 +2622,10 @@ const bearingCompassController = (() => {
       resetPerspective();
 
       /*
-        Every new city begins with
-        the complete world map at 1×.
+        Clear the previous city before choosing the new route's view.
       */
 
+      currentMapRoute = null;
       resetMapView();
 
       /*
@@ -2658,18 +2713,15 @@ const bearingCompassController = (() => {
 
         renderDistanceUnit();
 
+        placeholder.style.display = "none";
+        results.style.display = "block";
+
         const startPlane = drawMapMarkers(
           location.city,
           location.country,
           location.lat,
           location.lon
         );
-
-        placeholder.style.display =
-          "none";
-
-        results.style.display =
-          "block";
 
         if (worldDataLoaded) {
           mapLoading.style.display =
@@ -2769,6 +2821,8 @@ const bearingCompassController = (() => {
           "block";
 
         clearRoutePlane();
+        currentMapRoute = null;
+        markerLayer.replaceChildren();
         resetPerspective();
         resetMapView();
 
@@ -2791,6 +2845,3 @@ const bearingCompassController = (() => {
 
 <footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <span class="footer-destinations"><a href="./index.html">Return home</a><span aria-hidden="true">·</span><a href="./about.html">About AKS Ilm</a></span></footer></body>
 </html>
-
-
-
