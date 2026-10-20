@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How Far Are You From the Kaʿbah?</title>
+  <link rel="preload" as="image" href="./assets/map-nabawi.webp">
+  <link rel="preload" as="image" href="./assets/map-aqsa.webp">
 
   <style>
     * {
@@ -1040,7 +1042,7 @@
     const MAX_ZOOM = 160;
     const REGIONAL_DISTANCE_KM = 2500;
     const BUTTON_ZOOM_FACTOR = 1.12;
-    const ROUTE_PLANE_DURATION_MS = 3200;
+    const ROUTE_PLANE_DURATION_MS = 2600;
 
     const WORLD_DATA_URL =
       "./world.geojson";
@@ -1379,13 +1381,13 @@
     function layoutMapMarkers() {
       if (!currentMapRoute) return;
       markerLayer.replaceChildren();
-      const {cityName, countryName, city, makkah, distance} = currentMapRoute;
+      const {cityName, countryName, city, makkah, distance, landmark} = currentMapRoute;
       const a = mapToScreen(city), b = mapToScreen(makkah), ui = mapUIScale();
       const occupied = [labelBox(MAP_WIDTH-54*ui, 0, 54*ui, 88*ui)];
       const onMap = point => point.x > -10 && point.x < MAP_WIDTH+10 && point.y > -10 && point.y < MAP_HEIGHT+10;
       const sameCity = distance < 1 || /^(makkah|mecca|مكة|مكه)(\s|$)/i.test(cityName);
       const locations = sameCity ? [{point:b,name:'Makkah',country:'Saudi Arabia',destination:true}] : [
-        {point:a,name:cityName,country:countryName,destination:false},
+        {point:a,name:cityName,country:countryName,destination:false,landmark},
         {point:b,name:'Makkah',country:'Saudi Arabia',destination:true}
       ];
       for (const location of locations) {
@@ -1400,9 +1402,15 @@
         const country = createSVGElement('text', {x:0,y:26,class:'map-sub-label'});
         country.textContent = location.country || '';
         const label = createSVGElement('g');
+        const iconWidth = location.landmark ? 27 : 0;
+        if (location.landmark) {
+          const icon = createSVGElement('image', {href:location.landmark.src,x:0,y:0,width:22,height:22,role:'img','aria-label':location.landmark.name,class:'map-landmark'});
+          label.appendChild(icon);
+          name.setAttribute('x',iconWidth); country.setAttribute('x',iconWidth);
+        }
         label.append(name, country); group.appendChild(label); markerLayer.appendChild(group);
         // getComputedTextLength uses the same SVG font that the visitor sees.
-        const width = Math.max(name.getComputedTextLength(),country.getComputedTextLength(),30)*ui;
+        const width = (iconWidth + Math.max(name.getComputedTextLength(),country.getComputedTextLength(),30))*ui;
         const height = (location.country ? 30 : 16)*ui;
         const box = chooseLabelPosition(point, width, height, occupied, ui, point.x <= (a.x+b.x)/2);
         occupied.push(box);
@@ -2305,7 +2313,8 @@
       cityName,
       countryName,
       lat,
-      lon
+      lon,
+      landmark = null
     ) {
 
       routeLayer.innerHTML = "";
@@ -2344,7 +2353,7 @@
         routeLayer.appendChild(copy);
       }
 
-      currentMapRoute = {cityName,countryName,city,makkah,points,distance:haversineDistance(lat,lon,KABAH.lat,KABAH.lon)};
+      currentMapRoute = {cityName,countryName,city,makkah,points,landmark,distance:haversineDistance(lat,lon,KABAH.lat,KABAH.lon)};
       fitRouteView();
       return () => animateRoutePlane(points);
     }
@@ -2358,7 +2367,8 @@
         jeddah:{lat:21.4858,lon:39.1925,city:'Jeddah',country:'Saudi Arabia'},
         dammam:{lat:26.4207,lon:50.0888,city:'Dammam',country:'Saudi Arabia'},
         riyadh:{lat:24.7136,lon:46.6753,city:'Riyadh',country:'Saudi Arabia'},
-        madinah:{lat:24.4672,lon:39.6112,city:'Madinah',country:'Saudi Arabia'},
+        madinah:{lat:24.4672,lon:39.6112,city:'Madinah',country:'Saudi Arabia',landmark:{src:'./assets/map-nabawi.webp',name:'Al-Masjid an-Nabawi'}},
+        jerusalem:{lat:31.7683,lon:35.2137,city:'Jerusalem',country:'Palestine',landmark:{src:'./assets/map-aqsa.webp',name:'Al-Masjid al-Aqsa'}},
         taif:{lat:21.2703,lon:40.4158,city:'Taif',country:'Saudi Arabia'},
         makkah:{lat:21.3891,lon:39.8579,city:'Makkah',country:'Saudi Arabia'},
         toronto:{lat:43.6532,lon:-79.3832,city:'Toronto',country:'Canada'},
@@ -2375,7 +2385,7 @@
         'cape town':{lat:-33.9249,lon:18.4241,city:'Cape Town',country:'South Africa'},
         sydney:{lat:-33.8688,lon:151.2093,city:'Sydney',country:'Australia'}
       };
-      const aliases = {'jiddah':'jeddah','jeddah, saudi arabia':'jeddah','جدة':'jeddah','dammam, saudi arabia':'dammam','الدمام':'dammam','الرياض':'riyadh','medina':'madinah','al madinah':'madinah','المدينة المنورة':'madinah','mecca':'makkah','مكة':'makkah','مكة المكرمة':'makkah','taif, saudi arabia':'taif','الطائف':'taif'};
+      const aliases = {'madina':'madinah','al-madinah':'madinah','madinah, saudi arabia':'madinah','medina, saudi arabia':'madinah','المدينة':'madinah','al-quds':'jerusalem','al quds':'jerusalem','quds':'jerusalem','القدس':'jerusalem','jerusalem, palestine':'jerusalem','al-quds (jerusalem)':'jerusalem','jiddah':'jeddah','jeddah, saudi arabia':'jeddah','جدة':'jeddah','dammam, saudi arabia':'dammam','الدمام':'dammam','الرياض':'riyadh','medina':'madinah','al madinah':'madinah','المدينة المنورة':'madinah','mecca':'makkah','مكة':'makkah','مكة المكرمة':'makkah','taif, saudi arabia':'taif','الطائف':'taif'};
       const normalized = city.trim().toLowerCase();
       const known = knownCities[aliases[normalized] || normalized];
       if (known) return known;
@@ -2719,7 +2729,8 @@ const bearingCompassController = (() => {
           location.city,
           location.country,
           location.lat,
-          location.lon
+          location.lon,
+          location.landmark || null
         );
 
         if (worldDataLoaded) {
