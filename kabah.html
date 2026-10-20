@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How Far Are You From the Kaʿbah?</title>
-  <link rel="preload" as="image" href="./assets/map-nabawi.webp">
-  <link rel="preload" as="image" href="./assets/map-aqsa.webp">
 
   <style>
     * {
@@ -1370,7 +1368,7 @@
       }
       let best = null, bestScore = Infinity;
       for (const raw of candidates) {
-        const box = labelBox(clamp(raw.x, margin, MAP_WIDTH-width-margin), clamp(raw.y, margin, MAP_HEIGHT-height-36*ui), width, height);
+        const box = labelBox(clamp(raw.x, margin, MAP_WIDTH-width-margin), clamp(raw.y, margin, MAP_HEIGHT-height-margin), width, height);
         const collisions = occupied.filter(other => boxesOverlap(box, other, 6*ui)).length;
         const score = collisions*1000000 + Math.hypot(box.x+width/2-point.x, box.y+height/2-point.y);
         if (score < bestScore) { best = box; bestScore = score; }
@@ -2383,13 +2381,52 @@
        CITY LOOKUP
     ------------------------------ */
 
+    const CITY_LANDMARKS = {
+      "toronto": {"src":"./assets/map-toronto.webp","name":"CN Tower"},
+      "london": {"src":"./assets/map-london.webp","name":"Big Ben"},
+      "los angeles": {"src":"./assets/map-los-angeles.webp","name":"Hollywood sign"},
+      "dubai": {"src":"./assets/map-dubai.webp","name":"Burj Khalifa"},
+      "sydney": {"src":"./assets/map-sydney.webp","name":"Sydney Opera House"},
+      "barcelona": {"src":"./assets/map-barcelona.webp","name":"Camp Nou"},
+      "dhaka": {"src":"./assets/map-dhaka.webp","name":"National Parliament Building"},
+      "buenos aires": {"src":"./assets/map-buenos-aires.webp","name":"Obelisk of Buenos Aires"},
+      "madinah": {"src":"./assets/map-nabawi.webp","name":"Al-Masjid an-Nabawi"},
+      "jerusalem": {"src":"./assets/map-aqsa.webp","name":"Al-Masjid al-Aqsa"},
+      "paris": {"src":"./assets/map-paris.webp","name":"Eiffel Tower"},
+      "rome": {"src":"./assets/map-rome.webp","name":"Colosseum"},
+      "pisa": {"src":"./assets/map-pisa.webp","name":"Leaning Tower of Pisa"},
+      "cairo": {"src":"./assets/map-cairo.webp","name":"Pyramids of Giza"},
+      "giza": {"src":"./assets/map-cairo.webp","name":"Pyramids of Giza"},
+      "new york": {"src":"./assets/map-new-york.webp","name":"Statue of Liberty"},
+      "agra": {"src":"./assets/map-agra.webp","name":"Taj Mahal"},
+      "beijing": {"src":"./assets/map-beijing.webp","name":"Great Wall of China"},
+      "kuala lumpur": {"src":"./assets/map-kuala-lumpur.webp","name":"Petronas Twin Towers"},
+      "istanbul": {"src":"./assets/map-istanbul.webp","name":"Hagia Sophia"},
+      "abu dhabi": {"src":"./assets/map-abu-dhabi.webp","name":"Sheikh Zayed Grand Mosque"},
+      "tokyo": {"src":"./assets/map-tokyo.webp","name":"Tokyo Skytree"},
+      "singapore": {"src":"./assets/map-singapore.webp","name":"Merlion"},
+      "cape town": {"src":"./assets/map-cape-town.webp","name":"Table Mountain"},
+    };
+
     async function geocodeCity(city) {
       const knownCities = {
+        "paris":{"lat":48.8566,"lon":2.3522,"city":"Paris","country":"France"},
+        "rome":{"lat":41.9028,"lon":12.4964,"city":"Rome","country":"Italy"},
+        "pisa":{"lat":43.7228,"lon":10.4017,"city":"Pisa","country":"Italy"},
+        "cairo":{"lat":30.0444,"lon":31.2357,"city":"Cairo","country":"Egypt"},
+        "giza":{"lat":30.0131,"lon":31.2089,"city":"Giza","country":"Egypt"},
+        "new york":{"lat":40.7128,"lon":-74.006,"city":"New York City","country":"United States"},
+        "agra":{"lat":27.1767,"lon":78.0081,"city":"Agra","country":"India"},
+        "beijing":{"lat":39.9042,"lon":116.4074,"city":"Beijing","country":"China"},
+        "kuala lumpur":{"lat":3.139,"lon":101.6869,"city":"Kuala Lumpur","country":"Malaysia"},
+        "abu dhabi":{"lat":24.4539,"lon":54.3773,"city":"Abu Dhabi","country":"United Arab Emirates"},
+        "singapore":{"lat":1.3521,"lon":103.8198,"city":"Singapore","country":"Singapore"},
+
         jeddah:{lat:21.4858,lon:39.1925,city:'Jeddah',country:'Saudi Arabia'},
         dammam:{lat:26.4207,lon:50.0888,city:'Dammam',country:'Saudi Arabia'},
         riyadh:{lat:24.7136,lon:46.6753,city:'Riyadh',country:'Saudi Arabia'},
-        madinah:{lat:24.4672,lon:39.6112,city:'Madinah',country:'Saudi Arabia',landmark:{src:'./assets/map-nabawi.webp',name:'Al-Masjid an-Nabawi'}},
-        jerusalem:{lat:31.7683,lon:35.2137,city:'Jerusalem',country:'Palestine',landmark:{src:'./assets/map-aqsa.webp',name:'Al-Masjid al-Aqsa'}},
+        madinah:{lat:24.4672,lon:39.6112,city:'Madinah',country:'Saudi Arabia'},
+        jerusalem:{lat:31.7683,lon:35.2137,city:'Jerusalem',country:'Palestine'},
         taif:{lat:21.2703,lon:40.4158,city:'Taif',country:'Saudi Arabia'},
         makkah:{lat:21.3891,lon:39.8579,city:'Makkah',country:'Saudi Arabia'},
         toronto:{lat:43.6532,lon:-79.3832,city:'Toronto',country:'Canada'},
@@ -2407,9 +2444,11 @@
         sydney:{lat:-33.8688,lon:151.2093,city:'Sydney',country:'Australia'}
       };
       const aliases = {'madina':'madinah','al-madinah':'madinah','madinah, saudi arabia':'madinah','medina, saudi arabia':'madinah','المدينة':'madinah','al-quds':'jerusalem','al quds':'jerusalem','quds':'jerusalem','القدس':'jerusalem','jerusalem, palestine':'jerusalem','al-quds (jerusalem)':'jerusalem','jiddah':'jeddah','jeddah, saudi arabia':'jeddah','جدة':'jeddah','dammam, saudi arabia':'dammam','الدمام':'dammam','الرياض':'riyadh','medina':'madinah','al madinah':'madinah','المدينة المنورة':'madinah','mecca':'makkah','مكة':'makkah','مكة المكرمة':'makkah','taif, saudi arabia':'taif','الطائف':'taif'};
-      const normalized = city.trim().toLowerCase();
-      const known = knownCities[aliases[normalized] || normalized];
-      if (known) return known;
+      Object.assign(aliases, {"nyc": "new york", "new york city": "new york", "new york, usa": "new york", "new york city, usa": "new york", "la": "los angeles", "los angeles, usa": "los angeles", "kuala-lumpur": "kuala lumpur", "kl": "kuala lumpur", "abu-dhabi": "abu dhabi", "al quds": "jerusalem", "al-quds": "jerusalem", "medina": "madinah", "toronto, canada": "toronto", "london, uk": "london", "london, united kingdom": "london", "london, england": "london", "los angeles, united states": "los angeles", "los angeles, united states of america": "los angeles", "dubai, uae": "dubai", "dubai, united arab emirates": "dubai", "sydney, australia": "sydney", "barcelona, spain": "barcelona", "dhaka, bangladesh": "dhaka", "buenos aires, argentina": "buenos aires", "madinah, saudi arabia": "madinah", "jerusalem, palestine": "jerusalem", "paris, france": "paris", "rome, italy": "rome", "pisa, italy": "pisa", "cairo, egypt": "cairo", "giza, egypt": "giza", "new york, united states": "new york", "new york, united states of america": "new york", "agra, india": "agra", "beijing, china": "beijing", "kuala lumpur, malaysia": "kuala lumpur", "istanbul, turkey": "istanbul", "istanbul, türkiye": "istanbul", "abu dhabi, uae": "abu dhabi", "abu dhabi, united arab emirates": "abu dhabi", "tokyo, japan": "tokyo", "singapore, singapore": "singapore", "cape town, south africa": "cape town", "new york city, united states": "new york"});
+      const normalized = city.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ');
+      const key = aliases[normalized] || normalized;
+      const known = knownCities[key];
+      if (known) return {...known, landmark: CITY_LANDMARKS[key] || null};
 
 
       const url =
