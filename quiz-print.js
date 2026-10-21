@@ -25,7 +25,7 @@
   page=Math.max(0,Math.min(page,groups.length-1));
   preview.innerHTML=makeSheet(groups[page],answers,page,groups.length);
   qTab.setAttribute('aria-pressed',String(!answers));aTab.setAttribute('aria-pressed',String(answers));
-  byId('quiz-print-selection').textContent=selected.length+' questions · #'+selected[0][0]+'–'+selected[selected.length-1][0];
+  byId('quiz-print-selection').textContent=selected.length+(selected.length===1?' question · #':' questions · #')+selected[0][0]+'–'+selected[selected.length-1][0];
   byId('quiz-print-position').textContent=(answers?'Answer key':'Worksheet')+' '+(page+1)+' of '+groups.length;
   previous.disabled=page===0;next.disabled=page===groups.length-1;
  }
