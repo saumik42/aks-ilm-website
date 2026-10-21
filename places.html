@@ -557,6 +557,41 @@ function commonsImage(filename, width = 960) {
 
 const places = {
 
+  baqi: {
+    "name": "Al-Baqiʿ Cemetery",
+    "location": "Beside Masjid an-Nabawi · Madinah, Saudi Arabia",
+    "description": "Al-Baqiʿ is the historic cemetery of Madinah, beside Masjid an-Nabawi, where many Companions and members of the Prophet’s ﷺ family are buried. The Prophet ﷺ visited it and supplicated for those buried there.",
+    "reference": "Sahih Muslim 974b",
+    "url": "https://sunnah.com/muslim:974b",
+    "lat": 24.4669444,
+    "lng": 39.6163889,
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Al-Baqi%27.jpg",
+    "photoAsset": "./assets/places-baqi.webp",
+    "photoAlt": "Al-Baqiʿ Cemetery, Madinah",
+    "photoCaption": "Al-Baqiʿ Cemetery, Madinah · Resized",
+    "photoCredit": "Tahir mq",
+    "photoLicense": "CC BY-SA 4.0",
+    "photoLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+},
+
+  hudaybiyyah: {
+    "name": "Al-Hudaybiyyah",
+    "location": "Al-Shumaisi · West of Makkah, Saudi Arabia",
+    "description": "Al-Hudaybiyyah is the historic area where the Prophet Muhammad ﷺ and Quraysh concluded a peace treaty in 6 AH. The negotiations and terms of the treaty are recorded in Sahih al-Bukhari.",
+    "reference": "Sahih al-Bukhari 2731–2732",
+    "url": "https://sunnah.com/bukhari:2731",
+    "lat": 21.4414625,
+    "lng": 39.6246355,
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Old_Hubaidiyah_Mosque_-_panoramio_(1).jpg",
+    "photoAsset": "./assets/places-hudaybiyyah.webp",
+    "photoAlt": "Old mosque ruins in the Hudaybiyyah area",
+    "photoCaption": "Old mosque ruins in the Hudaybiyyah area · Resized / card view cropped",
+    "photoCredit": "GusJuned",
+    "photoLicense": "CC BY-SA 3.0",
+    "photoLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "locationNote": "The map marks the historic Al-Shumaisi area, not a verified exact spot where the treaty was signed. The photograph shows later mosque ruins in the area."
+},
+
   minaretIsa: {
     "name": "Minaret of ʿIsa",
     "location": "Umayyad Mosque, Damascus, Syria",
@@ -1828,13 +1863,14 @@ function showMakkahArea() {
       "mapCount"
     )
     .textContent =
-    "6 locations";
+    "7 locations";
 
   resetInfo(
     "Select a location in the Makkah area to learn more."
   );
 
   setLocationData([
+    makeFeature("hudaybiyyah", places.hudaybiyyah.lng, places.hudaybiyyah.lat),
 
     makeFeature(
       "makkah",
@@ -1934,9 +1970,11 @@ function showMakkahArea() {
     false
   );
 
+  addClickableLabel("hudaybiyyah", "Al-Hudaybiyyah", places.hudaybiyyah.lng, places.hudaybiyyah.lat, 0, -30, false);
+
   map.fitBounds(
     [
-      [39.79, 21.32],
+      [39.59, 21.32],
       [40.01, 21.48]
     ],
     {
@@ -1964,13 +2002,14 @@ function showMadinahArea() {
 
   document.getElementById("backButton").style.display = "none";
   document.getElementById("mapTitle").textContent = "Madinah Area";
-  document.getElementById("mapCount").textContent = "4 locations";
+  document.getElementById("mapCount").textContent = "5 locations";
 
   resetInfo(
     "Select a location in the Madinah area to learn more."
   );
 
   setLocationData([
+    makeFeature("baqi", places.baqi.lng, places.baqi.lat),
     makeFeature("madinah", places.madinah.lng, places.madinah.lat),
     makeFeature("uhud", places.uhud.lng, places.uhud.lat),
     makeFeature("quba", places.quba.lng, places.quba.lat),
@@ -1981,6 +2020,8 @@ function showMadinahArea() {
   addClickableLabel("uhud", "Mount Uhud", places.uhud.lng, places.uhud.lat, 0, -30, false);
   addClickableLabel("quba", "Masjid Quba", places.quba.lng, places.quba.lat, 54, 26, false);
   addClickableLabel("qiblatayn", "Masjid al-Qiblatayn", places.qiblatayn.lng, places.qiblatayn.lat, -74, -6, false);
+
+  addClickableLabel("baqi", "Al-Baqiʿ Cemetery", places.baqi.lng, places.baqi.lat, 70, -24, false);
 
   map.fitBounds(
     [[39.54, 24.41], [39.66, 24.55]],
