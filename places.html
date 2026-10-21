@@ -1721,9 +1721,10 @@ function showPlace(key) {
 
           <a
             href="${p.photoSource}"
+            ${p.photoCredit ? `title="Photo by ${p.photoCredit} — source and attribution on Wikimedia Commons"` : ""}
             target="_blank"
             rel="noopener noreferrer">
-            ${p.photoCredit ? "Photo: " + p.photoCredit + " / Wikimedia Commons ↗" : "Photo source: Wikimedia Commons ↗"}
+            Wikimedia Commons ↗
           </a>
           ${p.photoLicense ? `<a href="${p.photoLicenseUrl}" target="_blank" rel="noopener noreferrer">${p.photoLicense}</a>` : ""}
 
@@ -2218,7 +2219,7 @@ if (
 <footer class="page-foot">© 2026 AKS Ilm · Est. 2025 · Islamic Trivia & Learning · <span class="footer-destinations"><a href="./index.html">Return home</a><span aria-hidden="true">·</span><a href="./about.html">About AKS Ilm</a></span></footer><script>const placeSelect=document.getElementById('place-select');for(const [key,place] of Object.entries(places)){const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.append(option)}placeDiscoveries.syncOptions();placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
 <div class="photo-viewer-tools"><button id="photo-viewer-close" type="button" autofocus>Close ×</button></div>
 <figure><img id="photo-viewer-image" alt="" referrerpolicy="no-referrer"><figcaption id="photo-viewer-caption"></figcaption></figure>
-<div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Photo source: Wikimedia Commons ↗</a></div>
+<div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Wikimedia Commons ↗</a></div>
 </dialog><script id="location-photo-viewer-script">(()=>{
   const viewer=document.getElementById('location-photo-viewer');
   const info=document.getElementById('info');
@@ -2234,6 +2235,7 @@ if (
     enlarged.alt=photo.alt;
     document.getElementById('photo-viewer-caption').textContent=caption.querySelector('span').textContent.trim();
     document.getElementById('photo-viewer-source').href=source.href;
+    document.getElementById('photo-viewer-source').title=source.title;
     trigger=button;
     savedY=window.scrollY;
     savedOverflow=document.documentElement.style.overflow;
