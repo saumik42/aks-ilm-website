@@ -557,6 +557,27 @@ function commonsImage(filename, width = 960) {
 
 const places = {
 
+  minaretIsa: {
+    "name": "Minaret of ʿIsa",
+    "location": "Umayyad Mosque, Damascus, Syria",
+    "description": "The Prophet Muhammad ﷺ foretold that ʿIsa ibn Maryam (AS) will descend at the white minaret in the eastern side of Damascus. The Umayyad Mosque’s eastern minaret, known as the Minaret of ʿIsa, is traditionally associated with this narration.",
+    "locationNote": "The hadith does not name the Umayyad Mosque. Identifying this particular minaret as the one intended is disputed.",
+    "reference": "Sahih Muslim 2937a",
+    "url": "https://sunnah.com/muslim:2937a",
+    "photoFile": "Minaret of Jesus, Omayyad Mosque.jpg",
+    "photoAlt": "The Minaret of Isa at the Umayyad Mosque in Damascus",
+    "photoCaption": "Minaret of ʿIsa, Umayyad Mosque",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Minaret_of_Jesus,_Omayyad_Mosque.jpg",
+    "photoCredit": "Bernard Gagnon",
+    "photoLicense": "CC BY-SA 3.0",
+    "photoLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "lat": 33.5113,
+    "lng": 36.3074,
+    "photoAsset": "./assets/places-minaret-isa.webp",
+    "photoFit": "contain"
+},
+
+
   quds: {
     name: "Al-Quds (Jerusalem)",
     location: "Al-Quds (Jerusalem), Palestine",
@@ -1592,10 +1613,7 @@ function showPlace(key) {
   if (!p) return;
   focusSelectedPlace(key);
 
-  const imageURL =
-    commonsImage(
-      p.photoFile
-    );
+  const imageURL = p.photoAsset || commonsImage(p.photoFile);
 
   document
     .getElementById("info")
@@ -1611,9 +1629,10 @@ function showPlace(key) {
         <img
           class="location-photo"
           src="${imageURL}"
-          srcset="${commonsImage(p.photoFile,480)} 480w, ${imageURL} 960w"
+          srcset="${p.photoAsset ? "" : commonsImage(p.photoFile,480) + " 480w, " + imageURL + " 960w"}"
           sizes="(max-width:620px) calc(100vw - 50px), (max-width:990px) calc(100vw - 82px), 908px"
-          data-full-src="${commonsImage(p.photoFile,1800)}"
+          data-full-src="${p.photoAsset || commonsImage(p.photoFile,1800)}"
+          ${p.photoFit === "contain" ? 'style="object-fit:contain"' : ""}
           decoding="async"
           alt="${p.photoAlt}"
           loading="lazy"
@@ -1630,8 +1649,9 @@ function showPlace(key) {
             href="${p.photoSource}"
             target="_blank"
             rel="noopener noreferrer">
-            Photo source: Wikimedia Commons ↗
+            ${p.photoCredit ? "Photo: " + p.photoCredit + " / Wikimedia Commons ↗" : "Photo source: Wikimedia Commons ↗"}
           </a>
+          ${p.photoLicense ? `<a href="${p.photoLicenseUrl}" target="_blank" rel="noopener noreferrer">${p.photoLicense}</a>` : ""}
 
         </div>
 
@@ -1639,6 +1659,7 @@ function showPlace(key) {
 
       <div class="description">
         ${p.description}
+        ${p.locationNote ? `<br><br><strong>About this location:</strong> ${p.locationNote}` : ""}
       </div>
 
       <div class="reference">
@@ -1747,6 +1768,7 @@ function showRegionalMap() {
   if (!map || !mapLoadedSuccessfully || !locationLayersReady || mapUnavailable) return;
 
   setLocationData([
+    makeFeature("minaretIsa", places.minaretIsa.lng, places.minaretIsa.lat),
     makeFeature("quds", places.quds.lng, places.quds.lat),
     makeFeature("sinai", places.sinai.lng, places.sinai.lat),
     makeFeature("badr", places.badr.lng, places.badr.lat),
@@ -1757,6 +1779,7 @@ function showRegionalMap() {
     makeFeature("makkahGateway", places.makkah.lng, places.makkah.lat)
   ]);
 
+  addClickableLabel("minaretIsa", "Minaret of ʿIsa", places.minaretIsa.lng, places.minaretIsa.lat, 62, -8, false);
   addClickableLabel("quds", "Al-Quds (Jerusalem)", places.quds.lng, places.quds.lat, 80, 0, false);
   addClickableLabel("sinai", "Mount Sinai", places.sinai.lng, places.sinai.lat, -58, 4, false);
   addClickableLabel("badr", "Badr", places.badr.lng, places.badr.lat, -45, 4, false);
@@ -1767,7 +1790,7 @@ function showRegionalMap() {
   addClickableLabel("makkahGateway", "Makkah Area →", places.makkah.lng, places.makkah.lat, 75, 0, true);
 
   map.fitBounds(
-    [[33.25, 20.25], [44.25, 32.75]],
+    [[33.25, 20.25], [44.25, 33.95]],
     {
       padding: {top: 38, bottom: 38, left: 42, right: 42},
       maxZoom: 5.35,
@@ -2146,6 +2169,7 @@ if (
   });
 })();</script><dialog id="expanded-map-dialog" aria-labelledby="expanded-map-title"><div class="expanded-map-toolbar"><h2 id="expanded-map-title">Islamic Places</h2><button id="expanded-map-close" type="button" autofocus>Close ×</button></div></dialog></body>
 </html>
+
 
 
 
