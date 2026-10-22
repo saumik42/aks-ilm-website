@@ -19,3 +19,6 @@ body{background:#fff;color:#153451;font-family:Arial,Helvetica,sans-serif;margin
 /* Consistent, naturally wrapping footer destinations on feature pages. */
 .page-foot .footer-destinations{display:inline-flex;flex-wrap:wrap;align-items:baseline;column-gap:6px;vertical-align:baseline}
 .page-foot .footer-destinations>a{white-space:nowrap}
+
+/* Slightly larger branding on desktop screens. */
+@media(min-width:1001px){.site-logo{width:248px}}
