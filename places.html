@@ -1135,8 +1135,8 @@ function initialiseMap() {
       }
 
 
-      // Lower wheel and trackpad sensitivity while keeping MapLibre's smooth animation.
-      map.scrollZoom.setWheelZoomRate(1 / 900);
+      // Standard mouse-wheel speed with smooth animation; gentler trackpad sensitivity.
+      map.scrollZoom.setWheelZoomRate(1 / 450);
       map.scrollZoom.setZoomRate(1 / 150);
 
       map.on("error", function(event) {
