@@ -12,7 +12,8 @@
 #expanded-map-dialog .map-title{flex:1 1 100px;overflow-wrap:anywhere}
 #expanded-map-dialog .place-picker{flex:0 0 auto;flex-direction:row;align-items:center;gap:10px;padding:10px 12px}
 #expanded-map-dialog .place-picker label{flex:0 0 auto;font-size:12px}
-#expanded-map-dialog .place-picker select{min-width:0;width:0}
+#expanded-map-dialog .place-picker select{flex:1 1 auto;min-width:0;width:auto;color:#153451;background-color:#fff;color-scheme:light}
+#expanded-map-dialog .place-picker option{color:#153451;background-color:#fff}
 #expanded-map-dialog .map-holder{flex:1 1 auto;height:auto;min-height:0}
 #expanded-map-dialog #map{min-height:0;height:100%}
 #expanded-map-dialog .map-expand-trigger{display:none}
