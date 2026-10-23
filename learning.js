@@ -47,6 +47,7 @@
         termSelect.appendChild(option);
       });
     termSelect.addEventListener('change', () => {
+      if (termSelect.value === '') return;
       const index = Number(termSelect.value);
       if (Number.isInteger(index) && terms[index]) renderTerm(terms[index]);
     });
@@ -78,5 +79,6 @@
   el('another-term').addEventListener('click', showTerm);
   el('another-benefit').addEventListener('click', showBenefit);
   showTerm();
+  if (termSelect) termSelect.value = '';
   showBenefit();
 })();
