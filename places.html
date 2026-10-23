@@ -488,7 +488,7 @@
 .page-title-illustration{display:block;width:46px;height:46px;object-fit:contain;margin:0 auto 10px}
 .page-heading{text-align:center}
 @media(max-width:600px){.page-title-illustration{width:42px;height:42px;margin-bottom:9px}}
-</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="places-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./map-expand.css?v=2"><script defer src="./map-expand.js?v=1"></script><link rel="stylesheet" href="./discovery-stamps.css?v=1"></head>
+</style><link rel="stylesheet" href="./feature-ui.css"><link rel="stylesheet" href="./maps-menu.css?v=3"><script defer src="./maps-menu.js?v=3"></script><style id="places-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./map-expand.css?v=3"><script defer src="./map-expand.js?v=2"></script><link rel="stylesheet" href="./discovery-stamps.css?v=1"></head>
 
 <body><nav class="site-nav" aria-label="Site navigation"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-transparent-480.webp" srcset="./assets/logo-transparent-480.webp 480w, ./assets/logo-transparent-960.webp 960w" sizes="(max-width: 380px) 138px, (max-width: 600px) 176px, 220px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><div><a href="./index.html">Home</a><a href="./trivia.html">Trivia</a><a href="./library.html">Library</a><a href="./prophets.html">The Prophets</a><a href="./about.html">About</a><div class="nav-maps"><button type="button" class="nav-maps-toggle" aria-current="true" aria-expanded="false" aria-controls="nav-map-destinations">Maps<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="nav-map-links" id="nav-map-destinations" hidden><a href="./places.html" aria-current="page"><img src="./assets/feature-places.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Islamic Places</a><a href="./kabah.html"><img src="./assets/feature-kabah.webp" width="26" height="26" alt="" aria-hidden="true" decoding="async">Distance to the Kaʿbah</a></div></div></div></nav><div class="page-heading feature-page-heading"><img class="page-title-illustration" src="./assets/feature-places.webp" width="256" height="256" alt="" aria-hidden="true" decoding="async"><h1>Explore Islamic Places</h1><p style="color:#425f79;text-wrap:pretty;">Discover places connected to the Qur’an, Sunnah, and Islamic history.</p><p class="places-scope-note" style="max-width:60ch;margin:6px auto 0;font-size:13px;line-height:1.5;color:#69727b;text-wrap:balance;">Note: This map features a selection of significant Islamic places, rather than a complete list.</p></div>
 
@@ -1134,6 +1134,10 @@ function initialiseMap() {
         return;
       }
 
+
+      // Lower wheel and trackpad sensitivity while keeping MapLibre's smooth animation.
+      map.scrollZoom.setWheelZoomRate(1 / 900);
+      map.scrollZoom.setZoomRate(1 / 150);
 
       map.on("error", function(event) {
 
