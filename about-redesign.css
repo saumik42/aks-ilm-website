@@ -230,3 +230,10 @@ body{background:#f5f9fd}
 #aks-about-page .ae-contact{display:flex;flex-wrap:wrap;align-items:center;column-gap:6px;max-width:790px;margin:20px auto 0;color:#526d85;font:14px/1.8 Arial,Helvetica,sans-serif}
 #aks-about-page .ae-contact a{display:inline-flex;align-items:center;min-height:44px;color:#245fa6;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
 #aks-about-page .ae-contact a:hover{color:#164b88}
+
+/* A compact personal portrait, facing the introductory text. */
+#aks-about-page .ae-hero{display:grid;grid-template-columns:200px minmax(0,1fr);gap:38px;align-items:center;max-width:none;padding:35px 0 32px}
+#aks-about-page .ae-portrait{display:block;width:200px;max-width:100%;height:auto;justify-self:center}
+#aks-about-page .ae-hero-copy{min-width:0}
+#aks-about-page .ae-hero .ae-lede{max-width:680px}
+@media(max-width:760px){#aks-about-page .ae-hero{grid-template-columns:minmax(0,1fr);gap:18px;padding:25px 0 28px}#aks-about-page .ae-portrait{width:140px}#aks-about-page .ae-hero .ae-eyebrow{white-space:normal}}
