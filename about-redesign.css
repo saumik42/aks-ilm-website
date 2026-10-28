@@ -240,9 +240,9 @@ body{background:#f5f9fd}
 
 /* Compact mobile portrait and introductory phrase; retain the desktop composition. */
 @media(max-width:760px){
-#aks-about-page .ae-hero{grid-template-columns:58px minmax(0,1fr);column-gap:12px;row-gap:0;padding-top:24px}
+#aks-about-page .ae-hero{grid-template-columns:64px minmax(0,1fr);column-gap:12px;row-gap:0;padding-top:24px}
 #aks-about-page .ae-hero-copy{display:contents}
-#aks-about-page .ae-portrait{grid-column:1;grid-row:1;width:58px;justify-self:start;align-self:center}
+#aks-about-page .ae-portrait{grid-column:1;grid-row:1;width:64px;justify-self:start;align-self:center}
 #aks-about-page .ae-hero .ae-eyebrow{grid-column:2;grid-row:1;justify-self:start;align-self:center;font-size:11px;line-height:1.8;letter-spacing:.7px;margin:0;transform:translateY(15px)}
 #aks-about-page .ae-hero .ae-eyebrow span{display:block}
 #aks-about-page .ae-hero h1{grid-column:1/-1;margin-top:15px}
