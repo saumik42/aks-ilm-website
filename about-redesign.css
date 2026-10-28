@@ -274,3 +274,17 @@ body{background:#f5f9fd}
 @keyframes ae-bookmark-weave{0%,100%{filter:none}35%{filter:brightness(1.45)}}
 @keyframes ae-bookmark-sweep{0%,12%{transform:translateX(-150%)}72%,100%{transform:translateX(150%)}}
 @media(prefers-reduced-motion:reduce){#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark{animation:none;filter:brightness(1.2)}#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark>span{animation:none;filter:brightness(1.25)}#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark:before{display:none}}
+
+/* Small, on-demand interactions for the four content steps. */
+#aks-about-page .ae-process-tap{border:0;padding:0;cursor:pointer;color:inherit;font-family:inherit;-webkit-tap-highlight-color:transparent}
+#aks-about-page .ae-process-tap>span{display:block;pointer-events:none;transform-origin:center}
+#aks-about-page .ae-process-tap:focus-visible{outline:2px solid #377fc5;outline-offset:4px}
+#aks-about-page .ae-process-tap[data-effect="idea"].is-playing{animation:ae-idea-glow .9s ease-out}
+#aks-about-page .ae-process-tap[data-effect="study"].is-playing>span{animation:ae-study-open .85s ease-in-out}
+#aks-about-page .ae-process-tap[data-effect="verify"].is-playing>span{animation:ae-verify-bounce .7s ease-out}
+#aks-about-page .ae-process-tap[data-effect="share"].is-playing>span{animation:ae-share-lift .85s ease-in-out}
+@keyframes ae-idea-glow{0%,100%{background:#edf4fb;box-shadow:0 0 0 0 #e9ba4b00}40%{background:#fff7dc;box-shadow:0 0 12px 3px #e9ba4b30}}
+@keyframes ae-study-open{0%,100%{transform:perspective(160px) rotateY(0) rotate(0)}38%{transform:perspective(160px) rotateY(-14deg) rotate(-4deg)}65%{transform:perspective(160px) rotateY(7deg) rotate(2deg)}}
+@keyframes ae-verify-bounce{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-3px) scale(1.07)}65%{transform:translateY(1px) scale(.98)}}
+@keyframes ae-share-lift{0%,100%{transform:translateY(0)}42%{transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){#aks-about-page .ae-process-tap.is-playing,#aks-about-page .ae-process-tap.is-playing>span{animation:none!important}#aks-about-page .ae-process-tap.is-playing{background:#dcebf9}#aks-about-page .ae-process-tap[data-effect="idea"].is-playing{background:#fff7dc}}
