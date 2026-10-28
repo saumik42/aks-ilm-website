@@ -261,3 +261,16 @@ body{background:#f5f9fd}
 #aks-about-page .ae-creator-dialog .ae-dialog-thanks{margin-top:9px}
 #aks-about-page .ae-dialog-close{position:absolute;right:6px;top:6px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:50%;background:none;color:#526d85;cursor:pointer}
 #aks-about-page .ae-dialog-close:focus-visible{outline:2px solid #377fc5;outline-offset:2px}
+
+/* A quiet white sheen within the blue woven bookmark, on activation only. */
+#aks-about-page .ae-bookmark-button{position:absolute;right:-12px;top:-3px;display:block;width:44px;height:56px;border:0;padding:0;background:none;cursor:pointer}
+#aks-about-page .ae-bookmark-button .ae-story-bookmark{position:absolute;right:13px;top:5px;pointer-events:none;transform-origin:50% 0}
+#aks-about-page .ae-bookmark-button:focus-visible{outline:2px solid #377fc5;outline-offset:3px;border-radius:5px}
+#aks-about-page .ae-bookmark-button .ae-story-bookmark:before{content:"";position:absolute;z-index:2;inset:-20px -18px;background:linear-gradient(115deg,transparent 32%,#ffffff14 40%,#ffffffb3 49%,#ffffff26 57%,transparent 65%);transform:translateX(-150%);pointer-events:none}
+#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark{animation:ae-bookmark-lift 1.5s ease-out}
+#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark>span{animation:ae-bookmark-weave 1.5s ease-out}
+#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark:before{animation:ae-bookmark-sweep 1.5s ease-in-out}
+@keyframes ae-bookmark-lift{0%,100%{transform:scale(1);filter:brightness(1)}22%{transform:translateY(-2px) scale(1.06);filter:brightness(1.12)}58%{transform:translateY(-1px) scale(1.025);filter:brightness(1.06)}}
+@keyframes ae-bookmark-weave{0%,100%{filter:none}35%{filter:brightness(1.45)}}
+@keyframes ae-bookmark-sweep{0%,12%{transform:translateX(-150%)}72%,100%{transform:translateX(150%)}}
+@media(prefers-reduced-motion:reduce){#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark{animation:none;filter:brightness(1.2)}#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark>span{animation:none;filter:brightness(1.25)}#aks-about-page .ae-bookmark-button.is-shimmering .ae-story-bookmark:before{display:none}}
