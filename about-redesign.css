@@ -245,6 +245,6 @@ body{background:#f5f9fd}
 #aks-about-page .ae-portrait{grid-column:1;grid-row:1;width:64px;justify-self:start;align-self:center}
 #aks-about-page .ae-hero .ae-eyebrow{grid-column:2;grid-row:1;justify-self:start;align-self:center;font-size:11px;line-height:1.8;letter-spacing:.7px;margin:0;transform:translateY(15px)}
 #aks-about-page .ae-hero .ae-eyebrow span{display:block}
-#aks-about-page .ae-hero h1{grid-column:1/-1;margin-top:15px}
+#aks-about-page .ae-hero h1{grid-column:1/-1;margin-top:7px}
 #aks-about-page .ae-hero .ae-lede,#aks-about-page .ae-hero .ae-credit{grid-column:1/-1}
 }
