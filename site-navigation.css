@@ -43,3 +43,11 @@
  .aks-site-header.site-nav{gap:18px}
 }
 @media(max-width:360px){.aks-site-header .aks-nav-links{gap:2px}.aks-site-header .aks-nav-links>a,.aks-site-header .aks-explore>summary{font-size:12px;padding-left:1px;padding-right:1px}}
+
+/* Give the descriptive quiz label room on narrow screens. */
+@media(max-width:600px){
+ .aks-site-header .aks-nav-links{grid-template-columns:.8fr 1.3fr 1.6fr .8fr}
+ .aks-site-header .aks-nav-label{min-height:34px;line-height:1.3;text-align:center}
+ .aks-site-header .aks-nav-links>a[href="./trivia.html"] .aks-nav-label{white-space:normal;max-width:100px}
+ .aks-site-header .aks-nav-links>a,.aks-site-header .aks-explore>summary{min-height:82px;box-sizing:border-box}
+}
