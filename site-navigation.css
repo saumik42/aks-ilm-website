@@ -53,3 +53,8 @@
  .aks-site-header .aks-nav-chevron{width:10px;height:10px}
  .aks-site-header .aks-explore>summary{height:100%}
 }
+
+/* Reuse each feature's homepage illustration in the discovery menu. */
+.aks-site-header .aks-explore-panel>a{gap:11px}
+.aks-site-header .aks-menu-illustration{display:block;width:32px;height:32px;flex:0 0 32px;object-fit:contain}
+.aks-site-header .aks-explore-panel>a>span{min-width:0}
