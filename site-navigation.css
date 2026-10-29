@@ -1,0 +1,26 @@
+/* Shared navigation for the homepage and all feature pages. */
+.aks-site-header{position:relative;overflow:visible}
+.aks-site-header .aks-nav-links{display:flex;align-items:center;justify-content:flex-end;flex:0 1 auto;gap:22px;max-width:none;width:auto;margin:0;padding:0;font:14px/1.5 Arial,Helvetica,sans-serif;letter-spacing:normal;text-align:left}
+.aks-site-header .aks-nav-links>a,.aks-site-header .aks-explore>summary{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;width:auto;margin:0;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#164b88;font:inherit;white-space:nowrap;text-decoration:none;cursor:pointer}
+.aks-site-header .aks-nav-links>a:hover,.aks-site-header .aks-explore>summary:hover{color:#377fc5;background:transparent}
+.aks-site-header .aks-nav-links>a[aria-current="page"],.aks-site-header .aks-explore>summary[data-current="true"]{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:#377fc5}
+.aks-site-header .aks-explore{position:relative}
+.aks-site-header .aks-explore>summary{list-style:none}
+.aks-site-header .aks-explore>summary::-webkit-details-marker{display:none}
+.aks-site-header .aks-explore>summary svg{transition:transform .15s}
+.aks-site-header .aks-explore[open]>summary svg{transform:rotate(180deg)}
+.aks-site-header .aks-explore-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:1000;width:274px;max-width:calc(100vw - 48px);padding:8px;border:1px solid #dce7f2;border-radius:10px;background:#fff;box-shadow:0 12px 30px #164b8820}
+.aks-site-header .aks-explore-panel>a{display:flex;align-items:center;justify-content:flex-start;min-height:44px;margin:0;padding:10px 12px;border:0;border-radius:5px;background:#fff;box-shadow:none;color:#164b88;font:14px/1.5 Arial,Helvetica,sans-serif;text-align:left;white-space:normal;text-decoration:none}
+.aks-site-header .aks-explore-panel>a:hover,.aks-site-header .aks-explore-panel>a[aria-current]{background:#edf5fc}
+.aks-site-header .aks-explore-panel>a[aria-current]{font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.aks-site-header .aks-nav-links a:focus-visible,.aks-site-header .aks-explore>summary:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+@media(max-width:850px){.aks-site-header .aks-nav-links{gap:16px}}
+@media(max-width:600px){
+ .aks-site-header.site-nav{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+ .aks-site-header .aks-nav-links{position:relative;display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:none;font-size:13px}
+ .aks-site-header .aks-explore{position:static}
+ .aks-site-header .aks-explore-panel{right:0;left:0;top:calc(100% + 7px);width:auto;max-width:none;max-height:65vh;overflow-y:auto;overscroll-behavior:contain}
+ .aks-site-header .aks-nav-links>a,.aks-site-header .aks-explore>summary{padding:8px 0;min-height:44px;font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){.aks-site-header .aks-explore>summary svg{transition:none}}
+@media print{.aks-site-header .aks-explore-panel{display:none}}
