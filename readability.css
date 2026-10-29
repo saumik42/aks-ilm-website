@@ -1,0 +1,12 @@
+/* Readable supporting text on light surfaces. */
+.page-foot{color:#526b81}
+.page-heading p,.feature-page-heading p{color:#526b81}
+.questions-load-status,.library-end,.corrections,.group-back-top{color:#526b81}
+.aks-site-header .brand-tagline,footer,.copyright{color:#526b81}
+.section-head p,.term-word span,.term-source,.smile-copy a{color:#526b81}
+.shahadah-heading>p,.shahadah-source,.transliteration{color:#526b81}
+#aks-masjid-art .art-note,#aks-masjid-art .art-prompt,#aks-masjid-art .art-context{color:#526b81}
+.reminder cite,.reminder .benefit-note{color:#dce9f7}
+#placeholder.placeholder{padding:12px 18px;margin-top:12px;border:0;background:transparent;box-shadow:none}
+#placeholder .placeholder-note{margin:0;max-width:none;color:#526b81;font-size:13px;line-height:1.6;text-align:center}
+.library-end[hidden]{display:none!important}

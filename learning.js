@@ -79,6 +79,5 @@
   el('another-term').addEventListener('click', showTerm);
   el('another-benefit').addEventListener('click', showBenefit);
   showTerm();
-  if (termSelect) termSelect.value = '';
   showBenefit();
 })();
