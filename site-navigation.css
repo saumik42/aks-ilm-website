@@ -58,3 +58,7 @@
 .aks-site-header .aks-explore-panel>a{gap:11px}
 .aks-site-header .aks-menu-illustration{display:block;width:32px;height:32px;flex:0 0 32px;object-fit:contain}
 .aks-site-header .aks-explore-panel>a>span{min-width:0}
+
+/* Keep illustrations beside their labels despite homepage navigation styles. */
+.aks-site-header .aks-nav-links .aks-explore-panel>a{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:11px;text-align:left}
+.aks-site-header .aks-nav-links .aks-explore-panel>a>span{display:block;flex:1;white-space:normal}
