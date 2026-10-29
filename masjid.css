@@ -1,0 +1,36 @@
+
+#aks-masjid-art{padding:18px 8px}
+#aks-masjid-art *{box-sizing:border-box}
+#aks-masjid-art [hidden]{display:none!important}
+#aks-masjid-art .art-shell{max-width:740px;margin:auto;padding:28px 24px 23px;background:#fff;color:#153451;font:15px/1.75 Arial,Helvetica,sans-serif}
+#aks-masjid-art .art-eyebrow{margin:0 0 9px;font:500 11px/1.5 Arial,sans-serif;color:#3779b5;letter-spacing:1.3px;text-transform:uppercase}
+#aks-masjid-art h1{margin:0 0 10px;font:400 34px/1.2 Georgia,serif;color:#164b88}
+#aks-masjid-art .art-intro{margin:0;color:#60788f}
+#aks-masjid-art .art-views{display:flex;gap:5px;background:#edf4fb;padding:4px;border-radius:7px;width:max-content;margin:21px 0 17px}
+#aks-masjid-art .art-views button{border:0;background:transparent;color:#60788f;font:500 13px/1.5 Arial,sans-serif;padding:8px 21px;min-height:40px;border-radius:4px}
+#aks-masjid-art .art-views button.active{background:#fff;color:#164b88;box-shadow:0 2px 6px #164b8810}
+#aks-masjid-art .art-scene{overflow:hidden;border-radius:9px;background:#f2f7fc}
+#aks-masjid-art .art-picture{position:relative;line-height:0;isolation:isolate}
+#aks-masjid-art .art-picture>img{display:block;width:100%;height:auto}
+#aks-masjid-art .art-highlight{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+#aks-masjid-art .art-white-outline{fill:none;stroke:#fff;stroke-width:14;stroke-linejoin:round;stroke-linecap:round;opacity:.95}
+#aks-masjid-art .art-blue-outline{fill:none;stroke:#247bc5;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 5px #2d85ce99)}
+#aks-masjid-art .art-hit{position:absolute;border:0;padding:0;background:transparent;min-width:44px;z-index:2}
+#aks-masjid-art .art-hit:focus-visible{outline:3px solid #fff;outline-offset:-5px;box-shadow:inset 0 0 0 7px #247bc5}
+#aks-masjid-art .art-feature-names{display:flex;justify-content:center;gap:29px;padding:0 14px;background:#f2f7fc}
+#aks-masjid-art .art-feature-names button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:#60788f;font:500 12px/1.4 Arial,sans-serif;padding:5px 4px;min-height:44px;min-width:54px}
+#aks-masjid-art .art-feature-names button.selected{color:#164b88;border-bottom-color:#247bc5}
+#aks-masjid-art button:focus-visible{outline:3px solid #8bbce5;outline-offset:3px}
+#aks-masjid-art .art-detail{border-left:3px solid #247bc5;padding:0 0 0 16px;margin:22px 0 18px}
+#aks-masjid-art .art-detail-top{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:35px}
+#aks-masjid-art .art-context{font:500 10px/1.5 Arial,sans-serif;text-transform:uppercase;letter-spacing:1px;color:#60788f}
+#aks-masjid-art .art-arabic{font:400 26px/1.4 Georgia,serif;color:#245fa6}
+#aks-masjid-art h3{font:400 28px/1.25 Georgia,serif;color:#164b88;margin:0 0 9px}
+#aks-masjid-art .art-description{color:#526d85;font:15px/1.75 Arial,sans-serif;margin:0 0 12px;max-width:590px}
+#aks-masjid-art .art-source{color:#245fa6;font:12px/1.6 Arial,sans-serif;text-underline-offset:3px}
+#aks-masjid-art .art-prompt{margin:15px auto;max-width:100%;color:#60788f;font:13px/1.6 Arial,sans-serif;text-wrap:balance;text-align:center}
+#aks-masjid-art .art-note{border-top:1px solid #e1ebf4;padding-top:14px;margin:0;color:#60788f;font:11px/1.6 Arial,sans-serif}
+@media(max-width:430px){#aks-masjid-art .art-shell{padding:22px 12px 19px}#aks-masjid-art h1{font-size:29px}#aks-masjid-art .art-detail{padding-left:12px;margin-top:18px}#aks-masjid-art .art-description{font-size:14px}}
+
+#aks-masjid-art .masjid-back{display:inline-block;color:#245f9d;font:14px/1.5 Arial,sans-serif;text-decoration:none;margin-bottom:22px;padding:10px 0;min-height:44px}
+#aks-masjid-art .masjid-back:hover{text-decoration:underline}
