@@ -40,3 +40,6 @@
 
 /* Tighten the gap between the illustration note and page footer. */
 @media(max-width:600px){body:has(#aks-masjid-art) .page-foot{margin-top:14px}#aks-masjid-art{padding-bottom:0}}
+
+/* Bring the desktop back link closer to the navigation. */
+@media(min-width:601px){body:has(#aks-masjid-art) .site-nav{margin-bottom:10px}#aks-masjid-art{padding-top:4px}#aks-masjid-art .art-shell{padding-top:10px}}
