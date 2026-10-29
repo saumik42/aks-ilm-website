@@ -34,3 +34,6 @@
 
 #aks-masjid-art .masjid-back{display:inline-block;color:#245f9d;font:14px/1.5 Arial,sans-serif;text-decoration:none;margin-bottom:22px;padding:10px 0;min-height:44px}
 #aks-masjid-art .masjid-back:hover{text-decoration:underline}
+
+/* Keep the back link comfortably close to the navigation on mobile. */
+@media(max-width:600px){body:has(#aks-masjid-art) .site-nav{margin-bottom:10px}#aks-masjid-art{padding-top:4px}#aks-masjid-art .art-shell{padding-top:10px}}
