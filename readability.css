@@ -10,3 +10,6 @@
 #placeholder.placeholder{padding:12px 18px;margin-top:12px;border:0;background:transparent;box-shadow:none}
 #placeholder .placeholder-note{margin:0;max-width:none;color:#526b81;font-size:13px;line-height:1.6;text-align:center}
 .library-end[hidden]{display:none!important}
+
+/* Isolate link arrows from underlines on surrounding text. */
+.link-arrow{display:inline-block;text-decoration:none!important}
