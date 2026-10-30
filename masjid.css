@@ -43,3 +43,10 @@
 
 /* Bring the desktop back link closer to the navigation. */
 @media(min-width:601px){body:has(#aks-masjid-art) .site-nav{margin-bottom:10px}#aks-masjid-art{padding-top:4px}#aks-masjid-art .art-shell{padding-top:10px}}
+
+/* Compact illustrated view selectors. */
+#aks-masjid-art .art-views{max-width:100%;margin:18px 0 15px}
+#aks-masjid-art .art-views button{display:flex;align-items:center;justify-content:center;gap:8px;padding:5px 13px 5px 6px;min-height:44px}
+#aks-masjid-art .art-view-thumb{display:block;width:38px;height:30px;object-fit:cover;border-radius:3px;flex:none}
+#aks-masjid-art .art-hover-name{position:absolute;z-index:3;pointer-events:none;padding:5px 9px;border-radius:5px;background:#164b88;color:#fff;font:500 12px/1.4 Arial,Helvetica,sans-serif;white-space:nowrap;box-shadow:0 2px 7px #102e4d26}
+@media(hover:none),(pointer:coarse){#aks-masjid-art .art-hover-name{display:none!important}}

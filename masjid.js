@@ -10,6 +10,7 @@
  };
  const selections={outside:null,inside:null};
  function show(view){
+  hideHoverLabels();
   const key=selections[view],p=key?features[key]:null;
   root.querySelectorAll('[data-view]').forEach(b=>{const active=b.dataset.view===view;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
   root.querySelectorAll('[data-scene]').forEach(scene=>{
@@ -25,5 +26,33 @@
  function select(key){const p=features[key];selections[p.view]=key;show(p.view);}
  root.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
  root.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.feature)));
+ 
+ // Pointer labels identify parts without changing the selected feature.
+ const hoverPointer=window.matchMedia('(hover:hover) and (pointer:fine)');
+ function hideHoverLabels(){root.querySelectorAll('.art-hover-name').forEach(label=>label.hidden=true)}
+ root.querySelectorAll('.art-picture').forEach(picture=>{
+  const label=document.createElement('span');
+  label.className='art-hover-name';label.hidden=true;label.setAttribute('aria-hidden','true');picture.append(label);
+  function positionLabel(event){
+   const bounds=picture.getBoundingClientRect();
+   const maxX=Math.max(8,bounds.width-label.offsetWidth-8);
+   const maxY=Math.max(8,bounds.height-label.offsetHeight-8);
+   label.style.left=Math.max(8,Math.min(event.clientX-bounds.left+13,maxX))+'px';
+   label.style.top=Math.max(8,Math.min(event.clientY-bounds.top+15,maxY))+'px';
+  }
+  picture.querySelectorAll('.art-hit').forEach(button=>{
+   button.addEventListener('pointerenter',event=>{
+    if(!hoverPointer.matches||event.pointerType!=='mouse')return;
+    label.textContent=features[button.dataset.feature].name;label.hidden=false;positionLabel(event);
+   });
+   button.addEventListener('pointermove',event=>{if(!label.hidden)positionLabel(event)});
+   button.addEventListener('pointerleave',()=>{label.hidden=true});
+  });
+  picture.addEventListener('pointerleave',()=>{label.hidden=true});
+ });
+ root.addEventListener('keydown',event=>{if(event.key==='Escape')hideHoverLabels()});
+ hoverPointer.addEventListener('change',hideHoverLabels);
+ window.addEventListener('blur',hideHoverLabels);
+
  show('outside');
 })();
