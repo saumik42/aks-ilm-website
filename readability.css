@@ -13,3 +13,8 @@
 
 /* Isolate link arrows from underlines on surrounding text. */
 .link-arrow{display:inline-block;text-decoration:none!important}
+
+/* Match feature-page introduction alignment and brand colour. */
+.feature .header.feature-page-heading h1{color:#164b88}
+#aks-masjid-art .art-shell>header{text-align:center}
+#aks-masjid-art .art-shell>header .art-intro{margin-inline:auto}
