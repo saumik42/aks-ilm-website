@@ -2,7 +2,12 @@
 (()=>{
  const button=document.getElementById('sk-share-result'),status=document.getElementById('sk-share-status');
  if(!button||!status)return;
- let prepared=null,generation=0,busy=false;
+ const preview=document.getElementById('sk-share-preview'),previewImage=document.getElementById('sk-share-preview-image'),shareImage=document.getElementById('sk-share-image'),downloadImage=document.getElementById('sk-download-image'),closePreview=document.getElementById('sk-share-close'),previewStatus=document.getElementById('sk-share-preview-status');
+ if(!preview||!previewImage||!shareImage||!downloadImage||!closePreview||!previewStatus)return;
+ let prepared=null,generation=0,busy=false,previewUrl=null;
+ function releasePreview(){previewImage.removeAttribute('src');if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}}
+ preview.addEventListener('close',()=>{releasePreview();button.focus({preventScroll:true})});
+ closePreview.addEventListener('click',()=>preview.close());
  const logo=new Image();
  const logoReady=new Promise(resolve=>{logo.onload=()=>resolve(true);logo.onerror=()=>resolve(false);logo.src='./assets/logo-transparent-480.webp'});
  const logoAvailable=Promise.race([logoReady,new Promise(resolve=>setTimeout(()=>resolve(false),5000))]);
@@ -41,21 +46,30 @@
   const url=URL.createObjectURL(prepared.file),link=document.createElement('a');link.href=url;link.download=prepared.file.name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
  }
  document.addEventListener('aks-quiz-complete',async event=>{
-  const result=event.detail,id=++generation;prepared=null;status.textContent='';button.disabled=true;button.textContent='Preparing result image…';
+  const result=event.detail,id=++generation;if(preview.open)preview.close();releasePreview();prepared=null;status.textContent='';button.disabled=true;button.textContent='Preparing result image…';
   if(![10,25].includes(result.total)||!Number.isInteger(result.correct)||result.correct<0||result.correct>result.total)return;
   try{
    const blob=await makeCard(result);if(id!==generation)return;
    const file=new File([blob],'aks-ilm-quiz-'+result.correct+'-of-'+result.total+'.png',{type:'image/png'});
-   prepared={file};button.textContent=canShare(file)?'Share result':'Download result image';button.disabled=false;
+   prepared={file};button.textContent='Share result';button.disabled=false;
   }catch(error){if(id!==generation)return;button.textContent='Result image unavailable';status.textContent='The image could not be created. Please try another browser.'}
  });
- button.addEventListener('click',async()=>{
-  if(!prepared||busy)return;busy=true;button.disabled=true;status.textContent='';
-  try{
-   if(canShare(prepared.file)){await navigator.share({files:[prepared.file]});status.textContent=''}
-   else{download();status.textContent='Result image downloaded. You can add it to a Story or message.'}
-  }catch(error){
-   if(error.name!=='AbortError'){button.textContent='Download result image';status.textContent='Sharing is unavailable here. Tap again to download the image.';prepared.downloadOnly=true}
-  }finally{busy=false;button.disabled=false}
+ button.addEventListener('click',()=>{
+  if(!prepared||busy)return;
+  releasePreview();previewUrl=URL.createObjectURL(prepared.file);previewImage.src=previewUrl;
+  shareImage.hidden=!canShare(prepared.file);
+  previewStatus.textContent=shareImage.hidden?'You can download this image and add it to a Story or message.':'';
+  preview.showModal();
+ });
+ downloadImage.addEventListener('click',()=>{
+  if(!prepared||busy)return;download();previewStatus.textContent='Result image downloaded. You can add it to a Story or message.';
+ });
+ shareImage.addEventListener('click',async()=>{
+  if(!prepared||busy)return;
+  busy=true;shareImage.disabled=true;downloadImage.disabled=true;previewStatus.textContent='';
+  try{await navigator.share({files:[prepared.file]})}
+  catch(error){
+   if(error.name!=='AbortError'){prepared.downloadOnly=true;shareImage.hidden=true;previewStatus.textContent='Sharing is unavailable here. Use Download image instead.'}
+  }finally{busy=false;shareImage.disabled=false;downloadImage.disabled=false}
  });
 })();

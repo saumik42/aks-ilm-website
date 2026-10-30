@@ -353,6 +353,27 @@ if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.
 #sk-trivia-randomizer #sk-share-result:hover{background:#edf5fc}
 #sk-trivia-randomizer #sk-share-result:disabled{opacity:.65}
 #sk-trivia-randomizer #sk-share-status{margin:6px 0 0;color:#526b81;font:12px/1.5 Arial,Helvetica,sans-serif}
-</style><script src="./quiz-share.js?v=1"></script></body></html>
+</style><dialog id="sk-share-preview" aria-labelledby="sk-share-preview-title">
+ <div class="sk-share-preview-head"><h2 id="sk-share-preview-title">Your result image</h2><button type="button" id="sk-share-close" autofocus>Close ×</button></div>
+ <img id="sk-share-preview-image" alt="Your AKS Ilm quiz result card" width="1080" height="1260">
+ <div class="sk-share-preview-actions"><button type="button" id="sk-share-image">Share image</button><button type="button" id="sk-download-image">Download image</button></div>
+ <p id="sk-share-preview-status" role="status" aria-live="polite"></p>
+</dialog>
+<style id="quiz-share-preview-style">
+#sk-share-preview{box-sizing:border-box;width:min(440px,calc(100% - 28px));max-height:90vh;max-height:90dvh;margin:auto;padding:18px;border:1px solid #c8d9e8;border-radius:12px;background:#fff;color:#153451;box-shadow:0 18px 60px #102e4d38;overflow:auto}
+#sk-share-preview::backdrop{background:#102e4d88}
+#sk-share-preview .sk-share-preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#sk-share-preview h2{margin:0;font:400 23px/1.25 Georgia,serif;color:#164b88}
+#sk-share-preview button{min-height:44px;padding:10px 13px;border:1px solid #c8d9e8;border-radius:6px;background:#fff;color:#174a7e;font:500 14px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
+#sk-share-preview #sk-share-close{padding:8px 10px}
+#sk-share-preview-image{display:block;max-width:100%;width:auto;height:auto;max-height:54vh;max-height:54dvh;object-fit:contain;margin:0 auto;border-radius:5px}
+#sk-share-preview .sk-share-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+#sk-share-preview .sk-share-preview-actions button{flex:1 1 140px}
+#sk-share-preview #sk-share-image{background:#174a7e;color:#fff;border-color:#174a7e}
+#sk-share-preview button:disabled{opacity:.65;cursor:default}
+#sk-share-preview button:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+#sk-share-preview-status{margin:10px 0 0;color:#526b81;font:12px/1.5 Arial,Helvetica,sans-serif}
+#sk-share-preview [hidden]{display:none!important}
+</style><script src="./quiz-share.js?v=2"></script></body></html>
 
 
