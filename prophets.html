@@ -1915,7 +1915,7 @@ const prophetJump = document.getElementById("prophet-jump");
 document.getElementById("back-to-prophet-selector").addEventListener("click", () => {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   prophetJump.closest(".prophet-jump").scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth", block: "start" });
-  prophetJump.focus({ preventScroll: true });
+
 });
 prophetJump.addEventListener("change", () => {
   const step = document.getElementById(prophetJump.value);
