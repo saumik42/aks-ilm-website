@@ -61,14 +61,14 @@
       <div id="sk-answer-marks" class="sk-answer-marks" role="list" aria-label="Answer outcomes in challenge order"></div>
       <div class="sk-summary-legend"><span><i class="sk-summary-correct" aria-hidden="true">✓</i><span id="sk-summary-correct-count"></span></span><span><i class="sk-summary-missed" aria-hidden="true">×</i><span id="sk-summary-missed-count"></span></span></div>
     </div>
-    <div class="sk-finish-actions">
+    <div class="sk-result-controls"><div class="sk-finish-actions">
       <button id="sk-review" type="button" class="sk-secondary" hidden>📚 Review Missed Questions</button>
       <button id="sk-again" type="button">Try another challenge</button>
     </div>
     <div class="sk-share-actions">
       <button id="sk-share-result" type="button" disabled>Preparing result image…</button>
       <p id="sk-share-status" role="status" aria-live="polite"></p>
-    </div>
+    </div></div>
   </div>
 
   <div id="sk-review-screen" class="sk-review-screen" hidden aria-live="polite">
@@ -168,7 +168,7 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
     mode=data.mode;limit=mode==="unlimited"?null:Number(mode);deck=data.deck.map(id=>rowById.get(id).index);current=rowById.get(data.current).row;
     correctCount=data.correctCount;answeredCount=data.answeredCount;missed=data.missed.map(e=>({item:rowById.get(e.number).row,selected:e.selected}));answerHistory=data.answerHistory;
     resumeScreen.hidden=true;modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;review.hidden=true;
-    root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[mode];reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";
+    root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[mode];reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";
     next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";
     updateScore();draw(true);if(data.selected!==null)checkAnswer(data.selected,true);positionPhoneQuiz(true);
     if(data.selected===null)question.focus({preventScroll:true});
@@ -176,7 +176,7 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
   const tenMessages={0:"Keep going! Every question is an opportunity to learn something new. 📖",1:"A start is a start! Keep learning and building your knowledge. 🌱",2:"Keep going! Each answer you learn is knowledge gained. 📚",3:"Good effort! Keep seeking knowledge and try again. 🌱",4:"You're making progress! Keep learning and improving. 📖",5:"Halfway there! A good effort — keep building your knowledge. 🌟",6:"Good job! Your knowledge is growing — keep going. 📚",7:"MashaAllah, well done! A strong result — keep learning. 🌟",8:"MashaAllah! Keep seeking beneficial knowledge. 🤲",9:"MashaAllah, excellent! Just one away from a perfect score. ⭐",10:"MashaAllah, perfect score! May Allah increase you in beneficial knowledge. 🤲✨"};
   function shuffleDeck(){deck=Array.from({length:bank.length},(_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
   function updateScore(){const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
-  function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[value];mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionPhoneQuiz(true)}
+  function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[value];mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionPhoneQuiz(true)}
   function draw(restoring=false){if(!restoring){if(!deck.length)shuffleDeck();current=bank[deck.pop()]}answered=false;lastSelected=null;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Library question #"+n;question.textContent=q;const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});syncShortcutLabels();answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";root.querySelector("#sk-halfway").hidden=true;root.querySelector("#sk-halfway").textContent="";next.hidden=true;quiz.hidden=false;if(!restoring)saveSession()}
   function drawNextQuestion(){
     if(mode!=="unlimited"&&answered&&answeredCount>=limit){completeChallenge();return;}
@@ -204,7 +204,7 @@ container.hidden=false;
 }
   function completeChallenge(){
 clearSession();root.classList.remove("is-active-quiz");
-introduction.textContent=baseIntroduction+" Your "+limit+"-question challenge is complete.";
+root.classList.add("is-showing-results");
 quiz.hidden=true;score.hidden=true;finish.hidden=false;reviewScreen.hidden=true;
 const pct=Math.round(correctCount/answeredCount*100);
 finish.querySelector(".sk-finish-title").textContent=limit+"-question challenge complete";
@@ -215,11 +215,12 @@ root.querySelector("#sk-final-percentage").textContent="Correct answers · "+pct
 finalMessage.textContent=limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);
 renderAnswerSummary();
 document.dispatchEvent(new CustomEvent("aks-quiz-complete",{detail:{correct:correctCount,total:limit,message:finalMessage.textContent}}));
-if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.length===1?"question":"questions");review.hidden=false;review.focus()}else{review.hidden=true;again.focus()}
+if(missed.length){review.textContent="See missed answers";review.hidden=false;review.focus({preventScroll:true})}else{review.hidden=true;again.focus({preventScroll:true})}
+requestAnimationFrame(()=>{window.scrollTo({top:Math.max(0,window.scrollY+root.getBoundingClientRect().top-12),behavior:"instant"});});
 }
   function checkAnswer(selected,restoring=false){if(!current||answered)return;answered=true;lastSelected=selected;const[,,a,b,c,d,correct]=current;if(!restoring){answeredCount++;if(mode!=="unlimited")answerHistory.push({number:current[0],selected,correct:selected===correct});if(selected===correct)correctCount++;else if(mode!=="unlimited")missed.push({item:current,selected})}progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount} of ${limit}`;updateScore();const vals={A:a,B:b,C:c,D:d};options.querySelectorAll(".sk-option").forEach(btn=>{const letter=btn.dataset.letter;btn.disabled=true;if(letter===correct)btn.classList.add("sk-correct");if(letter===selected&&selected!==correct)btn.classList.add("sk-wrong")});if(selected===correct){answer.textContent="Correct! ✓  Answer: "+correct+") "+vals[correct];answer.classList.add("sk-result-correct")}else{answer.textContent="Incorrect. The correct answer is "+correct+") "+vals[correct];answer.classList.add("sk-result-wrong")}answer.hidden=false;const halfway=root.querySelector("#sk-halfway");halfway.hidden=mode==="unlimited"||answeredCount!==Math.ceil(limit/2);halfway.textContent=halfway.hidden?"":"Halfway there. Keep going!";if(mode==="unlimited"){const msg=unlimitedMessage();if(msg){milestone.textContent=msg;milestone.hidden=false}next.hidden=false;next.focus()}else if(answeredCount>=limit){next.textContent="See results";next.hidden=false;next.focus()}else{next.hidden=false;next.focus()}saveSession()}
   function resetUnlimited(){if(mode!=="unlimited")return;clearSession();correctCount=0;answeredCount=0;answered=false;shuffleDeck();updateScore();draw();question.focus({preventScroll:true})}
-  function chooseAgain(){clearSession();resumeScreen.hidden=true;root.classList.remove("is-active-quiz");introduction.textContent=baseIntroduction+" Choose a challenge below to begin.";mode=null;limit=null;current=null;missed=[];quiz.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=true;reset.hidden=true;exit.hidden=true;review.hidden=true;modeScreen.hidden=false;modeScreen.querySelector(".sk-mode-btn").focus()}
+  function chooseAgain(){root.classList.remove("is-showing-results");clearSession();resumeScreen.hidden=true;root.classList.remove("is-active-quiz");introduction.textContent=baseIntroduction+" Choose a challenge below to begin.";mode=null;limit=null;current=null;missed=[];quiz.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=true;reset.hidden=true;exit.hidden=true;review.hidden=true;modeScreen.hidden=false;modeScreen.querySelector(".sk-mode-btn").focus()}
   function showReview(){if(!missed.length)return;finish.hidden=true;reviewScreen.hidden=false;const pct=Math.round(correctCount/answeredCount*100);reviewScore.textContent=`Your result: ${correctCount} / ${limit} correct • ${pct}%`;reviewList.innerHTML="";missed.forEach(entry=>{const[n,q,a,b,c,d,correct]=entry.item,vals={A:a,B:b,C:c,D:d};const item=document.createElement("div");item.className="sk-review-item";const num=document.createElement("div");num.className="sk-review-number";num.textContent="Question #"+n;const qEl=document.createElement("div");qEl.className="sk-review-question";qEl.textContent=q;const userAns=document.createElement("div");userAns.className="sk-review-user-answer";const userStrong=document.createElement("strong");userStrong.textContent="Your answer: ";userAns.appendChild(userStrong);userAns.appendChild(document.createTextNode("❌ "+entry.selected+") "+vals[entry.selected]));const ans=document.createElement("div");ans.className="sk-review-answer";const strong=document.createElement("strong");strong.textContent="Correct answer: ";ans.appendChild(strong);ans.appendChild(document.createTextNode("✓ "+correct+") "+vals[correct]));item.appendChild(num);item.appendChild(qEl);item.appendChild(userAns);item.appendChild(ans);reviewList.appendChild(item)});backResults.focus()}
   function showResults(){reviewScreen.hidden=true;finish.hidden=false;review.focus()}
   root.querySelectorAll(".sk-mode-btn").forEach(btn=>btn.addEventListener("click",()=>startMode(btn.dataset.mode)));next.addEventListener("click",drawNextQuestion);reset.addEventListener("click",resetUnlimited);exit.addEventListener("click",chooseAgain);again.addEventListener("click",chooseAgain);review.addEventListener("click",showReview);backResults.addEventListener("click",showResults);reviewAgain.addEventListener("click",chooseAgain);foot.textContent=`${bank.length} questions in the current randomizer pool.`;
@@ -374,6 +375,30 @@ if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.
 #sk-share-preview button:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
 #sk-share-preview-status{margin:10px 0 0;color:#526b81;font:12px/1.5 Arial,Helvetica,sans-serif}
 #sk-share-preview [hidden]{display:none!important}
-</style><script src="./quiz-share.js?v=2"></script></body></html>
+</style><script src="./quiz-share.js?v=2"></script><style id="compact-quiz-results">
+#sk-trivia-randomizer.is-showing-results .sk-sub{display:none}
+#sk-trivia-randomizer.is-showing-results .sk-head{margin-bottom:15px}
+#sk-trivia-randomizer.is-showing-results .sk-title{margin:0;text-align:center}
+#sk-trivia-randomizer .sk-finish{padding:0}
+#sk-trivia-randomizer .sk-result-centre{padding:0}
+#sk-trivia-randomizer .sk-final-score{font-size:68px;margin:5px 0 4px}
+#sk-trivia-randomizer .sk-score-total{font-size:29px}
+#sk-trivia-randomizer .sk-final-percentage{margin:0 0 12px}
+#sk-trivia-randomizer .sk-final-message{font-size:15px;line-height:1.55;margin:0 auto 15px}
+#sk-trivia-randomizer .sk-answer-summary{margin:0 0 12px;padding:12px 0}
+#sk-trivia-randomizer .sk-summary-heading{margin-bottom:9px}
+#sk-trivia-randomizer .sk-answer-marks,#sk-trivia-randomizer .sk-answer-marks.sk-summary-long{grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;max-width:none}
+#sk-trivia-randomizer .sk-answer-marks>span{height:25px}
+#sk-trivia-randomizer .sk-summary-legend{margin-top:8px}
+#sk-trivia-randomizer .sk-result-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#sk-trivia-randomizer .sk-finish-actions,#sk-trivia-randomizer .sk-share-actions{display:contents}
+#sk-trivia-randomizer #sk-review{grid-column:1/-1}
+#sk-trivia-randomizer #sk-review[hidden]~#sk-again{grid-column:1/-1}
+#sk-trivia-randomizer .sk-result-controls button{width:100%;min-height:44px;padding:10px 12px;font:700 14px/1.3 Arial,sans-serif;border-radius:6px}
+#sk-trivia-randomizer #sk-share-status{grid-column:1/-1;margin:0}
+#sk-trivia-randomizer #sk-share-status:empty{display:none}
+#sk-trivia-randomizer .sk-result-controls:has(#sk-review[hidden]) #sk-share-result{grid-column:1/-1}
+@media(max-width:600px){#sk-trivia-randomizer.is-showing-results{padding:20px 18px 16px}#sk-trivia-randomizer.is-showing-results .sk-title{font-size:29px}}
+</style></body></html>
 
 
