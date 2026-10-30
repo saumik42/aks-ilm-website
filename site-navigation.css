@@ -62,3 +62,11 @@
 /* Keep illustrations beside their labels despite homepage navigation styles. */
 .aks-site-header .aks-nav-links .aks-explore-panel>a{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:11px;text-align:left}
 .aks-site-header .aks-nav-links .aks-explore-panel>a>span{display:block;flex:1;white-space:normal}
+
+/* Centre feature-page branding without changing logo dimensions. */
+.aks-site-header.site-nav{display:flex;flex-direction:column;align-items:center;gap:18px}
+.aks-site-header.site-nav .site-brand{align-self:center;margin-inline:auto;text-align:center}
+.aks-site-header.site-nav .site-logo{margin-inline:auto}
+.aks-site-header.site-nav .brand-tagline{text-align:center}
+.aks-site-header.site-nav .aks-nav-links{justify-content:center}
+@media(max-width:600px){.aks-site-header.site-nav .aks-nav-links{justify-content:space-between}}
