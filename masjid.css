@@ -50,3 +50,9 @@
 #aks-masjid-art .art-view-thumb{display:block;width:38px;height:30px;object-fit:cover;border-radius:3px;flex:none}
 #aks-masjid-art .art-hover-name{position:absolute;z-index:3;pointer-events:none;padding:5px 9px;border-radius:5px;background:#164b88;color:#fff;font:500 12px/1.4 Arial,Helvetica,sans-serif;white-space:nowrap;box-shadow:0 2px 7px #102e4d26}
 @media(hover:none),(pointer:coarse){#aks-masjid-art .art-hover-name{display:none!important}}
+
+/* Three compact views and the added prayer-hall selector. */
+#aks-masjid-art .art-views{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+#aks-masjid-art .art-views button{min-width:0;gap:6px;padding:5px 6px}
+#aks-masjid-art .art-feature-names{gap:16px;flex-wrap:wrap}
+@media(max-width:430px){#aks-masjid-art .art-views button{font-size:12px;gap:4px;padding:5px 3px}#aks-masjid-art .art-view-thumb{width:29px;height:25px}}
