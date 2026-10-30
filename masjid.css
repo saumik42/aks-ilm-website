@@ -56,3 +56,12 @@
 #aks-masjid-art .art-views button{min-width:0;gap:6px;padding:5px 6px}
 #aks-masjid-art .art-feature-names{gap:16px;flex-wrap:wrap}
 @media(max-width:430px){#aks-masjid-art .art-views button{font-size:12px;gap:4px;padding:5px 3px}#aks-masjid-art .art-view-thumb{width:29px;height:25px}}
+
+/* Compact the introduction between the navigation divider and view tabs. */
+body:has(#aks-masjid-art) .site-nav{margin-bottom:4px}
+#aks-masjid-art{padding-top:0}
+#aks-masjid-art .art-shell{padding-top:0}
+#aks-masjid-art .masjid-back{font-size:12px;line-height:1.5;margin-bottom:2px;padding:10px 0;min-height:44px}
+#aks-masjid-art .art-eyebrow{margin-bottom:5px}
+#aks-masjid-art h1{margin-bottom:6px}
+#aks-masjid-art .art-views{margin-top:12px;margin-bottom:12px}
