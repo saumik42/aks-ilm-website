@@ -32,8 +32,10 @@
   </div>
 
   <div id="sk-quiz" class="sk-quiz" hidden>
-    <div id="sk-progress" class="sk-progress"></div>
-    <div id="sk-number" class="sk-number"></div>
+    <div class="sk-question-meta">
+      <div id="sk-progress" class="sk-progress"></div>
+      <div id="sk-number" class="sk-number"></div>
+    </div>
     <div id="sk-question" class="sk-question" tabindex="-1" role="heading" aria-level="2" aria-describedby="sk-progress sk-number"></div>
     <div class="sk-keyboard-tools"><label><input id="sk-letter-shortcuts" type="checkbox" checked> A–D shortcuts</label><span><span class="link-arrow" aria-hidden="true">↑</span> / ↓ to move · Enter or Space to select · Enter for next</span></div>
     <div id="sk-options" class="sk-options" role="group" aria-label="Answer choices" aria-describedby="sk-question"></div>
@@ -171,7 +173,7 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
   function shuffleDeck(){deck=Array.from({length:bank.length},(_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
   function updateScore(){const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
   function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.add("is-active-quiz");introduction.textContent=baseIntroduction+" "+challengeIntroductions[value];mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionPhoneQuiz(true)}
-  function draw(restoring=false){if(!restoring){if(!deck.length)shuffleDeck();current=bank[deck.pop()]}answered=false;lastSelected=null;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Question #"+n;question.textContent=q;const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});syncShortcutLabels();answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";root.querySelector("#sk-halfway").hidden=true;root.querySelector("#sk-halfway").textContent="";next.hidden=true;quiz.hidden=false;if(!restoring)saveSession()}
+  function draw(restoring=false){if(!restoring){if(!deck.length)shuffleDeck();current=bank[deck.pop()]}answered=false;lastSelected=null;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Library question #"+n;question.textContent=q;const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});syncShortcutLabels();answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";root.querySelector("#sk-halfway").hidden=true;root.querySelector("#sk-halfway").textContent="";next.hidden=true;quiz.hidden=false;if(!restoring)saveSession()}
   function drawNextQuestion(){
     if(mode!=="unlimited"&&answered&&answeredCount>=limit){completeChallenge();return;}
     draw();
@@ -336,6 +338,10 @@ if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.
 #sk-trivia-randomizer #sk-again{background:#fff;color:#174a7e;border:1px solid #c8d9e8;box-shadow:none}
 #sk-trivia-randomizer #sk-review:hover{background:#2466a9}
 #sk-trivia-randomizer #sk-again:hover{background:#edf5fc}
+</style><style id="clear-quiz-numbering">
+#sk-trivia-randomizer .sk-question-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;margin:1px 0 11px;padding-bottom:9px;border-bottom:1px solid #e4edf5}
+#sk-trivia-randomizer .sk-question-meta .sk-progress{display:block;padding:0;margin:0;border-radius:0;background:transparent;color:#164b88;font:700 15px/1.4 Arial,Helvetica,sans-serif;letter-spacing:normal}
+#sk-trivia-randomizer .sk-question-meta .sk-number{display:block;padding:0;margin:0;color:#60788f;font:400 11px/1.5 Arial,Helvetica,sans-serif;text-transform:none;letter-spacing:normal;white-space:nowrap}
 </style></body></html>
 
 
