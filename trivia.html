@@ -65,6 +65,10 @@
       <button id="sk-review" type="button" class="sk-secondary" hidden>📚 Review Missed Questions</button>
       <button id="sk-again" type="button">Try another challenge</button>
     </div>
+    <div class="sk-share-actions">
+      <button id="sk-share-result" type="button" disabled>Preparing result image…</button>
+      <p id="sk-share-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
 
   <div id="sk-review-screen" class="sk-review-screen" hidden aria-live="polite">
@@ -210,6 +214,7 @@ finalScore.setAttribute("aria-label",correctCount+" out of "+limit+" correct");
 root.querySelector("#sk-final-percentage").textContent="Correct answers · "+pct+"%";
 finalMessage.textContent=limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);
 renderAnswerSummary();
+document.dispatchEvent(new CustomEvent("aks-quiz-complete",{detail:{correct:correctCount,total:limit,message:finalMessage.textContent}}));
 if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.length===1?"question":"questions");review.hidden=false;review.focus()}else{review.hidden=true;again.focus()}
 }
   function checkAnswer(selected,restoring=false){if(!current||answered)return;answered=true;lastSelected=selected;const[,,a,b,c,d,correct]=current;if(!restoring){answeredCount++;if(mode!=="unlimited")answerHistory.push({number:current[0],selected,correct:selected===correct});if(selected===correct)correctCount++;else if(mode!=="unlimited")missed.push({item:current,selected})}progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount} of ${limit}`;updateScore();const vals={A:a,B:b,C:c,D:d};options.querySelectorAll(".sk-option").forEach(btn=>{const letter=btn.dataset.letter;btn.disabled=true;if(letter===correct)btn.classList.add("sk-correct");if(letter===selected&&selected!==correct)btn.classList.add("sk-wrong")});if(selected===correct){answer.textContent="Correct! ✓  Answer: "+correct+") "+vals[correct];answer.classList.add("sk-result-correct")}else{answer.textContent="Incorrect. The correct answer is "+correct+") "+vals[correct];answer.classList.add("sk-result-wrong")}answer.hidden=false;const halfway=root.querySelector("#sk-halfway");halfway.hidden=mode==="unlimited"||answeredCount!==Math.ceil(limit/2);halfway.textContent=halfway.hidden?"":"Halfway there. Keep going!";if(mode==="unlimited"){const msg=unlimitedMessage();if(msg){milestone.textContent=msg;milestone.hidden=false}next.hidden=false;next.focus()}else if(answeredCount>=limit){next.textContent="See results";next.hidden=false;next.focus()}else{next.hidden=false;next.focus()}saveSession()}
@@ -342,6 +347,12 @@ if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.
 #sk-trivia-randomizer .sk-question-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;margin:1px 0 11px;padding-bottom:9px;border-bottom:1px solid #e4edf5}
 #sk-trivia-randomizer .sk-question-meta .sk-progress{display:block;padding:0;margin:0;border-radius:0;background:transparent;color:#164b88;font:700 15px/1.4 Arial,Helvetica,sans-serif;letter-spacing:normal}
 #sk-trivia-randomizer .sk-question-meta .sk-number{display:block;padding:0;margin:0;color:#60788f;font:400 11px/1.5 Arial,Helvetica,sans-serif;text-transform:none;letter-spacing:normal;white-space:nowrap}
-</style></body></html>
+</style><style id="quiz-result-sharing">
+#sk-trivia-randomizer .sk-share-actions{margin-top:12px;text-align:center}
+#sk-trivia-randomizer #sk-share-result{display:inline-flex;align-items:center;justify-content:center;width:auto;min-height:44px;padding:8px 14px;background:transparent;color:#245f98;border:1px solid #cadbea;border-radius:6px;box-shadow:none;font:500 13px/1.4 Arial,Helvetica,sans-serif}
+#sk-trivia-randomizer #sk-share-result:hover{background:#edf5fc}
+#sk-trivia-randomizer #sk-share-result:disabled{opacity:.65}
+#sk-trivia-randomizer #sk-share-status{margin:6px 0 0;color:#526b81;font:12px/1.5 Arial,Helvetica,sans-serif}
+</style><script src="./quiz-share.js?v=1"></script></body></html>
 
 
