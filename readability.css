@@ -18,3 +18,10 @@
 .feature .header.feature-page-heading h1{color:#164b88}
 #aks-masjid-art .art-shell>header{text-align:center}
 #aks-masjid-art .art-shell>header .art-intro{margin-inline:auto}
+
+/* Keep the four-story question compact without changing other questions. */
+#sk-trivia-randomizer .sk-question:has(.aks-story-list){text-wrap:pretty;line-height:1.4}
+#sk-trivia-randomizer .sk-question .aks-story-list{margin-top:7px;font-size:16px;line-height:1.45}
+#sk-trivia-randomizer .sk-question .aks-story-row{margin-top:3px;text-wrap:pretty}
+.library-question h3 .aks-story-list,.sk-review-question .aks-story-list{font-size:15px;line-height:1.45;margin-top:7px}
+.library-question h3 .aks-story-row,.sk-review-question .aks-story-row{margin-top:3px;text-wrap:pretty}
