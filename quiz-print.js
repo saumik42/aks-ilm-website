@@ -12,11 +12,12 @@
  let bank=[],selected=[],page=0,section='questions',savedOverflow='';
  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const chunk=(rows,size)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,i*size+size));
+ function formatQuestion(text){const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
  function makeSheet(rows,answers,index,total){
   const start=selected[0][0],end=selected[selected.length-1][0];
   const content=rows.map(q=>{
    if(answers)return '<div class="quiz-key-row"><span class="quiz-key-letter">'+escape(q[0])+'. '+escape(q[6])+'</span><span>'+escape(q[2+'ABCD'.indexOf(q[6])])+'</span></div>';
-   return '<section class="quiz-print-question"><h4>'+escape(q[0])+'. '+escape(q[1])+'</h4><ul class="quiz-print-options">'+q.slice(2,6).map((option,i)=>'<li><span class="quiz-answer-circle" aria-hidden="true"></span><span>'+String.fromCharCode(65+i)+') '+escape(option)+'</span></li>').join('')+'</ul></section>';
+   return '<section class="quiz-print-question"><h4>'+escape(q[0])+'. '+formatQuestion(q[1])+'</h4><ul class="quiz-print-options">'+q.slice(2,6).map((option,i)=>'<li><span class="quiz-answer-circle" aria-hidden="true"></span><span>'+String.fromCharCode(65+i)+') '+escape(option)+'</span></li>').join('')+'</ul></section>';
   }).join('');
   return '<section class="quiz-sheet"><div class="quiz-sheet-top"><span class="quiz-sheet-brand">AKS Ilm</span><span class="quiz-sheet-url">aksilm.org</span></div><h3>'+(answers?'Answer key':'Islamic Trivia')+'</h3><p class="quiz-sheet-subtitle">Questions '+escape(start)+'–'+escape(end)+(answers?'':' · Choose one answer for each question.')+'</p>'+(answers?'':'<div class="quiz-name-line"><span>Name: ____________________</span><span>Date: ______________</span></div>')+content+'<div class="quiz-sheet-foot"><span>Islamic Trivia &amp; Learning</span><span>'+(answers?'Answer key':'Worksheet')+' · '+(index+1)+' / '+total+'</span></div></section>';
  }
