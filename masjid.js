@@ -25,7 +25,7 @@
   root.querySelector('.art-prompt').hidden=!!p;
   if(p){root.querySelector('.art-arabic').textContent=p.arabic;root.querySelector('.art-detail h3').textContent=p.name;root.querySelector('.art-description').textContent=p.text;root.querySelector('.art-source').href=p.source;}
  }
- function select(key){const p=features[key];selections[p.view]=key;show(p.view);}
+ function select(key){const p=features[key];selections[p.view]=selections[p.view]===key?null:key;show(p.view);}
  root.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
  root.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.feature)));
  
