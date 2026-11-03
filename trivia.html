@@ -7,16 +7,7 @@
 #sk-trivia-randomizer #sk-fresh{min-height:44px;border-radius:6px;padding:10px 16px;color:#164b88;font-size:14px}
 #sk-trivia-randomizer .sk-resume .sk-resume-note{margin:13px 0 0;font-size:12px}
 @media(max-width:600px){#sk-trivia-randomizer .sk-resume{padding:18px 16px}#sk-trivia-randomizer .sk-resume h2{font-size:23px}#sk-trivia-randomizer .sk-resume-actions{display:grid;grid-template-columns:1fr}}
-</style><link rel="stylesheet" href="./site-navigation.css?v=6"><script defer src="./site-navigation.js?v=1"></script><link rel="stylesheet" href="./readability.css?v=2"><style id="quiz-intro-centred">#sk-trivia-randomizer .sk-head>.sk-title,#sk-trivia-randomizer .sk-head>.sk-sub{text-align:center}</style><style id="balanced-challenge-prompt">#sk-trivia-randomizer .sk-mode-title{text-align:center}#sk-trivia-randomizer .sk-mode-sub{text-wrap:balance;text-align:center}</style><style id="question-story-format">.aks-story-list{display:block;margin-top:9px;font-weight:400}.aks-story-row{display:block;margin-top:4px;font-weight:400}.aks-story-row strong{font-weight:700}</style><script>
-function aksRenderQuestion(node,text,prefix=''){
- node.textContent='';
- const lines=text.split('\n');
- if(lines.length!==5||!lines[1].startsWith('• Faith:')){node.textContent=prefix+text;return;}
- const prompt=document.createElement('span');prompt.className='aks-story-prompt';prompt.textContent=prefix+lines[0];node.append(prompt);
- const list=document.createElement('span');list.className='aks-story-list';
- for(const line of lines.slice(1)){const row=document.createElement('span');row.className='aks-story-row';const colon=line.indexOf(':');const label=document.createElement('strong');label.textContent=line.slice(0,colon+1);const story=document.createElement('span');story.className='aks-story-text';story.textContent=line.slice(colon+1);row.append(label,story);list.append(row);}node.append(list);
-}
-</script><style id="compact-selected-quiz-mode">
+</style><link rel="stylesheet" href="./site-navigation.css?v=6"><script defer src="./site-navigation.js?v=1"></script><link rel="stylesheet" href="./readability.css?v=2"><style id="quiz-intro-centred">#sk-trivia-randomizer .sk-head>.sk-title,#sk-trivia-randomizer .sk-head>.sk-sub{text-align:center}</style><style id="balanced-challenge-prompt">#sk-trivia-randomizer .sk-mode-title{text-align:center}#sk-trivia-randomizer .sk-mode-sub{text-wrap:balance;text-align:center}</style><style id="question-story-format">.aks-story-list{display:block;margin-top:9px;font-weight:400}.aks-story-row{display:block;margin-top:4px;font-weight:400}.aks-story-row strong{font-weight:700}</style><script src="./question-format.js?v=1"></script><style id="compact-selected-quiz-mode">
 #sk-trivia-randomizer .sk-mode-label{display:table;margin:5px auto 7px;padding:2px 9px;border-radius:4px;background:#e7f1fc;color:#164b88;font:600 12px/1.4 Arial,sans-serif}
 #sk-trivia-randomizer .sk-mode-label[hidden],#sk-trivia-randomizer.is-showing-results .sk-mode-label{display:none}
 #sk-trivia-randomizer.is-active-quiz .sk-title{margin-bottom:0}

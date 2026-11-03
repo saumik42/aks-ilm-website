@@ -25,3 +25,18 @@
 #sk-trivia-randomizer .sk-question .aks-story-row{margin-top:3px;text-wrap:pretty}
 .library-question h3 .aks-story-list,.sk-review-question .aks-story-list{font-size:15px;line-height:1.45;margin-top:7px}
 .library-question h3 .aks-story-row,.sk-review-question .aks-story-row{margin-top:3px;text-wrap:pretty}
+
+/* Compact quotations, supplications, blanks and clue lists. */
+.aks-q-text{display:block;white-space:pre-line}
+.aks-q-text+.aks-q-text{margin-top:7px}
+.aks-q-prompt{font-weight:700}
+.aks-q-passage,.aks-q-translation,.aks-q-clue{font-weight:400;line-height:1.5}
+.aks-q-clue+.aks-q-clue{margin-top:3px}
+.aks-q-arabic{font:400 25px/1.8 'Times New Roman',serif;text-align:center;direction:rtl}
+.aks-q-translation{text-align:center}
+#sk-trivia-randomizer .sk-question .aks-q-passage,#sk-trivia-randomizer .sk-question .aks-q-clue{font-size:16px}
+#sk-trivia-randomizer .sk-question .aks-q-translation{font-size:14px;color:#526b81}
+.library-question h3 .aks-q-passage,.library-question h3 .aks-q-clue,.library-question h3 .aks-q-translation{font-size:15px}
+.quiz-print-question .aks-q-passage,.quiz-print-question .aks-q-clue,.quiz-print-question .aks-q-translation{font-size:inherit}
+.quiz-print-question .aks-q-text+.aks-q-text{margin-top:4px}
+.quiz-print-question .aks-q-arabic{font-size:20px}

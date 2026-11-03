@@ -12,7 +12,7 @@
  let bank=[],selected=[],page=0,section='questions',savedOverflow='';
  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const chunk=(rows,size)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,i*size+size));
- function formatQuestion(text){const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
+ function formatQuestion(text){const parts=window.aksQuestionParts&&window.aksQuestionParts(text);if(parts)return parts.map(p=>'<span class="aks-q-text aks-q-'+p.kind+'">'+escape(p.text)+'</span>').join('');const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
  function makeSheet(rows,answers,index,total){
   const start=selected[0][0],end=selected[selected.length-1][0];
   const content=rows.map(q=>{
