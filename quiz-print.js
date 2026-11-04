@@ -11,6 +11,22 @@
  const previous=byId('quiz-print-previous'),next=byId('quiz-print-next');
  let bank=[],selected=[],page=0,section='questions',savedOverflow='';
  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const browserHelp=byId('quiz-print-browser-help'),copyLink=byId('quiz-print-copy-link'),linkField=byId('quiz-print-browser-link');
+ const inInstagram=/Instagram/i.test(navigator.userAgent||'');
+ function browserNotice(message){
+  status.textContent=message||(inInstagram?'To print or save as PDF, use Instagram’s browser menu to open this page in Safari or Chrome. Or copy the quiz link below and paste it into your browser.':'Printing is unavailable in this browser. Copy the quiz link below and open it in Safari or Chrome.');
+  browserHelp.hidden=false;
+ }
+ function resetNotice(){
+  status.textContent='';browserHelp.hidden=true;linkField.hidden=true;
+  if(inInstagram)browserNotice();
+ }
+ function openPreview(){
+  if(!bank.length||dialog.open)return;
+  document.body.classList.remove('aks-printing-quiz');
+  savedOverflow=document.documentElement.style.overflow;
+  resetNotice();dialog.showModal();document.documentElement.style.overflow='hidden';
+ }
  const chunk=(rows,size)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,i*size+size));
  function formatQuestion(text){const parts=window.aksQuestionParts&&window.aksQuestionParts(text);if(parts)return parts.map(p=>'<span class="aks-q-text aks-q-'+p.kind+'">'+escape(p.text)+'</span>').join('');const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
  function makeSheet(rows,answers,index,total){
@@ -37,22 +53,34 @@
   if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<min||hi>max||lo>hi||!rows.length){
    error.textContent='Choose a valid range between '+min+' and '+max+'.';error.hidden=false;status.textContent='';return false;
   }
-  error.hidden=true;selected=rows;page=0;section='questions';status.textContent='';render();return true;
+  error.hidden=true;selected=rows;page=0;section='questions';resetNotice();render();return true;
  }
  function acceptBank(rows){
   if(bank.length||!Array.isArray(rows)||!rows.length)return;
   bank=rows.slice().sort((a,b)=>a[0]-b[0]);
   from.min=to.min=bank[0][0];from.max=to.max=bank[bank.length-1][0];
   from.value=bank[0][0];to.value=bank[Math.min(9,bank.length-1)][0];
+  const params=new URLSearchParams(location.search),lo=Number(params.get('quizFrom')),hi=Number(params.get('quizTo'));
+  const resumePrint=params.get('quiz')==='print'&&params.has('quizFrom')&&params.has('quizTo')&&Number.isInteger(lo)&&Number.isInteger(hi)&&lo>=bank[0][0]&&hi<=bank[bank.length-1][0]&&lo<=hi;
+  if(resumePrint){from.value=lo;to.value=hi}
   selectRange();trigger.disabled=false;
+  if(resumePrint)openPreview();
  }
  document.addEventListener('aks-questions-ready',event=>acceptBank(event.detail));
  if(typeof questions!=='undefined')acceptBank(questions);
- trigger.addEventListener('click',()=>{
-  if(!bank.length||dialog.open)return;
-  document.body.classList.remove('aks-printing-quiz');
-  savedOverflow=document.documentElement.style.overflow;
-  status.textContent='';dialog.showModal();document.documentElement.style.overflow='hidden';
+ trigger.addEventListener('click',openPreview);
+ copyLink.addEventListener('click',async()=>{
+  if(!form.reportValidity()||!selectRange())return;
+  const url=new URL(location.pathname,location.origin);
+  url.searchParams.set('quiz','print');url.searchParams.set('quizFrom',from.value);url.searchParams.set('quizTo',to.value);
+  try{
+   if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error('Clipboard unavailable');
+   await navigator.clipboard.writeText(url.href);
+   status.textContent='Quiz link copied. Paste it into Safari or Chrome to continue with your selected questions.';
+  }catch(_){
+   linkField.value=url.href;linkField.hidden=false;linkField.focus();linkField.select();
+   status.textContent='Copy the selected link, then paste it into Safari or Chrome to continue.';
+  }
  });
  byId('quiz-print-close').addEventListener('click',()=>dialog.close());
  dialog.addEventListener('click',event=>{
@@ -67,6 +95,7 @@
  previous.addEventListener('click',()=>{page--;render()});next.addEventListener('click',()=>{page++;render()});
  byId('quiz-print-submit').addEventListener('click',()=>{
   if(!form.reportValidity()||!selectRange())return;
+  if(inInstagram||typeof window.print!=='function'){browserNotice();return;}
   const sheets=chunk(selected,4),keys=chunk(selected,20);
   output.innerHTML=sheets.map((rows,i)=>makeSheet(rows,false,i,sheets.length)).join('')+keys.map((rows,i)=>makeSheet(rows,true,i,keys.length)).join('');
   document.body.classList.add('aks-printing-quiz');
@@ -74,7 +103,7 @@
   dialog.close();
   try{window.print()}catch(_){
    document.body.classList.remove('aks-printing-quiz');dialog.showModal();document.documentElement.style.overflow='hidden';
-   status.textContent='Printing is unavailable here. Open this page in Safari or your browser and try again.';
+   browserNotice();
   }
  });
  window.addEventListener('afterprint',()=>document.body.classList.remove('aks-printing-quiz'));

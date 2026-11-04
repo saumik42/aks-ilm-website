@@ -68,3 +68,6 @@
  #quiz-print-output .quiz-sheet-subtitle,#quiz-print-output .quiz-name-line{font-size:9pt}
  #quiz-print-output .quiz-sheet-foot,#quiz-print-output .quiz-sheet-url{font-size:8pt}
 }
+
+#quiz-print-browser-help{margin-top:10px}
+#quiz-print-browser-help input{display:block;width:100%;min-height:44px;margin-top:8px;padding:8px;border:1px solid #c9d9e9;border-radius:6px;background:#fff;color:#153451;font:13px/1.4 Arial,Helvetica,sans-serif}
