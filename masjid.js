@@ -12,6 +12,10 @@
  };
  const selections={outside:null,inside:null,wudu:null};
  function show(view){
+  const previous=root.querySelector('[data-scene]:not([hidden])');
+  const changing=previous&&previous.dataset.scene!==view;
+  root.querySelectorAll('.art-transition-overlay').forEach(image=>image.remove());
+  const outgoing=changing&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches?previous.querySelector('.art-picture>img').cloneNode(false):null;
   hideHoverLabels();
   const key=selections[view],p=key?features[key]:null;
   root.querySelectorAll('[data-view]').forEach(b=>{const active=b.dataset.view===view;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
@@ -20,6 +24,13 @@
    scene.querySelector('.art-highlight').toggleAttribute('hidden',scene.hidden||!p);
    if(!scene.hidden&&p)scene.querySelectorAll('.art-mask,.art-white-outline,.art-blue-outline').forEach(path=>path.setAttribute('d',p.path));
   });
+  if(outgoing){
+   outgoing.className='art-transition-overlay';outgoing.alt='';outgoing.setAttribute('aria-hidden','true');
+   const picture=root.querySelector('[data-scene="'+view+'"] .art-picture');
+   picture.append(outgoing);
+   outgoing.addEventListener('animationend',()=>outgoing.remove(),{once:true});
+   setTimeout(()=>outgoing.remove(),280);
+  }
   root.querySelectorAll('[data-feature]').forEach(b=>{const active=b.dataset.feature===key;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active))});
   root.querySelector('.art-detail').hidden=!p;
   root.querySelector('.art-prompt').hidden=!!p;
