@@ -65,3 +65,8 @@ body:has(#aks-masjid-art) .site-nav{margin-bottom:4px}
 #aks-masjid-art .art-eyebrow{margin-bottom:5px}
 #aks-masjid-art h1{margin-bottom:6px}
 #aks-masjid-art .art-views{margin-top:12px;margin-bottom:12px}
+
+/* Crossfade views without changing scene layout or interactive hit targets. */
+#aks-masjid-art .art-picture>img.art-transition-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:4;pointer-events:none;animation:aks-masjid-view-fade 220ms ease-in-out forwards}
+@keyframes aks-masjid-view-fade{from{opacity:1}to{opacity:0}}
+@media(prefers-reduced-motion:reduce){#aks-masjid-art .art-transition-overlay{display:none!important;animation:none}}
