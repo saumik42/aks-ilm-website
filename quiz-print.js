@@ -31,6 +31,15 @@
  }
  const chunk=(rows,size)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,i*size+size));
  function formatQuestion(text){const parts=window.aksQuestionParts&&window.aksQuestionParts(text);if(parts)return parts.map(p=>'<span class="aks-q-text aks-q-'+p.kind+'">'+escape(p.text)+'</span>').join('');const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
+ function quizCodeForRows(rows){
+  let hash=2166136261;
+  const text=JSON.stringify(rows);
+  for(let i=0;i<text.length;i++){hash^=text.charCodeAt(i);hash=Math.imul(hash,16777619);}
+  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let value=hash>>>0,code='';
+  for(let i=0;i<4;i++){code=alphabet[value%alphabet.length]+code;value=Math.floor(value/alphabet.length);}
+  return code;
+ }
  function makeSheet(rows,answers,index,total){
   const start=selected[0][0],end=selected[selected.length-1][0];
   const selectionLabel=selectionMode.value==='range'?'Questions '+start+'–'+end:selected.length+' randomly selected questions';
@@ -38,7 +47,7 @@
    if(answers)return '<div class="quiz-key-row"><span class="quiz-key-letter">'+escape(q[0])+'. '+escape(q[6])+'</span><span>'+escape(q[2+'ABCD'.indexOf(q[6])])+'</span></div>';
    return '<section class="quiz-print-question"><h4>'+escape(q[0])+'. '+formatQuestion(q[1])+'</h4><ul class="quiz-print-options">'+q.slice(2,6).map((option,i)=>'<li><span class="quiz-answer-circle" aria-hidden="true"></span><span>'+String.fromCharCode(65+i)+') '+escape(option)+'</span></li>').join('')+'</ul></section>';
   }).join('');
-  return '<section class="quiz-sheet"><div class="quiz-sheet-top"><span class="quiz-sheet-brand">AKS Ilm</span><span class="quiz-sheet-url">aksilm.org</span></div><h3>'+(answers?'Answer key':'Islamic Trivia')+'</h3><p class="quiz-sheet-subtitle">'+escape(selectionLabel)+(answers?'':' · Choose one answer for each question.')+'</p>'+(answers?'':'<div class="quiz-name-line"><span>Name: ____________________</span><span>Date: ______________</span></div>')+content+'<div class="quiz-sheet-foot"><span>Islamic Trivia &amp; Learning</span><span>'+(answers?'Answer key':'Worksheet')+' · '+(index+1)+' / '+total+'</span></div></section>';
+  return '<section class="quiz-sheet"><div class="quiz-sheet-top"><span class="quiz-sheet-brand">AKS Ilm</span><span class="quiz-sheet-meta"><span class="quiz-sheet-url">aksilm.org</span><span class="quiz-sheet-code">Quiz code: '+escape(quizCodeForRows(selected))+'</span></span></div><h3>'+(answers?'Answer key':'Islamic Trivia')+'</h3><p class="quiz-sheet-subtitle">'+escape(selectionLabel)+(answers?'':' · Choose one answer for each question.')+'</p>'+(answers?'':'<div class="quiz-name-line"><span>Name: ____________________</span><span>Date: ______________</span></div>')+content+'<div class="quiz-sheet-foot"><span>Islamic Trivia &amp; Learning</span><span>'+(answers?'Answer key':'Worksheet')+' · '+(index+1)+' / '+total+'</span></div></section>';
  }
  function render(){
   const answers=section==='answers',groups=chunk(selected,answers?20:4);
