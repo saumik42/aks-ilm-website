@@ -784,7 +784,10 @@
 #clearCityBtn[hidden]{display:none}
 #clearCityBtn:hover{color:#164b88;background:#edf5fc}
 #clearCityBtn:focus-visible{outline:2px solid #377fc5;outline-offset:-3px}
-</style><style id="map-input-hints">.map-hint-touch{display:none}@media(pointer:coarse){.map-hint-mouse{display:none}.map-hint-touch{display:inline}}</style></head>
+</style><style id="map-input-hints">.map-hint-touch{display:none}@media(pointer:coarse){.map-hint-mouse{display:none}.map-hint-touch{display:inline}}</style><style id="selected-suggested-city">
+.example-grid .example[aria-pressed="true"]{background:#e5f0fc;color:#164b88;border-radius:6px;box-shadow:inset 0 0 0 1px #bcd3ed;font-weight:700;text-decoration:none}
+.example-grid .example[aria-pressed="true"]:hover{background:#e5f0fc;text-decoration:none}
+</style></head>
 
 <body><div class="site-nav aks-site-header"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-transparent-480.webp" srcset="./assets/logo-transparent-480.webp 480w, ./assets/logo-transparent-960.webp 960w" sizes="(max-width: 380px) 138px, (max-width: 600px) 176px, 220px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><nav class="aks-nav-links" aria-label="Main navigation"><a href="./index.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-8 9 8"/><path d="M5 9v12h14V9M10 21v-7h4v7"/></svg><span class="aks-nav-label">Home</span></a><a href="./trivia.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="15" height="19" rx="2"/><path d="M9 3V2h7v1M9 8l1 1 2-2M14 8h3M9 13h1M14 13h3M9 18h1M14 18h3"/></svg><span class="aks-nav-label">Islamic Trivia Quiz</span></a><details class="aks-explore"><summary data-current="true"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-2.5 5.5L8 16l2.5-5.5L16 8ZM12 1V0"/></svg><span class="aks-nav-label">Explore &amp; Learn <svg class="aks-nav-chevron" aria-hidden="true" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m4 6 4 4 4-4"/></svg></span></summary><div class="aks-explore-panel"><a href="./library.html"><img class="aks-menu-illustration" src="./assets/feature-library.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Islamic Trivia Library</span></a><a href="./prophets.html"><img class="aks-menu-illustration" src="./assets/feature-prophets.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>The Prophets</span></a><a href="./places.html"><img class="aks-menu-illustration" src="./assets/feature-places.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Islamic Places</span></a><a href="./kabah.html" aria-current="page"><img class="aks-menu-illustration" src="./assets/feature-kabah.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Distance to the Kaʿbah</span></a><a href="./index.html#term"><img class="aks-menu-illustration" src="./assets/feature-term.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Learn an Islamic Term</span></a><a href="./masjid.html"><img class="aks-menu-illustration" src="./assets/feature-masjid.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Discover the Masjid</span></a><a href="./index.html#reminder"><img class="aks-menu-illustration" src="./assets/feature-reminder.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Beneficial Reminder</span></a></div></details><a href="./about.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span class="aks-nav-label">About</span></a></nav></div>
 
@@ -1034,7 +1037,18 @@
 
     const cityInput = document.getElementById("cityInput");
     const clearCityBtn = document.getElementById("clearCityBtn");
-    function syncClearCity(){clearCityBtn.hidden=cityInput.value.length===0;}
+    let selectedSuggestedCity="";
+    const suggestedCityButtons=Array.from(document.querySelectorAll(".example"));
+    function updateSuggestedCity(){
+      suggestedCityButtons.forEach(button=>button.setAttribute("aria-pressed",String(
+        Boolean(selectedSuggestedCity)&&button.dataset.city.toLowerCase()===selectedSuggestedCity.toLowerCase()
+      )));
+    }
+    function syncClearCity(){
+      clearCityBtn.hidden=cityInput.value.length===0;
+      if(cityInput.value.trim().toLowerCase()!==selectedSuggestedCity.toLowerCase())selectedSuggestedCity="";
+      updateSuggestedCity();
+    }
     cityInput.addEventListener("input",syncClearCity);
     window.addEventListener("pageshow",syncClearCity);
     clearCityBtn.addEventListener("click",()=>{
@@ -2989,6 +3003,9 @@ const bearingCompassController = (() => {
             bearing
           );
 
+        selectedSuggestedCity=suggestedCityButtons.some(button=>button.dataset.city.toLowerCase()===city.toLowerCase())?city:"";
+        updateSuggestedCity();
+
         summaryCity.textContent =
           location.city;
 
@@ -3091,6 +3108,7 @@ const bearingCompassController = (() => {
               const city =
                 button.dataset.city;
 
+              selectedSuggestedCity=city;
               cityInput.value =
                 city;
               syncClearCity();
