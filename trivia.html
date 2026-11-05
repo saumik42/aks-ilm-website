@@ -132,6 +132,16 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
       window.scrollTo({top,behavior:reduceMotion?"instant":"smooth"});
     });
   }
+  function positionQuizStart(){
+    if(window.matchMedia("(max-width:760px)").matches){positionPhoneQuiz(true);return;}
+    requestAnimationFrame(()=>{
+      if(!root.classList.contains("is-active-quiz"))return;
+      const rect=root.getBoundingClientRect(),margin=16;
+      const top=Math.max(0,window.scrollY+rect.top-margin);
+      const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({top,behavior:reduceMotion?"instant":"smooth"});
+    });
+  }
   let deck=[],current=null,answered=false,correctCount=0,answeredCount=0,mode=null,limit=null,missed=[],answerHistory=[],lastSelected=null;
   const sessionKey="aks-ilm:trivia-session:v1";
   const requestedMode=new URLSearchParams(location.search).get("mode");
@@ -176,13 +186,13 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
     resumeScreen.hidden=true;modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;review.hidden=true;
     root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");showModeLabel(mode);reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";
     next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";
-    updateScore();draw(true);if(data.selected!==null)checkAnswer(data.selected,true);positionPhoneQuiz(true);
+    updateScore();draw(true);if(data.selected!==null)checkAnswer(data.selected,true);positionQuizStart();
     if(data.selected===null)question.focus({preventScroll:true});
   }
   const tenMessages={0:"Keep going! Every question is an opportunity to learn something new. 📖",1:"A start is a start! Keep learning and building your knowledge. 🌱",2:"Keep going! Each answer you learn is knowledge gained. 📚",3:"Good effort! Keep seeking knowledge and try again. 🌱",4:"You're making progress! Keep learning and improving. 📖",5:"Halfway there! A good effort — keep building your knowledge. 🌟",6:"Good job! Your knowledge is growing — keep going. 📚",7:"MashaAllah, well done! A strong result — keep learning. 🌟",8:"MashaAllah! Keep seeking beneficial knowledge. 🤲",9:"MashaAllah, excellent! Just one away from a perfect score. ⭐",10:"MashaAllah, perfect score! May Allah increase you in beneficial knowledge. 🤲✨"};
   function shuffleDeck(){deck=Array.from({length:bank.length},(_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
   function updateScore(){const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
-  function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");showModeLabel(value);mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionPhoneQuiz(true)}
+  function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");showModeLabel(value);mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionQuizStart()}
   function draw(restoring=false){if(!restoring){if(!deck.length)shuffleDeck();current=bank[deck.pop()]}answered=false;lastSelected=null;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Library question #"+n;aksRenderQuestion(question,q);const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});syncShortcutLabels();answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";root.querySelector("#sk-halfway").hidden=true;root.querySelector("#sk-halfway").textContent="";next.hidden=true;quiz.hidden=false;if(!restoring)saveSession()}
   function drawNextQuestion(){
     if(mode!=="unlimited"&&answered&&answeredCount>=limit){completeChallenge();return;}
