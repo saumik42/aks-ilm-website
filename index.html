@@ -358,7 +358,18 @@ try{await navigator.clipboard.writeText(url);status.textContent='Link copied!';r
 manual.hidden=false;link.focus();link.select();status.textContent='Select and copy the link below.';
 }finally{button.disabled=false}
 });
-})();</script><script src="./feedback.js?v=4"></script><script id="homepage-logo-shimmer-script">(()=>{const logo=document.querySelector('.aks-site-header .brand');let timer;logo.addEventListener('click',event=>{event.preventDefault();clearTimeout(timer);logo.classList.remove('is-shimmering');void logo.offsetWidth;logo.classList.add('is-shimmering');timer=setTimeout(()=>logo.classList.remove('is-shimmering'),1600)});})();</script></body></html>
+})();</script><script src="./feedback.js?v=4"></script><script id="homepage-logo-shimmer-script">(()=>{const logo=document.querySelector('.aks-site-header .brand');let timer;logo.addEventListener('click',event=>{event.preventDefault();clearTimeout(timer);logo.classList.remove('is-shimmering');void logo.offsetWidth;logo.classList.add('is-shimmering');timer=setTimeout(()=>logo.classList.remove('is-shimmering'),1600)});})();</script><style id="homepage-desktop-challenge-cards">
+@media(min-width:761px){
+ #trivia.featured{grid-template-columns:1fr;gap:22px;text-align:center}
+ #trivia.featured>div:first-child{max-width:700px;margin-inline:auto}
+ #trivia .modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+ #trivia .mode{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;min-width:0;min-height:84px;padding:13px 10px;text-align:center;border-radius:6px;font-size:15px;background:#fff;border:1px solid #fff;color:#164b88;box-shadow:0 3px 10px #061f3610}
+ #trivia .mode span:first-child{font-weight:700;line-height:1.4}
+ #trivia .mode span:last-child{font-size:12px;font-weight:400;line-height:1.4;color:#637f99}
+ #trivia .mode:hover{background:#eaf3fc;border-color:#c1d9ee}
+ #trivia .mode:focus-visible{outline:3px solid #a9d3f6;outline-offset:3px}
+}
+</style></body></html>
 
 
 
