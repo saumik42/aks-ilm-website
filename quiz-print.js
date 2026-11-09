@@ -29,16 +29,17 @@
   savedOverflow=document.documentElement.style.overflow;
   resetNotice();dialog.showModal();document.documentElement.style.overflow='hidden';
  }
- const chunk=(rows,size)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,i*size+size));
  function formatQuestion(text){const parts=window.aksQuestionParts&&window.aksQuestionParts(text);if(parts)return parts.map(p=>'<span class="aks-q-text aks-q-'+p.kind+'"'+(p.kind==='arabic'?' lang="ar" dir="rtl"':'')+'>'+escape(p.text)+'</span>').join('');const lines=text.split('\n');if(lines.length!==5||!lines[1].startsWith('• Faith:'))return escape(text);return escape(lines[0])+'<span class="aks-story-list">'+lines.slice(1).map(line=>{const i=line.indexOf(':');return '<span class="aks-story-row"><strong>'+escape(line.slice(0,i+1))+'</strong>'+escape(line.slice(i+1))+'</span>'}).join('')+'</span>';}
+ let codeRows=null,codeValue="";
  function quizCodeForRows(rows){
+  if(rows===codeRows)return codeValue;
   let hash=2166136261;
   const text=JSON.stringify(rows);
   for(let i=0;i<text.length;i++){hash^=text.charCodeAt(i);hash=Math.imul(hash,16777619);}
   const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let value=hash>>>0,code='';
   for(let i=0;i<4;i++){code=alphabet[value%alphabet.length]+code;value=Math.floor(value/alphabet.length);}
-  return code;
+  codeRows=rows;codeValue=code;return code;
  }
  function makeSheet(rows,answers,index,total){
   const start=selected[0][0],end=selected[selected.length-1][0];
@@ -49,8 +50,34 @@
   }).join('');
   return '<section class="quiz-sheet"><div class="quiz-sheet-top"><span class="quiz-sheet-brand">AKS Ilm</span><span class="quiz-sheet-meta"><span class="quiz-sheet-url">aksilm.org</span><span class="quiz-sheet-code">Quiz code: '+escape(quizCodeForRows(selected))+'</span></span></div><h3>'+(answers?'Answer key':'Islamic Trivia')+'</h3><p class="quiz-sheet-subtitle">'+escape(selectionLabel)+(answers?'':' · Choose one answer for each question.')+'</p>'+(answers?'':'<div class="quiz-name-line"><span>Name: ____________________</span><span>Date: ______________</span></div>')+content+'<div class="quiz-sheet-foot"><span>Islamic Trivia &amp; Learning</span><span>'+(answers?'Answer key':'Worksheet')+' · '+(index+1)+' / '+total+'</span></div></section>';
  }
+ // Measure at the narrower A4 content width and the shorter Letter content height.
+ // The same typography is used here and by the print stylesheet.
+ let layoutCache=null;
+ function sheetGroups(){
+  const cacheKey=JSON.stringify([selectionMode.value,selected]);
+  if(layoutCache&&layoutCache.key===cacheKey)return layoutCache;
+  const measure=document.createElement('div');
+  measure.className='aks-quiz-doc quiz-print-measure';measure.setAttribute('aria-hidden','true');
+  document.body.append(measure);
+  const heightProbe=document.createElement('div');heightProbe.style.height='248mm';measure.append(heightProbe);
+  const availableHeight=heightProbe.getBoundingClientRect().height;heightProbe.remove();
+  function paginate(answers){
+   const groups=[];let rows=[];
+   for(const row of selected){
+    const candidate=rows.concat([row]);
+    measure.innerHTML=makeSheet(candidate,answers,0,1);
+    const tooTall=measure.firstElementChild.getBoundingClientRect().height>availableHeight;
+    if(rows.length&&(tooTall||candidate.length>(answers?20:4))){groups.push(rows);rows=[row];}
+    else rows=candidate;
+   }
+   if(rows.length)groups.push(rows);
+   return groups;
+  }
+  try{layoutCache={key:cacheKey,questions:paginate(false),answers:paginate(true)};return layoutCache;}
+  finally{measure.remove();}
+ }
  function render(){
-  const answers=section==='answers',groups=chunk(selected,answers?20:4);
+  const answers=section==='answers',groups=sheetGroups()[section];
   page=Math.max(0,Math.min(page,groups.length-1));
   preview.innerHTML=makeSheet(groups[page],answers,page,groups.length);
   qTab.setAttribute('aria-pressed',String(!answers));aTab.setAttribute('aria-pressed',String(answers));
@@ -58,6 +85,7 @@
   byId('quiz-print-position').textContent=(answers?'Answer key':'Worksheet')+' '+(page+1)+' of '+groups.length;
   previous.disabled=page===0;next.disabled=page===groups.length-1;
  }
+ if(document.fonts)document.fonts.ready.then(()=>{layoutCache=null;if(selected.length)render()});
  function syncSelectionMode(){
   const range=selectionMode.value==='range';
   byId('quiz-print-range-fields').hidden=!range;
@@ -132,7 +160,7 @@
  byId('quiz-print-submit').addEventListener('click',()=>{
   if(!form.reportValidity()||!selectRange())return;
   if(inInstagram||typeof window.print!=='function'){browserNotice();return;}
-  const sheets=chunk(selected,4),keys=chunk(selected,20);
+  const layout=sheetGroups(),sheets=layout.questions,keys=layout.answers;
   output.innerHTML=sheets.map((rows,i)=>makeSheet(rows,false,i,sheets.length)).join('')+keys.map((rows,i)=>makeSheet(rows,true,i,keys.length)).join('');
   document.body.classList.add('aks-printing-quiz');
   document.documentElement.style.overflow=savedOverflow;
@@ -144,3 +172,4 @@
  });
  window.addEventListener('afterprint',()=>document.body.classList.remove('aks-printing-quiz'));
 })();
+
