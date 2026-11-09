@@ -795,6 +795,7 @@
 .city-match-choice:hover{background:#f0f6fd}
 .city-match-choice:focus-visible{outline:3px solid #377fc5;outline-offset:-3px}
 .city-match-choice small{display:block;color:#60788f;font:400 13px/1.5 Arial,Helvetica,sans-serif}
+.message.city-choice-notice{color:#527490}
 .city-match-action{flex:none;color:#2466a9;font:600 13px/1.4 Arial,Helvetica,sans-serif}
 </style></head>
 
@@ -2557,6 +2558,7 @@
       cityMatches.hidden=true;
       cityMatchList.replaceChildren();
       message.textContent='';
+      message.classList.remove('city-choice-notice');
       setLoading(false);
     }
     function showCityMatches(city,locations){
@@ -2576,6 +2578,7 @@
         cityMatchList.append(button);
       });
       cityMatches.hidden=false;
+      message.classList.add('city-choice-notice');
       message.textContent=locations.length+' matching cities. Choose a location to calculate its distance.';
       cityMatchList.querySelector('button').focus({preventScroll:true});
     }
