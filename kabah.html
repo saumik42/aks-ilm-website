@@ -787,6 +787,15 @@
 </style><style id="map-input-hints">.map-hint-touch{display:none}@media(pointer:coarse){.map-hint-mouse{display:none}.map-hint-touch{display:inline}}</style><style id="selected-suggested-city">
 .example-grid .example[aria-pressed="true"]{background:#e5f0fc;color:#164b88;border-radius:6px;box-shadow:inset 0 0 0 1px #bcd3ed;font-weight:700;text-decoration:none}
 .example-grid .example[aria-pressed="true"]:hover{background:#e5f0fc;text-decoration:none}
+</style><style id="city-match-style">
+.city-matches{margin-top:16px;border:1px solid #cbddec;border-radius:10px;overflow:hidden;background:#fff}
+.city-matches[hidden]{display:none}
+.city-matches-heading{margin:0;padding:12px 16px;background:#edf5fd;color:#164b88;font:600 14px/1.5 Arial,Helvetica,sans-serif}
+.city-match-choice{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:14px 16px;border:0;border-top:1px solid #e1eaf3;background:#fff;color:#153451;text-align:left;font:600 15px/1.5 Arial,Helvetica,sans-serif;cursor:pointer}
+.city-match-choice:hover{background:#f0f6fd}
+.city-match-choice:focus-visible{outline:3px solid #377fc5;outline-offset:-3px}
+.city-match-choice small{display:block;color:#60788f;font:400 13px/1.5 Arial,Helvetica,sans-serif}
+.city-match-action{flex:none;color:#2466a9;font:600 13px/1.4 Arial,Helvetica,sans-serif}
 </style></head>
 
 <body><div class="site-nav aks-site-header"><a class="site-brand" href="./index.html"><img class="site-logo" src="./assets/logo-transparent-480.webp" srcset="./assets/logo-transparent-480.webp 480w, ./assets/logo-transparent-960.webp 960w" sizes="(max-width: 380px) 138px, (max-width: 600px) 176px, 220px" alt="AKS Ilm — Islamic Trivia &amp; Learning" width="960" height="320"></a><nav class="aks-nav-links" aria-label="Main navigation"><a href="./index.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-8 9 8"/><path d="M5 9v12h14V9M10 21v-7h4v7"/></svg><span class="aks-nav-label">Home</span></a><a href="./trivia.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="15" height="19" rx="2"/><path d="M9 3V2h7v1M9 8l1 1 2-2M14 8h3M9 13h1M14 13h3M9 18h1M14 18h3"/></svg><span class="aks-nav-label">Islamic Trivia Quiz</span></a><details class="aks-explore"><summary data-current="true"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-2.5 5.5L8 16l2.5-5.5L16 8ZM12 1V0"/></svg><span class="aks-nav-label">Explore &amp; Learn <svg class="aks-nav-chevron" aria-hidden="true" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m4 6 4 4 4-4"/></svg></span></summary><div class="aks-explore-panel"><a href="./library.html"><img class="aks-menu-illustration" src="./assets/feature-library.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Islamic Trivia Library</span></a><a href="./prophets.html"><img class="aks-menu-illustration" src="./assets/feature-prophets.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>The Prophets</span></a><a href="./places.html"><img class="aks-menu-illustration" src="./assets/feature-places.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Islamic Places</span></a><a href="./kabah.html" aria-current="page"><img class="aks-menu-illustration" src="./assets/feature-kabah.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Distance to the Kaʿbah</span></a><a href="./index.html#term"><img class="aks-menu-illustration" src="./assets/feature-term.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Learn an Islamic Term</span></a><a href="./masjid.html"><img class="aks-menu-illustration" src="./assets/feature-masjid.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Discover the Masjid</span></a><a href="./index.html#reminder"><img class="aks-menu-illustration" src="./assets/feature-reminder.webp" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span>Beneficial Reminder</span></a></div></details><a href="./about.html"><svg class="aks-nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span class="aks-nav-label">About</span></a></nav></div>
@@ -819,6 +828,8 @@
           Calculate Distance
         </button>
       </div>
+
+      <section id="city-matches" class="city-matches" aria-labelledby="city-matches-heading" hidden><h2 id="city-matches-heading" class="city-matches-heading"></h2><div id="city-match-list"></div></section>
 
       <div class="examples"><span class="example-label">Try a city</span><div class="example-grid"><button type="button" class="example" data-city="Toronto">Toronto</button><button type="button" class="example" data-city="London">London</button><button type="button" class="example" data-city="Dubai">Dubai</button><button type="button" class="example" data-city="Buenos Aires">Buenos Aires</button><button type="button" class="example" data-city="Los Angeles">Los Angeles</button><button type="button" class="example" data-city="Dhaka">Dhaka</button><button type="button" class="example" data-city="Sydney">Sydney</button><button type="button" class="example" data-city="Barcelona">Barcelona</button></div></div>
 
@@ -2537,7 +2548,41 @@
       "cape town": {"src":"./assets/map-cape-town.webp","name":"Table Mountain"},
     };
 
-    async function geocodeCity(city) {
+    let cityLookupRevision=0, cityLookupController=null;
+    const cityMatches=document.getElementById('city-matches');
+    const cityMatchList=document.getElementById('city-match-list');
+    function clearCityMatches(){
+      cityLookupRevision++;
+      if(cityLookupController)cityLookupController.abort();
+      cityMatches.hidden=true;
+      cityMatchList.replaceChildren();
+      message.textContent='';
+      setLoading(false);
+    }
+    function showCityMatches(city,locations){
+      document.getElementById('city-matches-heading').textContent='Which '+city+' did you mean?';
+      cityMatchList.replaceChildren();
+      locations.forEach(location=>{
+        const button=document.createElement('button');button.type='button';button.className='city-match-choice';
+        const label=document.createElement('span'),name=document.createElement('span'),region=document.createElement('small'),action=document.createElement('span');
+        name.textContent=location.city;
+        region.textContent=[location.region,location.country].filter(Boolean).join(', ');
+        action.textContent='Choose →';action.className='city-match-action';
+        label.append(name,region);button.append(label,action);
+        button.addEventListener('click',()=>{
+          const fullName=[location.city,location.region,location.country].filter(Boolean).join(', ');
+          cityInput.value=fullName;syncClearCity();calculate(fullName,location);
+        });
+        cityMatchList.append(button);
+      });
+      cityMatches.hidden=false;
+      message.textContent=locations.length+' matching cities. Choose a location to calculate its distance.';
+      cityMatchList.querySelector('button').focus({preventScroll:true});
+    }
+    cityInput.addEventListener('input',clearCityMatches);
+    clearCityBtn.addEventListener('click',clearCityMatches);
+
+    async function geocodeCity(city,preferKnown=false,signal) {
       const knownCities = {
         "halifax":{"lat":44.6488,"lon":-63.5752,"city":"Halifax","country":"Canada"},
         "fredericton":{"lat":45.9636,"lon":-66.6431,"city":"Fredericton","country":"Canada"},
@@ -2704,79 +2749,35 @@
       const normalized = city.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ');
       const key = aliases[normalized] || normalized;
       const known = knownCities[key];
-      if (known) return {...known, landmark: CITY_LANDMARKS[key] || null};
-
-
-      const url =
-        "https://nominatim.openstreetmap.org/search" +
-        "?format=jsonv2" +
-        "&limit=1" +
-        "&addressdetails=1" +
-        "&q=" +
-        encodeURIComponent(city);
-
-      const response =
-        await fetch(
-          url,
-          {
-            headers: {
-              "Accept":
-                "application/json"
-            }
-          }
-        );
-
-      if (!response.ok) {
-
-        throw new Error(
-          "The city lookup could not be completed."
-        );
+      const knownLocation=known?{...known,landmark:CITY_LANDMARKS[key]||null}:null;
+      // Explicit example buttons and qualified aliases keep their established coordinates.
+      if(knownLocation&&(preferKnown||normalized.includes(',')))return [knownLocation];
+      // Keep the two common Londons available even without a network lookup.
+      const londonOntario={lat:42.9849,lon:-81.2453,city:'London',region:'Ontario',country:'Canada',landmark:null};
+      if(['london, canada','london, ontario','london, ontario, canada','london, on','london, on, canada'].includes(normalized))return [londonOntario];
+      if(normalized==='london')return [{...knownCities.london,region:'England',landmark:CITY_LANDMARKS.london||null},londonOntario];
+      const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&featuretype=city&q='+encodeURIComponent(city);
+      try{
+        const response=await fetch(url,{signal,headers:{Accept:'application/json'}});
+        if(!response.ok)throw new Error('The city lookup could not be completed.');
+        const data=await response.json();
+        const locations=[];
+        for(const result of data){
+          const address=result.address||{},lat=Number(result.lat),lon=Number(result.lon);
+          if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)continue;
+          const candidate={lat,lon,city:address.city||address.town||address.village||address.municipality||result.name||city,region:address.state||address.region||address.county||'',country:address.country||'',landmark:null};
+          // Several administrative records can describe the same city.
+          if(locations.some(other=>haversineDistance(other.lat,other.lon,lat,lon)<25))continue;
+          if(knownLocation&&haversineDistance(knownLocation.lat,knownLocation.lon,lat,lon)<25)candidate.landmark=knownLocation.landmark;
+          locations.push(candidate);
+        }
+        if(!locations.length){if(knownLocation)return [knownLocation];throw new Error('City not found. Try another city or include the country.');}
+        return locations;
+      }catch(error){
+        if(error.name==='AbortError')throw error;
+        if(knownLocation)return [knownLocation];
+        throw error;
       }
-
-      const data =
-        await response.json();
-
-      if (!data.length) {
-
-        throw new Error(
-          "City not found. Try another city or include the country."
-        );
-      }
-
-      const result =
-        data[0];
-
-      const address =
-        result.address || {};
-
-      const cityName =
-        address.city ||
-        address.town ||
-        address.village ||
-        address.municipality ||
-        address.county ||
-        city;
-
-      const countryName =
-        address.country || "";
-
-      return {
-        lat:
-          parseFloat(
-            result.lat
-          ),
-
-        lon:
-          parseFloat(
-            result.lon
-          ),
-
-        city:
-          cityName,
-
-        country:
-          countryName
-      };
     }
 
     function setLoading(
@@ -2918,7 +2919,7 @@ const bearingCompassController = (() => {
     }
 
     async function calculate(
-      cityOverride = null
+      cityOverride = null, resolvedLocation = null, preferKnown = false
     ) {
 
       const city =
@@ -2937,7 +2938,12 @@ const bearingCompassController = (() => {
         return;
       }
 
+      clearCityMatches();
+      const lookupRevision=cityLookupRevision;
+      cityLookupController=new AbortController();
       message.textContent = "";
+      results.style.display='none';
+      placeholder.style.display='block';
 
       cancelResultPresentation();
       bearingCompassController.clear();
@@ -2967,10 +2973,10 @@ const bearingCompassController = (() => {
 
       try {
 
-        const location =
-          await geocodeCity(
-            city
-          );
+        const locations=resolvedLocation?[resolvedLocation]:await geocodeCity(city,preferKnown,cityLookupController.signal);
+        if(lookupRevision!==cityLookupRevision)return;
+        if(locations.length>1){showCityMatches(city,locations);return;}
+        const location=locations[0];
 
         const distance =
           haversineDistance(
@@ -3061,14 +3067,10 @@ const bearingCompassController = (() => {
         presentMobileResult(startPlane);
 
       } catch (error) {
-
-        message.textContent =
-          error.message ||
-          "Something went wrong. Please try another city.";
-
+        if(lookupRevision!==cityLookupRevision||error.name==='AbortError')return;
+        message.textContent=error.message||'Something went wrong. Please try another city.';
       } finally {
-
-        setLoading(false);
+        if(lookupRevision===cityLookupRevision)setLoading(false);
       }
     }
 
@@ -3113,9 +3115,7 @@ const bearingCompassController = (() => {
                 city;
               syncClearCity();
 
-              calculate(
-                city
-              );
+              calculate(city,null,true);
             }
           );
         }
@@ -3143,6 +3143,7 @@ const bearingCompassController = (() => {
       "click",
       () => {
 
+        clearCityMatches();
         cancelResultPresentation();
         bearingCompassController.clear();
         results.style.display =
@@ -3177,3 +3178,4 @@ const bearingCompassController = (() => {
 
 <footer class="page-foot">© 2026 AKS Ilm · Online since 2025 · Islamic Trivia & Learning · <span class="footer-destinations"><a href="./index.html">Return home</a><span aria-hidden="true">·</span><a href="./about.html">About AKS Ilm</a></span></footer></body>
 </html>
+
