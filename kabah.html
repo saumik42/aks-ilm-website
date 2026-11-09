@@ -2864,9 +2864,8 @@ const bearingCompassController = (() => {
     phoneResults.addEventListener("change", arrangeDistanceSummary);
 
     let cancelResultPresentation = () => {};
-    function presentMobileResult(startPlane) {
+    function presentCityResult(startPlane) {
       cancelResultPresentation();
-      if (!phoneResults.matches) { startPlane(); return; }
       cityInput.blur();
       const viewport = window.visualViewport;
       let settleTimer, maximumTimer, revealFrame;
@@ -3067,7 +3066,7 @@ const bearingCompassController = (() => {
         }
 
         bearingCompassController.update(bearing, location.city);
-        presentMobileResult(startPlane);
+        presentCityResult(startPlane);
 
       } catch (error) {
         if(lookupRevision!==cityLookupRevision||error.name==='AbortError')return;
