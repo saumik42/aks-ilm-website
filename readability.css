@@ -1,3 +1,4 @@
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;src:url('https://fonts.gstatic.com/s/amiri/v30/J7aRnpd8CGxBHqUp.ttf') format('truetype')}
 /* Readable supporting text on light surfaces. */
 .page-foot{color:#526b81}
 .page-heading p,.feature-page-heading p{color:#526b81}
@@ -32,7 +33,7 @@
 .aks-q-prompt{font-weight:700}
 .aks-q-passage,.aks-q-translation,.aks-q-clue{font-weight:400;line-height:1.5}
 .aks-q-clue+.aks-q-clue{margin-top:3px}
-.aks-q-arabic{font:400 25px/1.8 'Times New Roman',serif;text-align:center;direction:rtl}
+.aks-q-arabic{font:400 25px/1.8 'Amiri','Times New Roman',serif;text-align:center;direction:rtl}
 .aks-q-translation{text-align:center}
 #sk-trivia-randomizer .sk-question .aks-q-passage,#sk-trivia-randomizer .sk-question .aks-q-clue{font-size:16px}
 #sk-trivia-randomizer .sk-question .aks-q-translation{font-size:14px;color:#526b81}
