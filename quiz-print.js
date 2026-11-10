@@ -13,6 +13,8 @@
  const previous=byId('quiz-print-previous'),next=byId('quiz-print-next');
  let bank=[],selected=[],page=0,section='questions',savedOverflow='';
  let randomSelectionMode='';
+ const pickedIds=new Set();
+ const pickedTray=byId('quiz-picked-tray'),pickedCount=byId('quiz-picked-count');
  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const browserHelp=byId('quiz-print-browser-help'),copyLink=byId('quiz-print-copy-link'),linkField=byId('quiz-print-browser-link');
  const inInstagram=/Instagram/i.test(navigator.userAgent||'');
@@ -44,7 +46,7 @@
  }
  function makeSheet(rows,answers,index,total){
   const start=selected[0][0],end=selected[selected.length-1][0];
-  const selectionLabel=selectionMode.value==='range'?'Questions '+start+'–'+end:selected.length+' randomly selected questions';
+  const selectionLabel=selectionMode.value==='range'?'Questions '+start+'–'+end:selected.length+(selectionMode.value==='custom'?' selected questions':' randomly selected questions');
   const content=rows.map(q=>{
    if(answers)return '<div class="quiz-key-row"><span class="quiz-key-letter">'+escape(q[0])+'. '+escape(q[6])+'</span><span>'+escape(q[2+'ABCD'.indexOf(q[6])])+'</span></div>';
    return '<section class="quiz-print-question"><h4>'+escape(q[0])+'. '+formatQuestion(q[1])+'</h4><ul class="quiz-print-options">'+q.slice(2,6).map((option,i)=>'<li><span class="quiz-answer-circle" aria-hidden="true"></span><span>'+String.fromCharCode(65+i)+') '+escape(option)+'</span></li>').join('')+'</ul></section>';
@@ -90,7 +92,7 @@
   page=Math.max(0,Math.min(page,groups.length-1));
   preview.innerHTML=makeSheet(groups[page],answers,page,groups.length);
   qTab.setAttribute('aria-pressed',String(!answers));aTab.setAttribute('aria-pressed',String(answers));
-  byId('quiz-print-selection').textContent=selectionMode.value==='range'?selected.length+(selected.length===1?' question · #':' questions · #')+selected[0][0]+'–'+selected[selected.length-1][0]:selected.length+' randomly selected questions';
+  byId('quiz-print-selection').textContent=selectionMode.value==='range'?selected.length+(selected.length===1?' question · #':' questions · #')+selected[0][0]+'–'+selected[selected.length-1][0]:selected.length+(selectionMode.value==='custom'?' selected questions':' randomly selected questions');
   byId('quiz-print-position').textContent=(answers?'Answer key':'Worksheet')+' '+(page+1)+' of '+groups.length;
   previous.disabled=page===0;next.disabled=page===groups.length-1;
  }
@@ -102,6 +104,11 @@
  }
  function selectRange(regenerate=false){
   if(!bank.length)return false;
+  if(selectionMode.value==='custom'){
+   selected=bank.filter(row=>pickedIds.has(row[0]));
+   if(!selected.length){error.textContent='Select questions in the Library first.';error.hidden=false;return false;}
+   randomSelectionMode='';error.hidden=true;page=0;section='questions';resetNotice();render();return true;
+  }
   if(selectionMode.value!=='range'){
    const count=Number(selectionMode.value);
    if(![10,25].includes(count)||bank.length<count){error.textContent='Not enough questions for this selection.';error.hidden=false;return false;}
@@ -131,12 +138,38 @@
   if(resumePrint){from.value=lo;to.value=hi}
   const ids=(params.get('quizIds')||'').split(',').filter(Boolean).map(Number);
   const randomRows=ids.map(id=>bank.find(row=>row[0]===id));
-  const resumeRandom=params.get('quiz')==='print'&&[10,25].includes(ids.length)&&new Set(ids).size===ids.length&&randomRows.every(Boolean);
+  const resumeCustom=params.get('quiz')==='print'&&params.get('quizSelection')==='custom'&&ids.length>0&&ids.length<=bank.length&&new Set(ids).size===ids.length&&randomRows.every(Boolean);
+  if(resumeCustom){ids.forEach(id=>pickedIds.add(id));selectionMode.value='custom';}
+  const resumeRandom=!resumeCustom&&params.get('quiz')==='print'&&[10,25].includes(ids.length)&&new Set(ids).size===ids.length&&randomRows.every(Boolean);
   if(resumeRandom){selectionMode.value=String(ids.length);selected=randomRows.slice().sort((a,b)=>a[0]-b[0]);randomSelectionMode=selectionMode.value;}
-  if(resumePrint||resumeRandom){if(includeKey)includeKey.checked=params.get('quizKey')!=='0';if(monochrome)monochrome.checked=params.get('quizMono')==='1';}
-  syncSelectionMode();selectRange();trigger.disabled=false;
-  if(resumePrint||resumeRandom)openPreview();
+  if(resumePrint||resumeRandom||resumeCustom){if(includeKey)includeKey.checked=params.get('quizKey')!=='0';if(monochrome)monochrome.checked=params.get('quizMono')==='1';}
+  queueMicrotask(()=>{setupPickControls();syncPickedTray()});syncPickedTray();syncSelectionMode();selectRange();trigger.disabled=false;
+  if(resumePrint||resumeRandom||resumeCustom)openPreview();
  }
+ function setupPickControls(){
+  document.querySelectorAll('.library-question').forEach(article=>{
+   const id=Number(article.id.replace('question-',''));
+   if(!bank.some(row=>row[0]===id)||article.querySelector('.quiz-pick-question'))return;
+   const label=document.createElement('label');label.className='quiz-pick-label';
+   const input=document.createElement('input');input.type='checkbox';input.className='quiz-pick-question';input.dataset.question=String(id);input.checked=pickedIds.has(id);
+   input.setAttribute('aria-label','Add question '+id+' to printable quiz');
+   label.append(input,document.createTextNode('Add to printable quiz'));article.append(label);
+  });
+ }
+ function syncPickedTray(){
+  const count=pickedIds.size,option=selectionMode.querySelector('option[value="custom"]');
+  option.disabled=count===0;option.textContent='Selected questions ('+count+')';
+  if(pickedTray){pickedTray.hidden=count===0;pickedCount.textContent=count+(count===1?' question selected':' questions selected');}
+  document.querySelectorAll('.quiz-pick-question').forEach(input=>{input.checked=pickedIds.has(Number(input.dataset.question))});
+ }
+ document.addEventListener('change',event=>{
+  const input=event.target;if(!input.classList.contains('quiz-pick-question'))return;
+  const id=Number(input.dataset.question);if(input.checked)pickedIds.add(id);else pickedIds.delete(id);
+  syncPickedTray();
+  if(selectionMode.value==='custom'){if(!pickedIds.size)selectionMode.value='range';syncSelectionMode();selectRange();}
+ });
+ byId('quiz-picked-print')?.addEventListener('click',()=>{if(!pickedIds.size)return;selectionMode.value='custom';syncSelectionMode();if(selectRange())openPreview()});
+ byId('quiz-picked-clear')?.addEventListener('click',()=>{pickedIds.clear();syncPickedTray();if(selectionMode.value==='custom'){selectionMode.value='range';syncSelectionMode();selectRange()}});
  document.addEventListener('aks-questions-ready',event=>acceptBank(event.detail));
  if(typeof questions!=='undefined')acceptBank(questions);
  trigger.addEventListener('click',openPreview);
@@ -147,7 +180,7 @@
   if(includeKey?.checked===false)url.searchParams.set('quizKey','0');
   if(monochrome?.checked===true)url.searchParams.set('quizMono','1');
   if(selectionMode.value==='range'){url.searchParams.set('quizFrom',from.value);url.searchParams.set('quizTo',to.value);}
-  else url.searchParams.set('quizIds',selected.map(row=>row[0]).join(','));
+  else{url.searchParams.set('quizIds',selected.map(row=>row[0]).join(','));if(selectionMode.value==='custom')url.searchParams.set('quizSelection','custom');}
   try{
    if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error('Clipboard unavailable');
    await navigator.clipboard.writeText(url.href);
@@ -186,4 +219,5 @@
  });
  window.addEventListener('afterprint',()=>document.body.classList.remove('aks-printing-quiz'));
 })();
+
 

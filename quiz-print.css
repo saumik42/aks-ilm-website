@@ -95,3 +95,13 @@
 .aks-quiz-doc.quiz-monochrome .quiz-sheet,.aks-quiz-doc.quiz-monochrome .quiz-sheet *{color:#111!important;background:transparent!important;box-shadow:none!important;border-color:#aaa!important}
 .aks-quiz-doc.quiz-monochrome .quiz-sheet{background:#fff!important}
 .aks-quiz-doc.quiz-monochrome .quiz-answer-circle{border-color:#666!important}
+
+
+.quiz-pick-label{display:flex;align-items:center;gap:8px;margin-top:12px;min-height:36px;color:#527490;font:13px/1.4 Arial,Helvetica,sans-serif;cursor:pointer;width:fit-content}
+.quiz-pick-label input{width:16px;height:16px;margin:0;accent-color:#164b88}
+.quiz-picked-tray{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:12px 16px;margin:0 0 20px;background:#edf5fc;border:1px solid #cbddec;border-radius:8px;color:#164b88;font:14px/1.5 Arial,Helvetica,sans-serif}
+.quiz-picked-tray[hidden]{display:none}
+.quiz-picked-tray button{min-height:40px;padding:7px 12px;border:1px solid #c3d7e9;border-radius:6px;background:#fff;color:#164b88;font:600 13px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
+.quiz-picked-tray #quiz-picked-print{background:#164b88;color:#fff;border-color:#164b88}
+.quiz-pick-label input:focus-visible,.quiz-picked-tray button:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
+@media print{.quiz-pick-label,.quiz-picked-tray{display:none!important}}
