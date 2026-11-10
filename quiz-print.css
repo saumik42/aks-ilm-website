@@ -87,3 +87,11 @@
 .quiz-print-measure .quiz-sheet-subtitle,.quiz-print-measure .quiz-name-line{font-size:9pt}
 .quiz-print-measure .quiz-sheet-foot,.quiz-print-measure .quiz-sheet-url{font-size:8pt}
 @media print{.quiz-print-measure{display:none!important}}
+
+/* Compact print preferences; only document content adopts monochrome styling. */
+.quiz-print-options-settings{display:flex;flex-wrap:wrap;gap:4px 22px;margin-top:12px}
+.quiz-print-options-settings label{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#527490;font:14px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
+.quiz-print-options-settings input{width:17px;height:17px;margin:0;accent-color:#164b88}
+.aks-quiz-doc.quiz-monochrome .quiz-sheet,.aks-quiz-doc.quiz-monochrome .quiz-sheet *{color:#111!important;background:transparent!important;box-shadow:none!important;border-color:#aaa!important}
+.aks-quiz-doc.quiz-monochrome .quiz-sheet{background:#fff!important}
+.aks-quiz-doc.quiz-monochrome .quiz-answer-circle{border-color:#666!important}
