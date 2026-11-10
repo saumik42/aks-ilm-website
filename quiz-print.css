@@ -98,3 +98,6 @@
 
 /* Keep both print preference labels on one compact row on phones. */
 @media(max-width:450px){.quiz-print-options-settings{grid-template-columns:max-content max-content;justify-content:space-between;gap:8px}.quiz-print-options-settings label{gap:6px;font-size:clamp(10px,3.2vw,13px);white-space:nowrap}.quiz-print-options-settings input{width:16px;height:16px;flex-basis:16px}}
+
+/* Group desktop print preferences closely together. */
+@media(min-width:769px){.quiz-print-options-settings{grid-template-columns:max-content max-content;justify-content:start;column-gap:22px}}
