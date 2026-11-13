@@ -278,7 +278,10 @@ requestAnimationFrame(()=>{window.scrollTo({top:Math.max(0,window.scrollY+root.g
   root.addEventListener("keydown",event=>{
     if(event.defaultPrevented||event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
     const target=event.target;
-    if(target.closest("input,textarea,select,[contenteditable]:not([contenteditable='false']),[role='textbox']"))return;
+    // The shortcut checkbox can keep focus after being toggled on question one.
+    // Allow only answer-letter shortcuts from it; preserve Space and other input keys.
+    const shortcutCheckboxLetter=target===shortcutToggle&&/^[a-d]$/i.test(event.key);
+    if(!shortcutCheckboxLetter&&target.closest("input,textarea,select,[contenteditable]:not([contenteditable='false']),[role='textbox']"))return;
     if(event.repeat&&(event.key==="Enter"||event.key===" ")){event.preventDefault();return}
     if(quiz.hidden||!current||answered)return;
     const letter=event.key.toUpperCase();
