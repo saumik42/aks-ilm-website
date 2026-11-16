@@ -23,8 +23,8 @@
   document.getElementById('gregorian').textContent=state.gregorian;
   const hijri=document.getElementById('hijri');hijri.textContent=state.hijri;hijri.dataset.month=String(state.month);
   const note=document.getElementById('date-note');note.replaceChildren();
-  if(state.sourceYear){const link=document.createElement('a');link.href=state.source;link.target='_blank';link.rel='noopener';link.textContent='Islamic Relief Canada';link.style.textDecoration='underline';note.append(state.sourceYear+' calendar aligned to ',link,'. Dates may vary with local moon sightings.')}
-  else note.textContent='Approximate date; local moon sightings may differ.';
+  if(state.sourceYear){const link=document.createElement('a');link.href=state.source;link.target='_blank';link.rel='noopener';link.textContent='Islamic Relief Canada';link.style.textDecoration='underline';note.append('Toronto-based calendar · '+state.sourceYear+' calendar aligned to ',link,'. Dates may vary with local moon sightings.')}
+  else note.textContent='Toronto-based calendar · Approximate date; local moon sightings may differ.';
   document.querySelectorAll('#hijri-month-list li').forEach(item=>{const current=Number(item.dataset.month)===state.month;if(current)item.setAttribute('aria-current','date');else item.removeAttribute('aria-current');item.querySelector('.current-month-label').hidden=!current});
  }
  refresh();setInterval(refresh,60000);

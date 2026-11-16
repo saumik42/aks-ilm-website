@@ -101,3 +101,6 @@
 
 /* Group desktop print preferences closely together. */
 @media(min-width:769px){.quiz-print-options-settings{grid-template-columns:max-content max-content;justify-content:start;column-gap:22px}}
+
+#quiz-print-page-count{margin:0;padding:0 22px 10px;color:#527490;font:12px/1.5 Arial,Helvetica,sans-serif}
+@media(max-width:450px){#quiz-print-page-count{padding-left:16px;padding-right:16px}}

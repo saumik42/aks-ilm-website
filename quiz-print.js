@@ -13,6 +13,9 @@
  const previous=byId('quiz-print-previous'),next=byId('quiz-print-next');
  let bank=[],selected=[],page=0,section='questions',savedOverflow='';
  let randomSelectionMode='';
+ let originalPageTitle=null;
+ function restorePageTitle(){if(originalPageTitle!==null){document.title=originalPageTitle;originalPageTitle=null}}
+ function printableTitle(){const label=selectionMode.value==='range'?'Questions '+selected[0][0]+'–'+selected[selected.length-1][0]:selected.length+' Random Questions';return 'AKS Ilm — '+label+' — Quiz '+quizCodeForRows(selected)}
  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const browserHelp=byId('quiz-print-browser-help'),copyLink=byId('quiz-print-copy-link'),linkField=byId('quiz-print-browser-link');
  const inInstagram=/Instagram/i.test(navigator.userAgent||'');
@@ -26,7 +29,7 @@
  }
  function openPreview(){
   if(!bank.length||dialog.open)return;
-  document.body.classList.remove('aks-printing-quiz');
+  document.body.classList.remove('aks-printing-quiz');restorePageTitle();
   savedOverflow=document.documentElement.style.overflow;
   resetNotice();dialog.showModal();document.documentElement.style.overflow='hidden';
  }
@@ -86,7 +89,10 @@
  }
  function render(){
   syncPrintOptions();
-  const answers=section==='answers',groups=sheetGroups()[section];
+  const layout=sheetGroups();
+  const answers=section==='answers',groups=layout[section];
+  const questionPages=layout.questions.length,keyPages=includeKey?.checked===false?0:layout.answers.length;
+  byId('quiz-print-page-count').textContent=questionPages+' question page'+(questionPages===1?'':'s')+(keyPages?' + '+keyPages+' answer-key page'+(keyPages===1?'':'s'):'')+' · '+(questionPages+keyPages)+' total';
   page=Math.max(0,Math.min(page,groups.length-1));
   preview.innerHTML=makeSheet(groups[page],answers,page,groups.length);
   qTab.setAttribute('aria-pressed',String(!answers));aTab.setAttribute('aria-pressed',String(answers));
@@ -179,11 +185,13 @@
   document.body.classList.add('aks-printing-quiz');
   document.documentElement.style.overflow=savedOverflow;
   dialog.close();
+  restorePageTitle();originalPageTitle=document.title;document.title=printableTitle();
   try{window.print()}catch(_){
+   restorePageTitle();
    document.body.classList.remove('aks-printing-quiz');dialog.showModal();document.documentElement.style.overflow='hidden';
    browserNotice();
   }
  });
- window.addEventListener('afterprint',()=>document.body.classList.remove('aks-printing-quiz'));
+ window.addEventListener('afterprint',()=>{document.body.classList.remove('aks-printing-quiz');restorePageTitle()});
 })();
 

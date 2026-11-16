@@ -37,7 +37,17 @@
   if(p){root.querySelector('.art-arabic').textContent=p.arabic;root.querySelector('.art-detail h3').textContent=p.name;root.querySelector('.art-description').textContent=p.text;root.querySelector('.art-source').href=p.source;}
  }
  function select(key){const p=features[key];selections[p.view]=selections[p.view]===key?null:key;show(p.view);}
- root.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
+ const viewButtons=Array.from(root.querySelectorAll('[data-view]'));
+ viewButtons.forEach((button,index)=>{
+  button.addEventListener('click',()=>show(button.dataset.view));
+  button.addEventListener('keydown',event=>{
+   if(event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.isComposing||!window.matchMedia('(min-width:761px)').matches)return;
+   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+   event.preventDefault();
+   const nextIndex=event.key==='Home'?0:event.key==='End'?viewButtons.length-1:(index+(event.key==='ArrowRight'?1:-1)+viewButtons.length)%viewButtons.length;
+   const next=viewButtons[nextIndex];show(next.dataset.view);next.focus({preventScroll:true});
+  });
+ });
  root.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.feature)));
  
  // Pointer labels identify parts without changing the selected feature.
