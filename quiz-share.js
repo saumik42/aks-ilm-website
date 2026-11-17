@@ -17,6 +17,8 @@
   if(line)out.push(line);return out;
  }
  async function makeCard(result){
+  // Capture the completion date once, before image loading or sharing can delay it.
+  const completionDate=new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date());
   const hasLogo=await logoAvailable;
   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1260;
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas unavailable');
@@ -25,6 +27,7 @@
   if(hasLogo&&logo.naturalWidth){const w=430,h=w*logo.naturalHeight/logo.naturalWidth;ctx.drawImage(logo,(1080-w)/2,58,w,h)}
   else{ctx.fillStyle='#164b88';ctx.font='bold 76px Georgia,serif';ctx.textAlign='center';ctx.fillText('AKS Ilm',540,160)}
   ctx.textAlign='center';ctx.fillStyle='#526b81';ctx.font='28px Arial,sans-serif';ctx.fillText('Islamic Trivia & Learning',540,245);
+  ctx.font='22px Arial,sans-serif';ctx.fillText('Completed '+completionDate,540,274);
   const gradient=ctx.createLinearGradient(0,285,1080,1120);gradient.addColorStop(0,'#1d4d91');gradient.addColorStop(1,'#245da2');ctx.fillStyle=gradient;ctx.fillRect(0,285,1080,835);
   ctx.fillStyle='#d9e7f7';ctx.font='bold 27px Arial,sans-serif';ctx.fillText(result.mode==='unlimited'?'UNLIMITED SESSION COMPLETE':result.total+'-QUESTION CHALLENGE COMPLETE',540,380);
   ctx.fillStyle='#ffffff';ctx.font='66px Georgia,serif';ctx.fillText('Islamic Trivia Quiz',540,478);
