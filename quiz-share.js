@@ -26,7 +26,7 @@
   else{ctx.fillStyle='#164b88';ctx.font='bold 76px Georgia,serif';ctx.textAlign='center';ctx.fillText('AKS Ilm',540,160)}
   ctx.textAlign='center';ctx.fillStyle='#526b81';ctx.font='28px Arial,sans-serif';ctx.fillText('Islamic Trivia & Learning',540,245);
   const gradient=ctx.createLinearGradient(0,285,1080,1120);gradient.addColorStop(0,'#1d4d91');gradient.addColorStop(1,'#245da2');ctx.fillStyle=gradient;ctx.fillRect(0,285,1080,835);
-  ctx.fillStyle='#d9e7f7';ctx.font='bold 27px Arial,sans-serif';ctx.fillText(result.total+'-QUESTION CHALLENGE COMPLETE',540,380);
+  ctx.fillStyle='#d9e7f7';ctx.font='bold 27px Arial,sans-serif';ctx.fillText(result.mode==='unlimited'?'UNLIMITED SESSION COMPLETE':result.total+'-QUESTION CHALLENGE COMPLETE',540,380);
   ctx.fillStyle='#ffffff';ctx.font='66px Georgia,serif';ctx.fillText('Islamic Trivia Quiz',540,478);
   const numerator=String(result.correct),denominator=' / '+result.total;
   ctx.font='bold 192px Arial,sans-serif';const a=ctx.measureText(numerator).width;
@@ -47,10 +47,10 @@
  }
  document.addEventListener('aks-quiz-complete',async event=>{
   const result=event.detail,id=++generation;if(preview.open)preview.close();releasePreview();prepared=null;status.textContent='';button.disabled=true;button.textContent='Preparing result image…';
-  if(![10,25].includes(result.total)||!Number.isInteger(result.correct)||result.correct<0||result.correct>result.total)return;
+  if(!(result.mode==='unlimited'?Number.isSafeInteger(result.total)&&result.total>0:[10,25].includes(result.total))||!Number.isInteger(result.correct)||result.correct<0||result.correct>result.total)return;
   try{
    const blob=await makeCard(result);if(id!==generation)return;
-   const file=new File([blob],'aks-ilm-quiz-'+result.correct+'-of-'+result.total+'.png',{type:'image/png'});
+   const file=new File([blob],'aks-ilm-'+(result.mode==='unlimited'?'unlimited':'quiz')+'-'+result.correct+'-of-'+result.total+'.png',{type:'image/png'});
    prepared={file};button.textContent='Share result';button.disabled=false;
   }catch(error){if(id!==generation)return;button.textContent='Result image unavailable';status.textContent='The image could not be created. Please try another browser.'}
  });

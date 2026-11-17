@@ -50,7 +50,7 @@
     <div class="sk-actions">
       <button id="sk-next" type="button" hidden>🎲 Another Random Question</button>
       <button id="sk-reset" type="button" class="sk-secondary" hidden>↻ Reset Session</button>
-      <button id="sk-exit" type="button" class="sk-secondary" hidden>Choose another challenge</button>
+      <button id="sk-exit" type="button" class="sk-secondary" hidden disabled>Finish &amp; see results</button>
     </div>
   </div>
 
@@ -176,7 +176,14 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
         if(data.selected!==null&&(!last||last.number!==data.current||last.selected!==data.selected))throw Error("Invalid current answer");
         const completed=new Set(data.answerHistory.map(e=>e.number));
         if(data.deck.some(id=>completed.has(id))||(data.selected===null&&completed.has(data.current)))throw Error("Repeated question");
-      }else if(data.missed.length||data.answerHistory.length)throw Error("Invalid unlimited state");
+       }else{
+        if(data.answerHistory.length!==data.answeredCount||!data.answerHistory.every(e=>e&&validId(e.number)&&letters.includes(e.selected)&&e.correct===correct(e.number,e.selected)))throw Error("Invalid unlimited history");
+        if(data.answerHistory.filter(e=>e.correct).length!==data.correctCount)throw Error("Invalid unlimited score");
+        const expected=data.answerHistory.filter(e=>!e.correct).map(e=>({number:e.number,selected:e.selected}));
+        if(JSON.stringify(expected)!==JSON.stringify(data.missed))throw Error("Invalid unlimited missed answers");
+        const last=data.answerHistory[data.answerHistory.length-1];
+        if(data.selected!==null&&(!last||last.number!==data.current||last.selected!==data.selected))throw Error("Invalid unlimited current answer");
+      }
       return data;
     }catch(error){clearSession();return null}
   }
@@ -191,7 +198,7 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
   }
   const tenMessages={0:"Keep going! Every question is an opportunity to learn something new. 📖",1:"A start is a start! Keep learning and building your knowledge. 🌱",2:"Keep going! Each answer you learn is knowledge gained. 📚",3:"Good effort! Keep seeking knowledge and try again. 🌱",4:"You're making progress! Keep learning and improving. 📖",5:"Halfway there! A good effort — keep building your knowledge. 🌟",6:"Good job! Your knowledge is growing — keep going. 📚",7:"MashaAllah, well done! A strong result — keep learning. 🌟",8:"MashaAllah! Keep seeking beneficial knowledge. 🤲",9:"MashaAllah, excellent! Just one away from a perfect score. ⭐",10:"MashaAllah, perfect score! May Allah increase you in beneficial knowledge. 🤲✨"};
   function shuffleDeck(){deck=Array.from({length:bank.length},(_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
-  function updateScore(){const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
+  function updateScore(){exit.disabled=answeredCount===0;const pct=answeredCount?Math.round(correctCount/answeredCount*100):0;score.textContent=answeredCount?`Session score: ${correctCount} correct • ${answeredCount} answered • ${pct}%`:"Session score: 0 correct • 0 answered"}
   function startMode(value){clearSession();resumeScreen.hidden=true;root.classList.remove("is-showing-results");root.classList.add("is-active-quiz");showModeLabel(value);mode=value;limit=value==="unlimited"?null:Number(value);correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];root.querySelector("#sk-answer-summary").hidden=true;shuffleDeck();modeScreen.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=false;reset.hidden=mode!=="unlimited";exit.hidden=mode!=="unlimited";review.hidden=true;next.textContent=mode==="unlimited"?"🎲 Another Random Question":"Next question";updateScore();draw();question.focus({preventScroll:true});positionQuizStart()}
   function draw(restoring=false){if(!restoring){if(!deck.length)shuffleDeck();current=bank[deck.pop()]}answered=false;lastSelected=null;const[n,q,a,b,c,d]=current;progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount+1} of ${limit}`;number.textContent="Library question #"+n;aksRenderQuestion(question,q);const vals={A:a,B:b,C:c,D:d};options.innerHTML="";["A","B","C","D"].forEach(letter=>{const btn=document.createElement("button");btn.type="button";btn.className="sk-option";btn.dataset.letter=letter;btn.setAttribute("aria-label",letter+") "+vals[letter]);const strong=document.createElement("span");strong.className="sk-choice-letter";strong.textContent=letter+") ";btn.appendChild(strong);btn.appendChild(document.createTextNode(vals[letter]));btn.addEventListener("click",()=>checkAnswer(letter));options.appendChild(btn)});syncShortcutLabels();answer.hidden=true;answer.textContent="";answer.className="sk-answer";milestone.hidden=true;milestone.textContent="";root.querySelector("#sk-halfway").hidden=true;root.querySelector("#sk-halfway").textContent="";next.hidden=true;quiz.hidden=false;if(!restoring)saveSession()}
   function drawNextQuestion(){
@@ -210,9 +217,12 @@ loadAKSQuestions(loadingRoot,document.getElementById("sk-mode"),()=>{loadingRoot
   function twentyFiveMessage(n){if(n<=5)return "Keep going! Every question is a chance to learn and grow in knowledge. 📖";if(n<=10)return "Good effort! Keep building your knowledge one question at a time. 🌱";if(n<=15)return "Well done! You're making good progress — keep seeking beneficial knowledge. 📚";if(n<=20)return "MashaAllah, strong performance! Keep learning and striving for more. 🌟";if(n<25)return "MashaAllah, excellent result! Your knowledge really showed in this challenge. ⭐";return "MashaAllah, a perfect 25/25! May Allah increase you in beneficial knowledge and understanding. 🤲✨"}
   function renderAnswerSummary(){
 const container=root.querySelector("#sk-answer-summary"),marks=root.querySelector("#sk-answer-marks");
-marks.replaceChildren();marks.classList.toggle("sk-summary-long",limit===25);
-answerHistory.forEach((entry,index)=>{
-const mark=document.createElement("span");mark.className=entry.correct?"sk-summary-correct":"sk-summary-missed";mark.setAttribute("role","listitem");mark.setAttribute("aria-label","Answer "+(index+1)+", question "+entry.number+": "+(entry.correct?"correct":"missed"));mark.textContent=entry.correct?"✓":"×";marks.append(mark);
+marks.replaceChildren();marks.classList.toggle("sk-summary-long",answerHistory.length>10);
+const offset=Math.max(0,answerHistory.length-50);
+root.querySelector(".sk-summary-heading>span").textContent=offset?"Last 50 answers":mode==="unlimited"?"In session order":"In challenge order";
+marks.setAttribute("aria-label",offset?"Last 50 answer outcomes":"Answer outcomes in order");
+answerHistory.slice(offset).forEach((entry,index)=>{
+const mark=document.createElement("span");mark.className=entry.correct?"sk-summary-correct":"sk-summary-missed";mark.setAttribute("role","listitem");mark.setAttribute("aria-label","Answer "+(offset+index+1)+", question "+entry.number+": "+(entry.correct?"correct":"missed"));mark.textContent=entry.correct?"✓":"×";marks.append(mark);
 });
 root.querySelector("#sk-summary-correct-count").textContent=correctCount+" correct";
 root.querySelector("#sk-summary-missed-count").textContent=(answeredCount-correctCount)+" missed";
@@ -222,15 +232,17 @@ container.hidden=false;
 clearSession();root.classList.remove("is-active-quiz");
 root.classList.add("is-showing-results");
 quiz.hidden=true;score.hidden=true;finish.hidden=false;reviewScreen.hidden=true;
+if(!answeredCount)return;
+const resultTotal=mode==="unlimited"?answeredCount:limit;
 const pct=Math.round(correctCount/answeredCount*100);
-finish.querySelector(".sk-finish-title").textContent=limit+"-question challenge complete";
+finish.querySelector(".sk-finish-title").textContent=mode==="unlimited"?"Unlimited session complete":limit+"-question challenge complete";
 finalScore.replaceChildren(document.createTextNode(String(correctCount)));
-const total=document.createElement("span");total.className="sk-score-total";total.textContent=" / "+limit;finalScore.append(total);
-finalScore.setAttribute("aria-label",correctCount+" out of "+limit+" correct");
+const total=document.createElement("span");total.className="sk-score-total";total.textContent=" / "+resultTotal;finalScore.append(total);
+finalScore.setAttribute("aria-label",correctCount+" out of "+resultTotal+" correct");
 root.querySelector("#sk-final-percentage").textContent="Correct answers · "+pct+"%";
-finalMessage.textContent=limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);
+finalMessage.textContent=mode==="unlimited"?"May Allah increase you in beneficial knowledge. Keep learning and growing. 🤲":limit===10?tenMessages[correctCount]:twentyFiveMessage(correctCount);
 renderAnswerSummary();
-document.dispatchEvent(new CustomEvent("aks-quiz-complete",{detail:{correct:correctCount,total:limit,message:finalMessage.textContent}}));
+document.dispatchEvent(new CustomEvent("aks-quiz-complete",{detail:{correct:correctCount,total:resultTotal,mode,message:finalMessage.textContent}}));
 if(missed.length){review.textContent="Review "+missed.length+" missed "+(missed.length===1?"question":"questions");review.hidden=false;review.focus({preventScroll:true})}else{review.hidden=true;again.focus({preventScroll:true})}
 requestAnimationFrame(()=>{window.scrollTo({top:Math.max(0,window.scrollY+root.getBoundingClientRect().top-12),behavior:"instant"});});
 }
@@ -253,12 +265,12 @@ requestAnimationFrame(()=>{window.scrollTo({top:Math.max(0,window.scrollY+root.g
       }
     });
   }
-  function checkAnswer(selected,restoring=false){if(!current||answered)return;answered=true;lastSelected=selected;const[,,a,b,c,d,correct]=current;if(!restoring){answeredCount++;if(mode!=="unlimited")answerHistory.push({number:current[0],selected,correct:selected===correct});if(selected===correct)correctCount++;else if(mode!=="unlimited")missed.push({item:current,selected})}progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount} of ${limit}`;updateScore();const vals={A:a,B:b,C:c,D:d};options.querySelectorAll(".sk-option").forEach(btn=>{const letter=btn.dataset.letter;btn.disabled=true;if(letter===correct)btn.classList.add("sk-correct");if(letter===selected&&selected!==correct)btn.classList.add("sk-wrong");if(letter===correct||letter===selected){const mark=document.createElement("span");mark.className="sk-option-result-mark";mark.textContent=letter===correct?"✓":"×";mark.setAttribute("aria-hidden","true");btn.appendChild(mark);btn.setAttribute("aria-label",letter+") "+vals[letter]+(letter===correct?" — Correct answer":" — Your incorrect answer"))}});if(selected===correct){answer.textContent="Correct! ✓  Answer: "+correct+") "+vals[correct];answer.classList.add("sk-result-correct")}else{answer.textContent="Incorrect. The correct answer is "+correct+") "+vals[correct];answer.classList.add("sk-result-wrong")}answer.hidden=false;const halfway=root.querySelector("#sk-halfway");halfway.hidden=mode==="unlimited"||answeredCount!==Math.ceil(limit/2);halfway.textContent=halfway.hidden?"":"Halfway there. Keep going!";if(mode==="unlimited"){const msg=unlimitedMessage();if(msg){milestone.textContent=msg;milestone.hidden=false}next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}else if(answeredCount>=limit){next.textContent="See results";next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}else{next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}saveSession();if(!restoring)positionAnsweredDesktopQuiz()}
-  function resetUnlimited(){if(mode!=="unlimited")return;clearSession();correctCount=0;answeredCount=0;answered=false;shuffleDeck();updateScore();draw();question.focus({preventScroll:true})}
+  function checkAnswer(selected,restoring=false){if(!current||answered)return;answered=true;lastSelected=selected;const[,,a,b,c,d,correct]=current;if(!restoring){answeredCount++;answerHistory.push({number:current[0],selected,correct:selected===correct});if(selected===correct)correctCount++;else missed.push({item:current,selected})}progress.textContent=mode==="unlimited"?`Unlimited • ${answeredCount} answered`:`Question ${answeredCount} of ${limit}`;updateScore();const vals={A:a,B:b,C:c,D:d};options.querySelectorAll(".sk-option").forEach(btn=>{const letter=btn.dataset.letter;btn.disabled=true;if(letter===correct)btn.classList.add("sk-correct");if(letter===selected&&selected!==correct)btn.classList.add("sk-wrong");if(letter===correct||letter===selected){const mark=document.createElement("span");mark.className="sk-option-result-mark";mark.textContent=letter===correct?"✓":"×";mark.setAttribute("aria-hidden","true");btn.appendChild(mark);btn.setAttribute("aria-label",letter+") "+vals[letter]+(letter===correct?" — Correct answer":" — Your incorrect answer"))}});if(selected===correct){answer.textContent="Correct! ✓  Answer: "+correct+") "+vals[correct];answer.classList.add("sk-result-correct")}else{answer.textContent="Incorrect. The correct answer is "+correct+") "+vals[correct];answer.classList.add("sk-result-wrong")}answer.hidden=false;const halfway=root.querySelector("#sk-halfway");halfway.hidden=mode==="unlimited"||answeredCount!==Math.ceil(limit/2);halfway.textContent=halfway.hidden?"":"Halfway there. Keep going!";if(mode==="unlimited"){const msg=unlimitedMessage();if(msg){milestone.textContent=msg;milestone.hidden=false}next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}else if(answeredCount>=limit){next.textContent="See results";next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}else{next.hidden=false;next.focus({preventScroll:window.matchMedia("(min-width:761px)").matches})}saveSession();if(!restoring)positionAnsweredDesktopQuiz()}
+  function resetUnlimited(){if(mode!=="unlimited")return;clearSession();correctCount=0;answeredCount=0;answered=false;missed=[];answerHistory=[];shuffleDeck();updateScore();draw();question.focus({preventScroll:true})}
   function chooseAgain(){root.querySelector("#sk-mode-label").hidden=true;root.classList.remove("is-showing-results");clearSession();resumeScreen.hidden=true;root.classList.remove("is-active-quiz");introduction.textContent=baseIntroduction+" Choose a challenge below to begin.";mode=null;limit=null;current=null;missed=[];quiz.hidden=true;finish.hidden=true;reviewScreen.hidden=true;score.hidden=true;reset.hidden=true;exit.hidden=true;review.hidden=true;modeScreen.hidden=false;modeScreen.querySelector(".sk-mode-btn").focus()}
-  function showReview(){if(!missed.length)return;finish.hidden=true;reviewScreen.hidden=false;const pct=Math.round(correctCount/answeredCount*100);reviewScore.textContent=`Your result: ${correctCount} / ${limit} correct • ${pct}%`;reviewList.innerHTML="";missed.forEach(entry=>{const[n,q,a,b,c,d,correct]=entry.item,vals={A:a,B:b,C:c,D:d};const item=document.createElement("div");item.className="sk-review-item";const num=document.createElement("div");num.className="sk-review-number";num.textContent="Question #"+n;const qEl=document.createElement("div");qEl.className="sk-review-question";aksRenderQuestion(qEl,q);const userAns=document.createElement("div");userAns.className="sk-review-user-answer";const userStrong=document.createElement("strong");userStrong.textContent="Your answer: ";userAns.appendChild(userStrong);userAns.appendChild(document.createTextNode("❌ "+entry.selected+") "+vals[entry.selected]));const ans=document.createElement("div");ans.className="sk-review-answer";const strong=document.createElement("strong");strong.textContent="Correct answer: ";ans.appendChild(strong);ans.appendChild(document.createTextNode("✓ "+correct+") "+vals[correct]));item.appendChild(num);item.appendChild(qEl);item.appendChild(userAns);item.appendChild(ans);reviewList.appendChild(item)});backResults.focus()}
+  function showReview(){if(!missed.length)return;finish.hidden=true;reviewScreen.hidden=false;const pct=Math.round(correctCount/answeredCount*100);reviewScore.textContent=`Your result: ${correctCount} / ${mode==="unlimited"?answeredCount:limit} correct • ${pct}%`;reviewList.innerHTML="";missed.forEach(entry=>{const[n,q,a,b,c,d,correct]=entry.item,vals={A:a,B:b,C:c,D:d};const item=document.createElement("div");item.className="sk-review-item";const num=document.createElement("div");num.className="sk-review-number";num.textContent="Question #"+n;const qEl=document.createElement("div");qEl.className="sk-review-question";aksRenderQuestion(qEl,q);const userAns=document.createElement("div");userAns.className="sk-review-user-answer";const userStrong=document.createElement("strong");userStrong.textContent="Your answer: ";userAns.appendChild(userStrong);userAns.appendChild(document.createTextNode("❌ "+entry.selected+") "+vals[entry.selected]));const ans=document.createElement("div");ans.className="sk-review-answer";const strong=document.createElement("strong");strong.textContent="Correct answer: ";ans.appendChild(strong);ans.appendChild(document.createTextNode("✓ "+correct+") "+vals[correct]));item.appendChild(num);item.appendChild(qEl);item.appendChild(userAns);item.appendChild(ans);reviewList.appendChild(item)});backResults.focus()}
   function showResults(){reviewScreen.hidden=true;finish.hidden=false;review.focus()}
-  root.querySelectorAll(".sk-mode-btn").forEach(btn=>btn.addEventListener("click",()=>startMode(btn.dataset.mode)));next.addEventListener("click",drawNextQuestion);reset.addEventListener("click",resetUnlimited);exit.addEventListener("click",chooseAgain);again.addEventListener("click",chooseAgain);review.addEventListener("click",showReview);backResults.addEventListener("click",showResults);reviewAgain.addEventListener("click",chooseAgain);foot.textContent=`Questions drawn from the ${bank.length}-question library.`;
+  root.querySelectorAll(".sk-mode-btn").forEach(btn=>btn.addEventListener("click",()=>startMode(btn.dataset.mode)));next.addEventListener("click",drawNextQuestion);reset.addEventListener("click",resetUnlimited);exit.addEventListener("click",()=>{if(mode==="unlimited"&&answeredCount>0)completeChallenge()});again.addEventListener("click",chooseAgain);review.addEventListener("click",showReview);backResults.addEventListener("click",showResults);reviewAgain.addEventListener("click",chooseAgain);foot.textContent=`Questions drawn from the ${bank.length}-question library.`;
 
   const shortcutToggle=root.querySelector("#sk-letter-shortcuts");
   const desktopKeyboard=window.matchMedia("(min-width:761px)");
@@ -413,7 +425,7 @@ requestAnimationFrame(()=>{window.scrollTo({top:Math.max(0,window.scrollY+root.g
 #sk-share-preview button:focus-visible{outline:3px solid #377fc5;outline-offset:3px}
 #sk-share-preview-status{margin:10px 0 0;color:#526b81;font:12px/1.5 Arial,Helvetica,sans-serif}
 #sk-share-preview [hidden]{display:none!important}
-</style><script src="./quiz-share.js?v=2"></script><style id="compact-quiz-results">
+</style><script src="./quiz-share.js?v=3"></script><style id="compact-quiz-results">
 #sk-trivia-randomizer.is-showing-results .sk-sub{display:none}
 #sk-trivia-randomizer.is-showing-results .sk-head{margin-bottom:15px}
 #sk-trivia-randomizer.is-showing-results .sk-title{margin:0;text-align:center}
