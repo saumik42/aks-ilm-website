@@ -2224,7 +2224,19 @@ if (
  ['Makkah and surroundings',['makkah','hira','thawr','aisha','mina','muzdalifah','arafah','hudaybiyyah','taif']],
  ['Madinah and surroundings',['madinah','quba','qiblatayn','baqi','dhulHulayfah','uhud','badr']],
  ['Other locations',['quds','minaretIsa','sinai','hijr','khaybar']]
-];const groupedPlaces=new Set();for(const [label,keys] of placeGroups){const group=document.createElement('optgroup');group.label=label;for(const key of keys){const place=places[key];if(!place)continue;const option=document.createElement('option');option.value=key;option.textContent=place.name;group.append(option);groupedPlaces.add(key)}placeSelect.append(group)}for(const [key,place] of Object.entries(places)){if(groupedPlaces.has(key))continue;const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.lastElementChild.append(option)}placeDiscoveries.syncOptions();placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
+];const groupedPlaces=new Set();for(const [label,keys] of placeGroups){const group=document.createElement('optgroup');group.label=label;for(const key of keys){const place=places[key];if(!place)continue;const option=document.createElement('option');option.value=key;option.textContent=place.name;group.append(option);groupedPlaces.add(key)}placeSelect.append(group)}for(const [key,place] of Object.entries(places)){if(groupedPlaces.has(key))continue;const option=document.createElement('option');option.value=key;option.textContent=place.name;placeSelect.lastElementChild.append(option)}placeDiscoveries.syncOptions();placeSelect.addEventListener('change',()=>{if(placeSelect.value)showPlace(placeSelect.value);else showRegionalMap();});
+(function(){
+ let restoring=false;
+ const originalShowPlace=showPlace,originalRegional=showRegionalMap;
+ function remember(key){if(restoring||history.state?.aksPlace===key)return;history.pushState({...history.state,aksPlace:key},'');}
+ showPlace=function(key){if(!places[key])return;originalShowPlace(key);remember(key)};
+ showRegionalMap=function(){originalRegional();remember(null)};
+ function restore(){restoring=true;try{const key=history.state?.aksPlace;if(key&&places[key])showPlace(key);else showRegionalMap();}finally{restoring=false}}
+ if(!Object.prototype.hasOwnProperty.call(history.state||{},'aksPlace'))history.replaceState({...history.state,aksPlace:selectedPlaceKey},'');
+ if(history.state.aksPlace)restore();
+ window.addEventListener('popstate',restore);
+})();
+</script><dialog id="location-photo-viewer" aria-labelledby="photo-viewer-caption">
 <div class="photo-viewer-tools"><button id="photo-viewer-close" type="button" autofocus>Close ×</button></div>
 <figure><img id="photo-viewer-image" alt="" referrerpolicy="no-referrer"><figcaption id="photo-viewer-caption"></figcaption></figure>
 <div class="photo-viewer-credit"><a id="photo-viewer-source" target="_blank" rel="noopener noreferrer">Wikimedia Commons <span class="link-arrow" aria-hidden="true">↗</span></a></div>

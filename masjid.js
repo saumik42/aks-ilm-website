@@ -11,7 +11,7 @@
  wudu:{view:'wudu',name:'Wudu area',arabic:'',text:'A designated space where worshippers perform wudu (ablution) before prayer. Its location varies between masjids—it may be near the prayer hall, on another floor, or in a separate facility.',source:met,path:'M46 154 L1490 154 L1490 983 L46 983 Z'}
  };
  const selections={outside:null,inside:null,wudu:null};
- function show(view){
+ function show(view,record=true){
   const previous=root.querySelector('[data-scene]:not([hidden])');
   const changing=previous&&previous.dataset.scene!==view;
   root.querySelectorAll('.art-transition-overlay').forEach(image=>image.remove());
@@ -35,6 +35,12 @@
   root.querySelector('.art-detail').hidden=!p;
   root.querySelector('.art-prompt').hidden=!!p;
   if(p){root.querySelector('.art-arabic').textContent=p.arabic;root.querySelector('.art-detail h3').textContent=p.name;root.querySelector('.art-description').textContent=p.text;root.querySelector('.art-source').href=p.source;}
+  if(record)saveViewHistory(view);
+ }
+ function saveViewHistory(view){
+  const snapshot={view,selections:{...selections}};
+  if(JSON.stringify(history.state?.aksMasjid)===JSON.stringify(snapshot))return;
+  history.pushState({...history.state,aksMasjid:snapshot},'');
  }
  function select(key){const p=features[key];selections[p.view]=selections[p.view]===key?null:key;show(p.view);}
  const viewButtons=Array.from(root.querySelectorAll('[data-view]'));
@@ -77,5 +83,13 @@
  hoverPointer.addEventListener('change',hideHoverLabels);
  window.addEventListener('blur',hideHoverLabels);
 
- show('outside');
+ function restoreViewHistory(snapshot){
+  const view=['outside','inside','wudu'].includes(snapshot?.view)?snapshot.view:'outside';
+  for(const key of Object.keys(selections)){const selected=snapshot?.selections?.[key];selections[key]=features[selected]?.view===key?selected:null;}
+  show(view,false);
+ }
+ const initial=history.state?.aksMasjid||{view:'outside',selections:{...selections}};
+ history.replaceState({...history.state,aksMasjid:initial},'');
+ restoreViewHistory(initial);
+ window.addEventListener('popstate',()=>restoreViewHistory(history.state?.aksMasjid));
 })();

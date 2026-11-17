@@ -97,7 +97,8 @@
   preview.innerHTML=makeSheet(groups[page],answers,page,groups.length);
   qTab.setAttribute('aria-pressed',String(!answers));aTab.setAttribute('aria-pressed',String(answers));
   byId('quiz-print-selection').textContent=selectionMode.value==='range'?selected.length+(selected.length===1?' question · #':' questions · #')+selected[0][0]+'–'+selected[selected.length-1][0]:selected.length+' randomly selected questions';
-  byId('quiz-print-position').textContent=(answers?'Answer key':'Worksheet')+' '+(page+1)+' of '+groups.length;
+  byId('quiz-print-page-label').textContent=answers?'Answer key page':'Worksheet page';
+  const jump=byId('quiz-print-page-jump');jump.max=String(groups.length);jump.value=String(page+1);byId('quiz-print-page-total').textContent='of '+groups.length;
   previous.disabled=page===0;next.disabled=page===groups.length-1;
  }
  if(document.fonts)document.fonts.ready.then(()=>{layoutCache=null;if(selected.length)render()});
@@ -176,6 +177,9 @@
  aTab.addEventListener('click',()=>{if(includeKey?.checked===false)return;section='answers';page=0;render()});
  includeKey?.addEventListener('change',()=>{page=0;if(selected.length)render();else syncPrintOptions()});
  monochrome?.addEventListener('change',syncPrintOptions);
+ function jumpToPage(){const input=byId('quiz-print-page-jump'),value=Number(input.value);if(!Number.isInteger(value)||value<1||value>Number(input.max)){input.value=String(page+1);return;}page=value-1;render();}
+ byId('quiz-print-page-jump').addEventListener('change',jumpToPage);
+ byId('quiz-print-page-jump').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();jumpToPage()}});
  previous.addEventListener('click',()=>{page--;render()});next.addEventListener('click',()=>{page++;render()});
  byId('quiz-print-submit').addEventListener('click',()=>{
   if(!form.reportValidity()||!selectRange())return;

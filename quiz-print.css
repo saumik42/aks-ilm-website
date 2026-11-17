@@ -104,3 +104,5 @@
 
 #quiz-print-page-count{margin:0;padding:0 22px 10px;color:#527490;font:12px/1.5 Arial,Helvetica,sans-serif}
 @media(max-width:450px){#quiz-print-page-count{padding-left:16px;padding-right:16px}}
+
+.quiz-page-jump{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px}.quiz-page-jump input{box-sizing:border-box;width:58px;min-height:44px;padding:8px 4px;border:1px solid #c9d9e9;border-radius:6px;background:#fff;color:#153451;text-align:center;font:16px Arial,sans-serif}
