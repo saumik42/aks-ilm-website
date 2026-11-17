@@ -1,3 +1,6 @@
+/* QPC Uthmani Hafs supplied by Quran Foundation; paired with verified QPC-script passages.
+   Keep punctuation in Amiri: the QPC font reserves some punctuation glyph positions. */
+@font-face{font-family:'AKS QPC Hafs';font-style:normal;font-weight:400;font-display:swap;src:url('https://verses.quran.foundation/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.woff2') format('woff2');unicode-range:U+0600-060B,U+060D-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
 @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;src:url('https://fonts.gstatic.com/s/amiri/v30/J7aRnpd8CGxBHqUp.ttf') format('truetype')}
 /* Readable supporting text on light surfaces. */
 .page-foot{color:#526b81}
@@ -33,7 +36,7 @@
 .aks-q-prompt{font-weight:700}
 .aks-q-passage,.aks-q-translation,.aks-q-clue{font-weight:400;line-height:1.5}
 .aks-q-clue+.aks-q-clue{margin-top:3px}
-.aks-q-arabic{font:400 25px/1.8 'Amiri','Times New Roman',serif;text-align:center;direction:rtl}
+.aks-q-arabic{font:400 25px/1.8 'AKS QPC Hafs','Amiri','Times New Roman',serif;text-align:center;direction:rtl}
 .aks-q-translation{text-align:center}
 #sk-trivia-randomizer .sk-question .aks-q-passage,#sk-trivia-randomizer .sk-question .aks-q-clue{font-size:16px}
 #sk-trivia-randomizer .sk-question .aks-q-translation{font-size:14px;color:#526b81}
@@ -41,3 +44,4 @@
 .quiz-print-question .aks-q-passage,.quiz-print-question .aks-q-clue,.quiz-print-question .aks-q-translation{font-size:inherit}
 .quiz-print-question .aks-q-text+.aks-q-text{margin-top:4px}
 .quiz-print-question .aks-q-arabic{font-size:20px}
+
