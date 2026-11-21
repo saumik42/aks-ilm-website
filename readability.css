@@ -54,3 +54,6 @@
  }
  body .reminder cite a{color:#dce9f7;text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:#a9c7e8;text-decoration-thickness:1px;text-underline-offset:4px}
 }
+
+/* Let the About page's full-width wrapper reveal the shared edge tint. */
+@media screen{body.aks-soft-page-edges #aks-about-page{background:transparent}}
