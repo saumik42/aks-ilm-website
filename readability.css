@@ -45,3 +45,12 @@
 .quiz-print-question .aks-q-text+.aks-q-text{margin-top:4px}
 .quiz-print-question .aks-q-arabic{font-size:20px}
 
+
+/* Gentle page edges and source-link styling; screen-only so printing stays unchanged. */
+@media screen{
+ body.aks-soft-page-edges{background-image:linear-gradient(90deg,#eaf3ff 0%,#f6faff 19%,#fff 38%,#fff 62%,#f6faff 81%,#eaf3ff 100%)}
+ body .shahadah-source a,body .smile-copy a,body #term-reference a,body a.reference,body .reference a,body a.art-source{
+  color:#2e5591;text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:#8ba9cd;text-decoration-thickness:1px;text-underline-offset:4px
+ }
+ body .reminder cite a{color:#dce9f7;text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:#a9c7e8;text-decoration-thickness:1px;text-underline-offset:4px}
+}
