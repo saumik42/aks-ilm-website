@@ -730,6 +730,7 @@ const places = {
       {label: "Qur’an 17:1", url: "https://quran.com/17/1"}
     ],
     photoFile: "Kaaba, Makkah.jpg",
+    photoPosition: "50% 0%",
     photoAlt: "The Kaʿbah at Al-Masjid Al-Haram in Makkah",
     photoCaption: "The Kaʿbah, Makkah",
     photoSource:
@@ -1710,7 +1711,7 @@ function showPlace(key) {
           srcset="${p.photoAsset ? "" : commonsImage(p.photoFile,480) + " 480w, " + imageURL + " 960w"}"
           sizes="(max-width:620px) calc(100vw - 50px), (max-width:990px) calc(100vw - 82px), 908px"
           data-full-src="${p.photoAsset || commonsImage(p.photoFile,1800)}"
-          ${p.photoFit === "contain" ? 'style="object-fit:contain"' : ""}
+          style="object-fit:${p.photoFit === "contain" ? "contain" : "cover"};object-position:${p.photoPosition || "50% 50%"}"
           decoding="async"
           alt="${p.photoAlt}"
           loading="lazy"
