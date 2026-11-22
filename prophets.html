@@ -1236,6 +1236,10 @@ body {
 
 }
 
+
+/* Separate the revealed glimpse from its source without adding vertical space. */
+.details-box .prophet-source-row{border-top:1px solid color-mix(in srgb,var(--accent) 35%,white);margin-top:4px;padding-top:8px}
+.details-box .prophet-source-row .reference{margin-top:0}
 </style>
 
 <link rel="stylesheet" href="./shared.css?v=logo-size-2"><style>body{background:#fff}.title{color:#164b88;font:normal 36px Georgia,serif}.description{font-size:16px;color:#647b90}.app{padding-top:0}.top-back-nav,.back-area{display:none}.card{border-radius:14px;box-shadow:0 6px 20px #1534510a}.glimpse{font-size:16px;line-height:1.7}.card.open .details{max-height:1200px}.reference{font-size:14px}.reference-note{font-size:14px}.reveal{font-size:12px}.arabic{font-size:32px}.path-line{stroke:#a8bbd0}.start-label,.end-text{font-size:12px}.english{font-size:14px}@media(max-width:650px){.description{font-size:16px}.glimpse{font-size:16px}.reference-note{font-size:14px}.top-back-link{font-size:14px}}</style><style id="honorific-guide-style">
@@ -1270,7 +1274,7 @@ body {
 .page-title-illustration{display:block;width:46px;height:46px;object-fit:contain;margin:0 auto 10px}
 
 @media(max-width:600px){.page-title-illustration{width:42px;height:42px;margin-bottom:9px}}
-</style><link rel="stylesheet" href="./feature-ui.css"><style id="prophets-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./site-navigation.css?v=6"><script defer src="./site-navigation.js?v=1"></script><link rel="stylesheet" href="./readability.css?v=5"><style>
+</style><link rel="stylesheet" href="./feature-ui.css"><style id="prophets-phone-intro-spacing">@media(max-width:600px){.site-nav{margin-bottom:22px}.feature-page-heading{margin-bottom:18px}.feature-page-heading h1{margin-bottom:8px}.feature-page-heading>p{line-height:1.55}}</style><link rel="stylesheet" href="./site-navigation.css?v=7"><script defer src="./site-navigation.js?v=1"></script><link rel="stylesheet" href="./readability.css?v=5"><style>
 .prophet-jump{scroll-margin-top:24px}
 .prophet-selector-return{display:flex;justify-content:center;margin:18px 0 22px}
 #back-to-prophet-selector{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 14px;border:1px solid #c5d8e9;border-radius:6px;background:#f1f7fd;color:#164b88;font:13px/1.4 Arial,Helvetica,sans-serif;cursor:pointer}
@@ -2129,6 +2133,7 @@ prophets.forEach(
           </p>
 
 
+          <div class="prophet-source-row">
           <a
             class="reference"
             href="${prophet.url}"
@@ -2153,6 +2158,7 @@ prophets.forEach(
             </span>
 
           </a>
+          </div>
 
         </div>
 

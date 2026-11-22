@@ -70,3 +70,6 @@
 .aks-site-header.site-nav .brand-tagline{text-align:center}
 .aks-site-header.site-nav .aks-nav-links{justify-content:center}
 @media(max-width:600px){.aks-site-header.site-nav .aks-nav-links{justify-content:space-between}}
+
+/* Give every discovery illustration the same quiet blue backing. */
+.aks-site-header .aks-menu-illustration{background:#edf5fc;border-radius:6px}
