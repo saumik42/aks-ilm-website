@@ -112,7 +112,7 @@
  let initialized=false;
  function unavailable(){if(initialized)return;status.replaceChildren();const text=document.createElement('p');text.textContent='Questions could not be loaded. Please try again.';const retry=document.createElement('button');retry.type='button';retry.textContent='Retry';retry.addEventListener('click',()=>location.reload());status.append(text,retry)}
  const timeout=setTimeout(unavailable,15000);
- const script=document.createElement('script');script.src='./questions.js?v=271-qpc-hafs';script.async=true;
+ const script=document.createElement('script');script.src='./questions.js?v=272';script.async=true;
  script.addEventListener('error',()=>{clearTimeout(timeout);unavailable()});
  script.addEventListener('load',()=>{if(initialized)return;clearTimeout(timeout);if(typeof questions==='undefined'||!Array.isArray(questions)||!questions.length){unavailable();return}initialized=true;status.remove();initialize()});
  document.head.appendChild(script);
