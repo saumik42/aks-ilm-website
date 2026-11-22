@@ -288,3 +288,7 @@ body{background:#f5f9fd}
 @keyframes ae-verify-bounce{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-3px) scale(1.07)}65%{transform:translateY(1px) scale(.98)}}
 @keyframes ae-share-lift{0%,100%{transform:translateY(0)}42%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){#aks-about-page .ae-process-tap.is-playing,#aks-about-page .ae-process-tap.is-playing>span{animation:none!important}#aks-about-page .ae-process-tap.is-playing{background:#dcebf9}#aks-about-page .ae-process-tap[data-effect="idea"].is-playing{background:#fff7dc}}
+
+/* A soft blue glow behind the portrait, without changing its layout. */
+#aks-about-page .ae-portrait-trigger{position:relative;isolation:isolate}
+#aks-about-page .ae-portrait-trigger:before{content:"";position:absolute;left:50%;top:50%;width:184.375%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#8db9e34d 0%,#bad6f233 42%,#dbeafa14 62%,transparent 74%);pointer-events:none;z-index:-1}
